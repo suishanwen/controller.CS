@@ -100,12 +100,19 @@ namespace controller
                 return textBox4;
             }
         }
+        public NotifyIcon NotifyIcon1
+        {
+            get
+            {
+                return notifyIcon1;
+            }
+        }
 
         public Form1()
         {
             InitializeComponent();
             initConfig();
-            new Form3().Show();
+            new Form3(this).Show();
         }
 
 
@@ -139,7 +146,8 @@ namespace controller
                     comboBox1.Items.Insert(i, strArray[i]);
                 }
             }
-            
+            notifyIcon1.ShowBalloonTip(3000, "监控启动", "当前时间："+DateTime.Now.ToLocalTime().ToString(), ToolTipIcon.Info);
+
         }
         //选择共享button
         private void button1_Click(object sender, EventArgs e)
@@ -314,7 +322,21 @@ namespace controller
             Form2.InstanceForm(this, allDir);
         }
 
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                this.WindowState = FormWindowState.Normal;
+            }
+        }
 
-
+        private void button10_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = MessageBox.Show("确定要‘挂机’吗?", "愉快挂机", MessageBoxButtons.OKCancel);
+            if (dr == DialogResult.OK)
+            {
+                SwitchUtil.swichVm(textBox2.Text, textBox3.Text, textBox4, "", "yukuai", PathShare);
+            }
+        }
     }
 }

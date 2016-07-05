@@ -19,15 +19,17 @@ namespace controller
         private int over;
         private int kick;
         private string arrDrop;
+        private string activeVm;
         
 
         public Form3()
         {
-            InitializeComponent();
+            
         }
         public Form3(Form1 form1)
         {
             _mainForm = form1;
+            InitializeComponent();
             timer1.Enabled = true;
         }
 
@@ -35,7 +37,7 @@ namespace controller
         {
             count++;
             Console.WriteLine(count);
-            if (count == 3)
+            if (count == 2)
             {
                 val = 0;
                 over = 0;
@@ -43,6 +45,7 @@ namespace controller
                 try
                 {
                     val = int.Parse(IniReadWriter.ReadIniKeys("Command", "Val", _mainForm.PathShare + "/CF.ini"));
+
                 }
                 catch (Exception)
                 {
@@ -68,10 +71,11 @@ namespace controller
 
 
             }
-            else if (count == 5)
+            else if (count == 4)
             {
                 if (val > 0)
                 {
+                    _mainForm.NotifyIcon1.ShowBalloonTip(0,val+ "号虚拟机网络异常", DateTime.Now.ToLocalTime().ToString(), ToolTipIcon.Info);
                     IniReadWriter.WriteIniKeys("Command", "Val", "0", _mainForm.PathShare + "/CF.ini");
                 }
                 else if (val < 0)
@@ -99,36 +103,53 @@ namespace controller
                     }
                     IniReadWriter.WriteIniKeys("Command", "Val", "0", _mainForm.PathShare + "/CF.ini");
                     IniReadWriter.WriteIniKeys("Command", "ArrDrop", drop, _mainForm.PathShare + "/CF.ini");
+                    _mainForm.NotifyIcon1.ShowBalloonTip(0, val + "号虚拟机掉线了", DateTime.Now.ToLocalTime().ToString(), ToolTipIcon.Error);
 
                 }
             }
-            else if (count == 7)
+            else if (count == 6)
             {
                 if (over > 0)
                 {
                     IniReadWriter.WriteIniKeys("Command", "OVER", "0", _mainForm.PathShare + "/CF.ini");
+                    _mainForm.NotifyIcon1.ShowBalloonTip(0, "项目已结束", DateTime.Now.ToLocalTime().ToString(), ToolTipIcon.Info);
                 }
                 if (kick > 0)
                 {
                     IniReadWriter.WriteIniKeys("Command", "KICK", "0", _mainForm.PathShare + "/CF.ini");
+                    _mainForm.NotifyIcon1.ShowBalloonTip(0, "项目限人", DateTime.Now.ToLocalTime().ToString(), ToolTipIcon.Info);
                 }
 
             }
-            else if (count == 9)
+            else if (count == 8)
             {
+                activeVm = "";
                 for (int i = int.Parse(_mainForm.VM1); i <= int.Parse(_mainForm.VM2); i++)
                 {
                     string state = IniReadWriter.ReadIniKeys("Command", "TaskChange" + i, _mainForm.PathShare + "/Task.ini");
                     if (state == "1")
                     {
+                        activeVm += " " + i + " |";
                     }
                 }
-            }
-            else if (count == 12)
-            {
+                if (arrDrop != "")
+                {
+                    label3.Text = arrDrop;
+                }else
+                {
+                    label3.Text = "无";
+                }
+                if (activeVm != "")
+                {
+                    label4.Text = activeVm;
+                }
+                else
+                {
+                    label4.Text = "无";
+                }
                 count = 0;
+
             }
         }
-
     }
 }

@@ -62,7 +62,7 @@ namespace controller
             }
             if (executableFile != null)
             {
-                string pathName = executableFile.FullName.Replace(_mainForm.PathShare, _mainForm.PathShareVm + "\\");
+                string pathName = executableFile.FullName.Replace(_mainForm.PathShare, _mainForm.PathShareVm);
                 SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm.VM3TextBox, pathName, "投票项目", _mainForm.PathShare);
                 _mainForm.Show();
                 _Instance.Hide();
