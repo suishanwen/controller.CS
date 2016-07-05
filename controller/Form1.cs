@@ -25,13 +25,6 @@ namespace controller
         private string downloads; //下载路径，用于RAR一键解压
         private string votePath; //投票路径，用于一键解压与OPT一键清空
         private string pathShareVm; //虚拟机内的共享路径，用于分割字符串将主机路径转换为虚拟机路径
-        private int timerCount1;
-        private string arrDrop;
-        private string activeVm;
-        private int val;
-        private int kick;
-        private int over;
-        private string windowText;
 
         public string PathShare
         {
@@ -85,96 +78,6 @@ namespace controller
             }
         }
 
-        public int TimerCount1
-        {
-            get
-            {
-                return timerCount1;
-            }
-
-            set
-            {
-                timerCount1 = value;
-            }
-        }
-
-        public string ArrDrop
-        {
-            get
-            {
-                return arrDrop;
-            }
-
-            set
-            {
-                arrDrop = value;
-            }
-        }
-
-        public string ActiveVm
-        {
-            get
-            {
-                return activeVm;
-            }
-
-            set
-            {
-                activeVm = value;
-            }
-        }
-
-        public int Val
-        {
-            get
-            {
-                return val;
-            }
-
-            set
-            {
-                val = value;
-            }
-        }
-
-        public int Kick
-        {
-            get
-            {
-                return kick;
-            }
-
-            set
-            {
-                kick = value;
-            }
-        }
-
-        public int Over
-        {
-            get
-            {
-                return over;
-            }
-
-            set
-            {
-                over = value;
-            }
-        }
-
-        public string WindowText
-        {
-            get
-            {
-                return windowText;
-            }
-
-            set
-            {
-                windowText = value;
-            }
-        }
 
         public string VM1
         {
@@ -202,6 +105,7 @@ namespace controller
         {
             InitializeComponent();
             initConfig();
+            new Form3().Show();
         }
 
 
@@ -235,8 +139,7 @@ namespace controller
                     comboBox1.Items.Insert(i, strArray[i]);
                 }
             }
-            timer1.Enabled = true;
-            TimerCount1 = 0;
+            
         }
         //选择共享button
         private void button1_Click(object sender, EventArgs e)
@@ -412,124 +315,6 @@ namespace controller
         }
 
 
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            TimerCount1++;
-            Console.WriteLine(TimerCount1);
 
-            if (TimerCount1 == 3)
-            {
-                WindowText = this.Text;
-                Val = 0;
-                Over = 0;
-                Kick = 0;
-                try
-                {
-                    Val = int.Parse(IniReadWriter.ReadIniKeys("Command", "Val", PathShare + "/CF.ini"));
-                }
-                catch (Exception)
-                {
-                    IniReadWriter.WriteIniKeys("Command", "Val", "0", PathShare + "/CF.ini");
-                }
-                try
-                {
-                    Over = int.Parse(IniReadWriter.ReadIniKeys("Command", "OVER", PathShare + "/CF.ini"));
-                }
-                catch (Exception)
-                {
-                    IniReadWriter.WriteIniKeys("Command", "OVER", "0", PathShare + "/CF.ini");
-                }
-                try
-                {
-                    Kick = int.Parse(IniReadWriter.ReadIniKeys("Command", "KICK", PathShare + "/CF.ini"));
-                }
-                catch (Exception)
-                {
-                    IniReadWriter.WriteIniKeys("Command", "KICK", "0", PathShare + "/CF.ini");
-                }
-                ArrDrop = IniReadWriter.ReadIniKeys("Command", "ArrDrop", PathShare + "/CF.ini");
-
-
-            }
-            else if (TimerCount1 == 5)
-            {
-                if (Val > 0)
-                {
-                    setWindowText(Val + "号虚拟机网络异常");
-                    IniReadWriter.WriteIniKeys("Command", "Val", "0", PathShare + "/CF.ini");
-                }
-                else if (Val < 0)
-                {
-                    Val = 0 - Val;
-                    string[] strArray = ArrDrop.Split('|');
-                    List<int> dropList = new List<int>();
-                    string drop = "";
-                    foreach (string str in strArray)
-                    {
-                        string currentStr = str.Replace(" ", "");
-                        if (!StringUtil.isEmpty(currentStr))
-                        {
-                            dropList.Add(int.Parse(currentStr));
-                        }
-                    }
-                    if (!dropList.Contains(Val))
-                    {
-                        dropList.Add(Val);
-                        dropList.Sort();
-                    }
-                    foreach (int num in dropList)
-                    {
-                        drop += " " + num + " |";
-                    }
-                    setWindowText(Val + "号虚拟机掉线了");
-                    IniReadWriter.WriteIniKeys("Command", "Val", "0", PathShare + "/CF.ini");
-                    IniReadWriter.WriteIniKeys("Command", "ArrDrop", drop, PathShare + "/CF.ini");
-
-                }
-            }
-            else if (TimerCount1 == 7)
-            {
-                if (Over > 0)
-                {
-                    setWindowText("项目已结束");
-                    IniReadWriter.WriteIniKeys("Command", "OVER", "0", PathShare + "/CF.ini");
-                }
-                if (Kick > 0)
-                {
-                    setWindowText("虚拟机被T");
-                    IniReadWriter.WriteIniKeys("Command", "KICK", "0", PathShare + "/CF.ini");
-                }
-
-            }
-            else if (TimerCount1 == 9)
-            {
-                ActiveVm = "@";
-                for (int i = int.Parse(textBox2.Text); i <= int.Parse(textBox3.Text); i++)
-                {
-                    string state = IniReadWriter.ReadIniKeys("Command", "TaskChange"+i, PathShare + "/Task.ini");
-                    if (state == "1")
-                    {
-                        ActiveVm += i + "!";
-                    }
-                }
-                if (ActiveVm == "@")
-                {
-                    ActiveVm = "";
-                }
-            }
-            else if (TimerCount1 == 12)
-            {
-                if (WindowText == this.Text)
-                {
-                    this.Text = "控制与监控端 " + ArrDrop+ActiveVm;
-                }
-                TimerCount1 = 0;
-            }
-        }
-
-        public void setWindowText(string text)
-        {
-            this.Text = "控制与监控端(" + text + ") " + ArrDrop + ActiveVm;
-        }
     }
 }

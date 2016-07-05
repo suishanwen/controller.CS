@@ -51,7 +51,6 @@
             this.button9 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.textBox6 = new System.Windows.Forms.TextBox();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // button1
@@ -249,10 +248,6 @@
             this.textBox6.TabIndex = 23;
             this.textBox6.TextChanged += new System.EventHandler(this.textBox6_TextChanged);
             // 
-            // timer1
-            // 
-            this.timer1.Interval = 1000;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Form1
             // 
@@ -314,7 +309,6 @@
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textBox6;
-        private System.Windows.Forms.Timer timer1;
     }
 }
 
