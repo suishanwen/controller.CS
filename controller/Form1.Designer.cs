@@ -51,6 +51,8 @@
             this.button9 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.textBox6 = new System.Windows.Forms.TextBox();
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.button10 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -223,9 +225,9 @@
             // 
             // button9
             // 
-            this.button9.Location = new System.Drawing.Point(218, 108);
+            this.button9.Location = new System.Drawing.Point(218, 90);
             this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(75, 23);
+            this.button9.Size = new System.Drawing.Size(48, 46);
             this.button9.TabIndex = 21;
             this.button9.Text = "投票";
             this.button9.UseVisualStyleBackColor = true;
@@ -248,12 +250,30 @@
             this.textBox6.TabIndex = 23;
             this.textBox6.TextChanged += new System.EventHandler(this.textBox6_TextChanged);
             // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+            this.notifyIcon1.Text = "控制与监控端";
+            this.notifyIcon1.Visible = true;
+            this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
+            // 
+            // button10
+            // 
+            this.button10.Location = new System.Drawing.Point(283, 90);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(48, 46);
+            this.button10.TabIndex = 24;
+            this.button10.Text = "挂机";
+            this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(536, 148);
+            this.Controls.Add(this.button10);
             this.Controls.Add(this.textBox6);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.button9);
@@ -280,7 +300,10 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
+            this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "控制与监控端";
+            this.TopMost = true;
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -309,6 +332,8 @@
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textBox6;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.Button button10;
     }
 }
 
