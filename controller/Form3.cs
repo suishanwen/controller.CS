@@ -20,11 +20,11 @@ namespace controller
         private int kick;
         private string arrDrop;
         private string activeVm;
-        
+
 
         public Form3()
         {
-            
+
         }
         public Form3(Form1 form1)
         {
@@ -75,7 +75,7 @@ namespace controller
             {
                 if (val > 0)
                 {
-                    _mainForm.NotifyIcon1.ShowBalloonTip(0,val+ "号虚拟机网络异常", DateTime.Now.ToLocalTime().ToString(), ToolTipIcon.Info);
+                    _mainForm.NotifyIcon1.ShowBalloonTip(0, val + "号虚拟机网络异常", DateTime.Now.ToLocalTime().ToString(), ToolTipIcon.Info);
                     IniReadWriter.WriteIniKeys("Command", "Val", "0", _mainForm.PathShare + "/CF.ini");
                 }
                 else if (val < 0)
@@ -135,7 +135,8 @@ namespace controller
                 if (arrDrop != "")
                 {
                     label3.Text = arrDrop;
-                }else
+                }
+                else
                 {
                     label3.Text = "无";
                 }
