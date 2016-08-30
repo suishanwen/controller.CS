@@ -106,11 +106,14 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="util\HtmlMatch.cs" />
     <Compile Include="util\HttpManager.cs" />
     <Compile Include="util\IniReadWriter.cs" />
+    <Compile Include="util\Log.cs" />
     <Compile Include="util\MouseKeyboard.cs" />
     <Compile Include="util\StringUtil.cs" />
     <Compile Include="util\SwitchUtil.cs" />
+    <Compile Include="util\VoteProject.cs" />
     <Compile Include="util\Winrar.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
