@@ -146,7 +146,7 @@ namespace controller
                     comboBox1.Items.Insert(i, strArray[i]);
                 }
             }
-            notifyIcon1.ShowBalloonTip(3000, "监控启动", "当前时间："+DateTime.Now.ToLocalTime().ToString(), ToolTipIcon.Info);
+            notifyIcon1.ShowBalloonTip(3000, "监控启动", "当前时间：" + DateTime.Now.ToLocalTime().ToString(), ToolTipIcon.Info);
 
         }
         //选择共享button
