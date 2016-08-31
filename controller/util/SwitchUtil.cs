@@ -10,7 +10,23 @@ namespace controller.util
 {
     class SwitchUtil
     {
-        public static void swichVm(string vm1,string vm2,TextBox textBox,string customPath, string taskName,string pathShare)
+
+        public static void clearAutoVote(string pathShare)
+        {
+            IniReadWriter.WriteIniKeys("Command", "ProjectName", "", pathShare + "/AutoVote.ini");
+            IniReadWriter.WriteIniKeys("Command", "Price", "", pathShare + "/AutoVote.ini");
+            IniReadWriter.WriteIniKeys("Command", "TotalRequire", "", pathShare + "/AutoVote.ini");
+            IniReadWriter.WriteIniKeys("Command", "FinishQuantity", "", pathShare + "/AutoVote.ini");
+            IniReadWriter.WriteIniKeys("Command", "Remains", "", pathShare + "/AutoVote.ini");
+            IniReadWriter.WriteIniKeys("Command", "BackgroundNo", "", pathShare + "/AutoVote.ini");
+            IniReadWriter.WriteIniKeys("Command", "BackgroundAddress", "", pathShare + "/AutoVote.ini");
+            IniReadWriter.WriteIniKeys("Command", "DownloadAddress", "", pathShare + "/AutoVote.ini");
+            IniReadWriter.WriteIniKeys("Command", "IsRestrict", "", pathShare + "/AutoVote.ini");
+            IniReadWriter.WriteIniKeys("Command", "IdType", "", pathShare + "/AutoVote.ini");
+            IniReadWriter.WriteIniKeys("Command", "RefreshDate", "", pathShare + "/AutoVote.ini");
+        }
+
+        public static void swichVm(string vm1, string vm2, TextBox textBox, string customPath, string taskName, string pathShare)
         {
             if (StringUtil.isEmpty(textBox.Text))
             {
