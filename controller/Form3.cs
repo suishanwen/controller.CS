@@ -29,6 +29,7 @@ namespace controller
         private string voteProjectNameDroped;
         private string voteProjectNameGreen;
         private int downLoadCount;
+        private bool isDownloading;
 
         public Form3()
         {
@@ -39,7 +40,7 @@ namespace controller
             _mainForm = form1;
             InitializeComponent();
             timer1.Enabled = true;
-            //timer2.Enabled = false;
+            timer2.Enabled = true;
             autoVote = new Thread(autoVoteSystem);
             autoVote.Start();
         }
@@ -89,7 +90,19 @@ namespace controller
         private List<VoteProject> getVoteProjects()
         {
             HttpManager httpUtil = HttpManager.getInstance();
-            string result = httpUtil.requestHttpGet("http://butingzhuan.com/tasks.php", "", "");
+            string result = "";
+            do
+            {
+                try
+                {
+                    result = httpUtil.requestHttpGet("http://butingzhuan.com/tasks.php", "", "");
+                }
+                catch (Exception e)
+                {
+                    Log.writeLogs("./log.txt", "Request Fail!Retry in 10s...");
+                    Thread.Sleep(10000);
+                }
+            } while (result == "");
             result = result.Substring(result.IndexOf("时间</td>"));
             result = result.Substring(0, result.IndexOf("qzd_yj"));
             result = result.Substring(result.IndexOf("<tr class='blank'>"));
@@ -252,9 +265,9 @@ namespace controller
                     string now = DateTime.Now.ToLocalTime().ToString();
                     Log.writeLogs("./log.txt", "开始下载:" + url);
                     downLoadCount = 0;
-                    //timer2.Enabled = true;
+                    isDownloading = true;
                     httpManager.HttpDownloadFile(url, pathName);
-                    //timer2.Enabled = false;
+                    isDownloading = false;
                     Log.writeLogs("./log.txt", pathName + "  下载完成");
                     Winrar.UnCompressRar(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName, IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini"), voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1));
                     try
@@ -427,15 +440,19 @@ namespace controller
             }
         }
 
-        //private void timer2_Tick(object sender, EventArgs e)
-        //{
-        //    downLoadCount++;
-        //    if (downLoadCount > 150)
-        //    {
-        //        autoVote.Abort();
-        //        autoVote.Start();
-        //        timer2.Enabled = false;
-        //    }
-        //}
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            if (isDownloading)
+            {
+                downLoadCount++;
+                if (downLoadCount > 15)
+                {
+                    Log.writeLogs("./log.txt", "Download OverTime,Thread Restart");
+                    autoVote.Abort();
+                    autoVote.Start();
+                    timer2.Enabled = false;
+                }
+            }
+        }
     }
 }
