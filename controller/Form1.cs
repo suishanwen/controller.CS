@@ -14,13 +14,10 @@ namespace controller
 {
     //mouse_event(MOUSEEVENTF_MOVE, 0, -30, 0, 0);
     //mouse_event(MOUSEEVENTF_LEFTUP|MOUSEEVENTF_LEFTDOWN , 0, -30, 0, 0);
-    //String test = IniReadWriter.ReadIniKeys("sc", "name", "c:/test.ini");
-    //MessageBox.Show(test);
-    //IniReadWriter.WriteIniKeys("sc", "name", textBox1.Text, "c:/test.ini");
-    //test = IniReadWriter.ReadIniKeys("sc", "name", "c:/test.ini");
-    //MessageBox.Show(test);
+
     public partial class Form1 : Form
     {
+        private static Form3 _Form3;
         private string pathShare; //主机共享路径
         private string downloads; //下载路径，用于RAR一键解压
         private string votePath; //投票路径，用于一键解压与OPT一键清空
@@ -112,9 +109,24 @@ namespace controller
         {
             InitializeComponent();
             initConfig();
-            new Form3(this).Show();
+            _Form3 = new Form3(this);
+            _Form3.Show();
         }
 
+        //关闭程序，结束自动挂票线程
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (DialogResult.OK == MessageBox.Show("你确定要关闭应用程序吗？", "关闭提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question))
+            {
+                _Form3.AutoVote.Abort();
+                this.FormClosing -= new FormClosingEventHandler(this.Form1_FormClosing);//为保证Application.Exit();时不再弹出提示，所以将FormClosing事件取消
+                Application.Exit();//退出整个应用程序
+            }
+            else
+            {
+                e.Cancel = true;  //取消关闭事件
+            }
+        }
 
         private void initConfig()
         {
@@ -338,5 +350,39 @@ namespace controller
                 SwitchUtil.swichVm(textBox2.Text, textBox3.Text, textBox4, "", "yukuai", PathShare);
             }
         }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+
+            if ( _Form3.VoteProjectMonitorList.Count > 0)
+            {
+                String view = "";
+                foreach (VoteProject voteProject in _Form3.VoteProjectMonitorList)
+                {
+                    string name = voteProject.ProjectName;
+                    string price = voteProject.Price.ToString();
+                    string remains = voteProject.Remains.ToString();
+                    do
+                    {
+                        name += " ";
+                    } while (name.Length < 20);
+                    do
+                    {
+                        price += " ";
+                    } while (price.Length < 15);
+                    do
+                    {
+                        remains += " ";
+                    } while (remains.Length < 15);
+                    do
+                    {
+                        remains += " ";
+                    } while (remains.Length < 15);
+                    view += name + price + remains + voteProject.BackgroundNo+"\n";
+                }
+                MessageBox.Show(view);
+            }
+        }
+
     }
 }

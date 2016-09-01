@@ -31,6 +31,22 @@ namespace controller
         private int downLoadCount;
         private bool isDownloading;
 
+        internal List<VoteProject> VoteProjectMonitorList
+        {
+            get
+            {
+                return voteProjectMonitorList;
+            }
+        }
+
+        public Thread AutoVote
+        {
+            get
+            {
+                return autoVote;
+            }
+        }
+
         public Form3()
         {
 
@@ -46,11 +62,6 @@ namespace controller
         }
 
 
-        //关闭程序，结束自动挂票线程
-        private void form3_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            autoVote.Abort();
-        }
 
         private bool isDropedProject(string project, int checkType)
         {
@@ -194,24 +205,13 @@ namespace controller
 
         private void voteProjectsAnalysis(List<VoteProject> voteProjectList)
         {
+            voteProjectMonitorList.Clear();
             foreach (VoteProject voteProject in voteProjectList)
             {
                 //不存在于黑名单，并且是九天项目
                 if (!isDropedProject(voteProject.ProjectName, 0) && voteProject.BackgroundAddress.IndexOf("http://61.153.107.108") != -1)
                 {
-                    bool exist = false;
-                    for (int i = 0; i < voteProjectMonitorList.Count; i++)
-                    {
-                        if (voteProject.ProjectName.Equals(voteProjectMonitorList[i].ProjectName))
-                        {
-                            exist = true;
-                            break;
-                        }
-                    }
-                    if (!exist)
-                    {
-                        voteProjectMonitorList.Add(voteProject);
-                    }
+                    voteProjectMonitorList.Add(voteProject);
                 }
             }
         }
@@ -436,7 +436,7 @@ namespace controller
                     label4.Text = "无";
                 }
                 count = 0;
-
+                this.Text = "实时监控(" + voteProjectMonitorList.Count + ")";
             }
         }
 
@@ -449,6 +449,7 @@ namespace controller
                 {
                     Log.writeLogs("./log.txt", "Download OverTime,Thread Restart");
                     autoVote.Abort();
+                    autoVote = new Thread(autoVoteSystem);
                     autoVote.Start();
                     timer2.Enabled = false;
                 }
