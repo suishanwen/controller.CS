@@ -118,7 +118,7 @@ namespace controller
             result = result.Substring(0, result.IndexOf("qzd_yj"));
             result = result.Substring(result.IndexOf("<tr class='blank'>"));
             result = result.Substring(0, result.LastIndexOf("<tr class='blank'>"));
-            Log.writeLogs("./log.txt", "Finished Request!");
+            //Log.writeLogs("./log.txt", "Finished Request!");
             Regex regTR = new Regex(@"(?is)<tr[^>]*>(?:(?!</tr>).)*</tr>");
             Regex regTD = new Regex(@"(?is)<t[dh][^>]*>((?:(?!</td>).)*)</t[dh]>");
             MatchCollection mcTR = regTR.Matches(result);
@@ -273,7 +273,6 @@ namespace controller
                     try
                     {
                         File.Delete(pathName);
-
                     }
                     catch (IOException)
                     {
@@ -283,7 +282,7 @@ namespace controller
                     writeAutoVoteProject();
                     setWorkerId();
                     _mainForm.VM3TextBox.Text = "";
-                    Log.writeLogs("./log.txt", "AutoVote: " + voteProject.ProjectName + " " + voteProject.BackgroundNo);
+                    Log.writeLogs("./log.txt", "AutoVote: " + voteProject.ProjectName + " " + voteProject.BackgroundNo+"    "+ DateTime.Now.ToLocalTime().ToString());
                     SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm.VM3TextBox, _mainForm.PathShareVm + "\\投票项目\\" + voteProject.ProjectName + "\\vote.exe", "投票项目", _mainForm.PathShare);
                     break;
                 }
