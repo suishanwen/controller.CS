@@ -56,9 +56,13 @@ namespace controller
             _mainForm = form1;
             InitializeComponent();
             timer1.Enabled = true;
-            timer2.Enabled = true;
-            autoVote = new Thread(autoVoteSystem);
-            autoVote.Start();
+            string isAutoVote= IniReadWriter.ReadIniKeys("Command", "isAutoVote", _mainForm.PathShare + "/CF.ini");
+            if(!StringUtil.isEmpty(isAutoVote)&& isAutoVote .Equals("1"))
+            {
+                timer2.Enabled = true;
+                autoVote = new Thread(autoVoteSystem);
+                autoVote.Start();
+            }
         }
 
 
@@ -292,12 +296,16 @@ namespace controller
 
         private bool isWaitOrder()
         {
+            string arrDrop= IniReadWriter.ReadIniKeys("Command", "ArrDrop", _mainForm.PathShare + "/CF.ini");
             for (int i = int.Parse(_mainForm.VM1); i <= int.Parse(_mainForm.VM2); i++)
             {
-                string taskName = IniReadWriter.ReadIniKeys("Command", "TaskName" + i, _mainForm.PathShare + "/Task.ini");
-                if (!taskName.Equals("待命"))
+                if (arrDrop.IndexOf(" "+i+" |") == -1)
                 {
-                    return false;
+                    string taskName = IniReadWriter.ReadIniKeys("Command", "TaskName" + i, _mainForm.PathShare + "/Task.ini");
+                    if (!taskName.Equals("待命"))
+                    {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -309,9 +317,9 @@ namespace controller
             Log.writeLogs("./log.txt", "AutoVoteSystem Thread Running");
             do
             {
-                voteProjectsAnalysis(getVoteProjects());
                 if (isWaitOrder())
                 {
+                    voteProjectsAnalysis(getVoteProjects());
                     testVoteProjectMonitorList();
                 }
                 Thread.Sleep(30000);

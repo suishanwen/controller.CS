@@ -118,7 +118,10 @@ namespace controller
         {
             if (DialogResult.OK == MessageBox.Show("你确定要关闭应用程序吗？", "关闭提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question))
             {
-                _Form3.AutoVote.Abort();
+                if (_Form3.AutoVote != null)
+                {
+                    _Form3.AutoVote.Abort();
+                }
                 this.FormClosing -= new FormClosingEventHandler(this.Form1_FormClosing);//为保证Application.Exit();时不再弹出提示，所以将FormClosing事件取消
                 Application.Exit();//退出整个应用程序
             }
