@@ -296,6 +296,10 @@ namespace controller
                 {
                     Console.WriteLine(NextFile.Name);
                     int index = NextFile.Name.IndexOf(".rar") != -1 ? NextFile.Name.IndexOf(".rar") : NextFile.Name.IndexOf(".zip");
+                    if (index == -1)
+                    {
+                        index = NextFile.Name.IndexOf(".RAR") != -1 ? NextFile.Name.IndexOf(".RAR") : NextFile.Name.IndexOf(".ZIP");
+                    }
                     if (index != -1)
                     {
                         Winrar.UnCompressRar(PathShare + "/投票项目/" + NextFile.Name.Substring(0, index), NextFile.DirectoryName, NextFile.Name);
