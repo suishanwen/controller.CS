@@ -332,7 +332,7 @@ namespace controller
         {
             count++;
             Console.WriteLine(count);
-            if (count == 2)
+            if (count == 1)
             {
                 val = 0;
                 over = 0;
@@ -366,7 +366,7 @@ namespace controller
 
 
             }
-            else if (count == 4)
+            else if (count == 2)
             {
                 if (val > 0)
                 {
@@ -402,7 +402,7 @@ namespace controller
 
                 }
             }
-            else if (count == 6)
+            else if (count == 4)
             {
                 if (over > 0)
                 {
@@ -416,7 +416,7 @@ namespace controller
                 }
 
             }
-            else if (count == 8)
+            else if (count == 3||count == 5)
             {
                 activeVm = "";
                 for (int i = int.Parse(_mainForm.VM1); i <= int.Parse(_mainForm.VM2); i++)
