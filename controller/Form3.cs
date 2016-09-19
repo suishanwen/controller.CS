@@ -300,6 +300,10 @@ namespace controller
             string arrDrop= IniReadWriter.ReadIniKeys("Command", "ArrDrop", _mainForm.PathShare + "/CF.ini");
             for (int i = int.Parse(_mainForm.VM1); i <= int.Parse(_mainForm.VM2); i++)
             {
+                if (!StringUtil.isEmpty(arrDrop))
+                {
+                    arrDrop = " " + arrDrop;
+                }
                 if (arrDrop.IndexOf(" "+i+" |") == -1)
                 {
                     string taskName = IniReadWriter.ReadIniKeys("Command", "TaskName" + i, _mainForm.PathShare + "/Task.ini");
