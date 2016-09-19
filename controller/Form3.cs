@@ -240,6 +240,7 @@ namespace controller
                 IniReadWriter.WriteIniKeys("Command", "IsRestrict", activeVoteProject.IsRestrict.ToString(), _mainForm.PathShare + "/AutoVote.ini");
                 IniReadWriter.WriteIniKeys("Command", "IdType", activeVoteProject.IdType, _mainForm.PathShare + "/AutoVote.ini");
                 IniReadWriter.WriteIniKeys("Command", "RefreshDate", activeVoteProject.RefreshDate.ToLocalTime().ToString(), _mainForm.PathShare + "/AutoVote.ini");
+                IniReadWriter.WriteIniKeys("Command", "dropVote", "0", _mainForm.PathShare + "/AutoVote.ini");
             }
         }
 
@@ -455,10 +456,17 @@ namespace controller
                 if (downLoadCount > 15)
                 {
                     Log.writeLogs("./log.txt", "Download OverTime,Thread Restart");
-                    autoVote.Abort();
-                    autoVote = new Thread(autoVoteSystem);
-                    autoVote.Start();
-                    timer2.Enabled = false;
+                    try
+                    {
+                        autoVote.Abort();
+                        autoVote = new Thread(autoVoteSystem);
+                        autoVote.Start();
+                        timer2.Enabled = false;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                    }
                 }
             }
         }

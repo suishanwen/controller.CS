@@ -24,6 +24,7 @@ namespace controller.util
             IniReadWriter.WriteIniKeys("Command", "IsRestrict", "", pathShare + "/AutoVote.ini");
             IniReadWriter.WriteIniKeys("Command", "IdType", "", pathShare + "/AutoVote.ini");
             IniReadWriter.WriteIniKeys("Command", "RefreshDate", "", pathShare + "/AutoVote.ini");
+            IniReadWriter.WriteIniKeys("Command", "dropVote", "0", pathShare + "/AutoVote.ini");
         }
 
         public static void swichVm(string vm1, string vm2, TextBox textBox, string customPath, string taskName, string pathShare)
