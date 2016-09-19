@@ -29,7 +29,6 @@ namespace controller
         private string voteProjectNameDroped;
         private string voteProjectNameGreen;
         private int downLoadCount;
-        private bool isDownloading;
 
         internal List<VoteProject> VoteProjectMonitorList
         {
@@ -59,7 +58,6 @@ namespace controller
             string isAutoVote= IniReadWriter.ReadIniKeys("Command", "isAutoVote", _mainForm.PathShare + "/CF.ini");
             if(!StringUtil.isEmpty(isAutoVote)&& isAutoVote .Equals("1"))
             {
-                timer2.Enabled = true;
                 autoVote = new Thread(autoVoteSystem);
                 autoVote.Start();
             }
@@ -110,7 +108,7 @@ namespace controller
             {
                 try
                 {
-                    result = httpUtil.requestHttpGet("http://butingzhuan.com/tasks.php", "", "");
+                    result = httpUtil.requestHttpGet("http://butingzhuan.com/tasks.php?t="+ DateTime.Now.Millisecond.ToString(), "", "");
                 }
                 catch (Exception e)
                 {
@@ -270,9 +268,20 @@ namespace controller
                     string now = DateTime.Now.ToLocalTime().ToString();
                     Log.writeLogs("./log.txt", "开始下载:" + url);
                     downLoadCount = 0;
-                    isDownloading = true;
-                    httpManager.HttpDownloadFile(url, pathName);
-                    isDownloading = false;
+                    bool isDownloading = true;
+                    do
+                    {
+                        try
+                        {
+                            httpManager.HttpDownloadFile(url, pathName);
+                            isDownloading = false;
+                        }
+                        catch (Exception)
+                        {
+                            Log.writeLogs("./log.txt", voteProject.ProjectName + "  下载异常，重新下载");
+                            Thread.Sleep(1000);
+                        }
+                    } while (isDownloading);
                     Log.writeLogs("./log.txt", pathName + "  下载完成");
                     Winrar.UnCompressRar(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName, IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini"), voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1));
                     try
@@ -449,29 +458,6 @@ namespace controller
                 }
                 count = 0;
                 this.Text = "实时监控(" + voteProjectMonitorList.Count + ")";
-            }
-        }
-
-        private void timer2_Tick(object sender, EventArgs e)
-        {
-            if (isDownloading)
-            {
-                downLoadCount++;
-                if (downLoadCount > 15)
-                {
-                    Log.writeLogs("./log.txt", "Download OverTime,Thread Restart");
-                    try
-                    {
-                        autoVote.Abort();
-                        autoVote = new Thread(autoVoteSystem);
-                        autoVote.Start();
-                        timer2.Enabled = false;
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.ToString());
-                    }
-                }
             }
         }
     }

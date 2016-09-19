@@ -34,7 +34,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // timer1
@@ -82,11 +81,6 @@
             this.label4.TabIndex = 3;
             this.label4.Text = "无";
             // 
-            // timer2
-            // 
-            this.timer2.Interval = 10000;
-            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
-            // 
             // Form3
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -119,6 +113,5 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Timer timer2;
     }
 }
