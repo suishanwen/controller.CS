@@ -284,6 +284,11 @@ namespace controller
                     } while (isDownloading);
                     Log.writeLogs("./log.txt", pathName + "  下载完成");
                     Winrar.UnCompressRar(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName, IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini"), voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1));
+                    if (!File.Exists(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName + "/启动九天.bat"))
+                    {
+                        String[] Lines = { @"start vote.exe" };
+                        File.WriteAllLines(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName + "/启动九天.bat", Lines, Encoding.GetEncoding("GBK"));
+                    }
                     try
                     {
                         File.Delete(pathName);

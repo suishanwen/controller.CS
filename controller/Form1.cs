@@ -327,7 +327,7 @@ namespace controller
                 {
                     Directory.Delete(d.FullName, true);
                 }
-                catch (System.UnauthorizedAccessException)
+                catch (Exception)
                 {
                     Console.WriteLine(d.FullName + "-->文件占用中，无法删除!");
                 }

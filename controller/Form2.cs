@@ -62,6 +62,20 @@ namespace controller
             }
             if (executableFile != null)
             {
+                if (executableFile.FullName.IndexOf("vote.exe") != -1)
+                {
+                    if (!File.Exists(executableFile.FullName.Substring(0, executableFile.FullName.Length - 9) + "/启动九天.bat"))
+                    {
+                        try
+                        {
+                            String[] Lines = { @"start vote.exe" };
+                            File.WriteAllLines(executableFile.FullName.Substring(0, executableFile.FullName.Length - 9) + "/启动九天.bat", Lines, Encoding.GetEncoding("GBK"));
+                        }
+                        catch (Exception ex) {
+                            MessageBox.Show(ex.ToString());
+                        }
+                    }
+                }
                 string pathName = executableFile.FullName.Replace(_mainForm.PathShare, _mainForm.PathShareVm);
                 SwitchUtil.clearAutoVote(_mainForm.PathShare);
                 SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm.VM3TextBox, pathName, "投票项目", _mainForm.PathShare);
