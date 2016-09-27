@@ -120,7 +120,10 @@ namespace controller
             result = result.Substring(0, result.IndexOf("qzd_yj"));
             result = result.Substring(result.IndexOf("<tr class='blank'>"));
             result = result.Substring(0, result.LastIndexOf("<tr class='blank'>"));
-            //Log.writeLogs("./log.txt", "Finished Request!");
+            if (DateTime.Now.Minute % 30 == 0)
+            {
+                Log.writeLogs("./log.txt", "AutoVote: Keep Alive! Finished Request!");
+            }
             Regex regTR = new Regex(@"(?is)<tr[^>]*>(?:(?!</tr>).)*</tr>");
             Regex regTD = new Regex(@"(?is)<t[dh][^>]*>((?:(?!</td>).)*)</t[dh]>");
             MatchCollection mcTR = regTR.Matches(result);
