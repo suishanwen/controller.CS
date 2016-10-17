@@ -122,7 +122,7 @@ namespace controller
             result = result.Substring(0, result.LastIndexOf("<tr class='blank'>"));
             if (DateTime.Now.Minute % 30 == 0)
             {
-                Log.writeLogs("./log.txt", "AutoVote: Keep Alive! Finished Request!");
+                Log.writeLogs("./log.txt", "AutoVote: Keep Alive! Finished Request!     "+ DateTime.Now.ToString());
             }
             Regex regTR = new Regex(@"(?is)<tr[^>]*>(?:(?!</tr>).)*</tr>");
             Regex regTD = new Regex(@"(?is)<t[dh][^>]*>((?:(?!</td>).)*)</t[dh]>");
@@ -282,6 +282,7 @@ namespace controller
                         catch (Exception)
                         {
                             Log.writeLogs("./log.txt", voteProject.ProjectName + "  下载异常，重新下载");
+                            File.Delete(pathName);
                             Thread.Sleep(1000);
                         }
                     } while (isDownloading);
