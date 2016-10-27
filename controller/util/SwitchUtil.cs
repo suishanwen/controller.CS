@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using controller.util;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace controller.util
 {
@@ -35,10 +36,27 @@ namespace controller.util
                 {
                     for (int i = int.Parse(vm1); i <= int.Parse(vm2); i++)
                     {
-                        IniReadWriter.WriteIniKeys("Command", "CacheMemory" + i, "", pathShare + "/TaskPlus.ini");
-                        IniReadWriter.WriteIniKeys("Command", "CustomPath" + i, customPath, pathShare + "/TaskPlus.ini");
-                        IniReadWriter.WriteIniKeys("Command", "TaskName" + i, taskName, pathShare + "/Task.ini");
-                        IniReadWriter.WriteIniKeys("Command", "TaskChange" + i, "1", pathShare + "/Task.ini");
+                        bool pass = false;
+                        do
+                        {
+                            IniReadWriter.WriteIniKeys("Command", "CacheMemory" + i, "", pathShare + "/TaskPlus.ini");
+                            IniReadWriter.WriteIniKeys("Command", "CustomPath" + i, customPath, pathShare + "/TaskPlus.ini");
+                            IniReadWriter.WriteIniKeys("Command", "TaskName" + i, taskName, pathShare + "/Task.ini");
+                            IniReadWriter.WriteIniKeys("Command", "TaskChange" + i, "1", pathShare + "/Task.ini");
+                            Thread.Sleep(50);
+                            String CacheMemory = IniReadWriter.ReadIniKeys("Command", "CacheMemory" + i, pathShare + "/TaskPlus.ini");
+                            String CustomPath = IniReadWriter.ReadIniKeys("Command", "CustomPath" + i, pathShare + "/TaskPlus.ini");
+                            String TaskName = IniReadWriter.ReadIniKeys("Command", "TaskName" + i, pathShare + "/Task.ini");
+                            String TaskChange = IniReadWriter.ReadIniKeys("Command", "TaskChange" + i, pathShare + "/Task.ini");
+                            try
+                            {
+                                if (CacheMemory.Equals("")&& CustomPath.Equals(customPath)&& TaskName.Equals(taskName)&& TaskChange.Equals("1"))
+                                {
+                                    pass = true;
+                                }
+                            }
+                            catch(Exception){}
+                        } while (!pass);
                     }
                 }
                 else
