@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using controller.util;
 using System.IO;
+using System.Threading;
+using System.Management;
 
 namespace controller
 {
@@ -22,6 +17,79 @@ namespace controller
         private string downloads; //下载路径，用于RAR一键解压
         private string votePath; //投票路径，用于一键解压与OPT一键清空
         private string pathShareVm; //虚拟机内的共享路径，用于分割字符串将主机路径转换为虚拟机路径
+        private string user;//用户ID
+        private Thread syncThread;//同步进程
+
+        //取CPU编号   
+        public String GetCpuID()
+        {
+            try
+            {
+                ManagementClass mc = new ManagementClass("Win32_Processor");
+                ManagementObjectCollection moc = mc.GetInstances();
+
+                String strCpuID = null;
+                foreach (ManagementObject mo in moc)
+                {
+                    strCpuID = mo.Properties["ProcessorId"].Value.ToString();
+                    break;
+                }
+                return strCpuID;
+            }
+            catch
+            {
+                return textBox5.Text+"-unknown";
+            }
+        }
+
+        public String GetHardDiskID()
+        {
+            try
+            {
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PhysicalMedia");
+                String strHardDiskID = null;
+                foreach (ManagementObject mo in searcher.Get())
+                {
+                    strHardDiskID = mo["SerialNumber"].ToString().Trim();
+                    break;
+                }
+                return strHardDiskID;
+            }
+            catch
+            {
+                return textBox5.Text + "-unknown";
+            }
+        }
+
+        private void syncController()
+        {
+            HttpManager httpUtil = HttpManager.getInstance();
+            if (StringUtil.isEmpty(label4.Text))
+            {
+                string url = "http://42.96.207.122:89/api/controller/register?cpu=" + GetCpuID() + "&hdd=" + GetHardDiskID() + "&t=" + DateTime.Now.Millisecond.ToString();
+                string result = "";
+                Log.writeLogs("./log.txt", "Register Url:"+url);
+                do
+                {
+                    try
+                    {
+                       
+                        result = httpUtil.requestHttpGet(url, "", "");
+                    }
+                    catch (Exception e)
+                    {
+                        Log.writeLogs("./log.txt", "Register Fail!Retry in 10s...");
+                        Thread.Sleep(10000);
+                    }
+                } while (result == "");
+                label4.Text = result;
+                user = result;
+                IniReadWriter.WriteIniKeys("Command", "USER", result, PathShare + "/CF.ini");
+            }else
+            {
+
+            }
+        }
 
         public string PathShare
         {
@@ -111,6 +179,8 @@ namespace controller
             initConfig();
             _Form3 = new Form3(this);
             _Form3.Show();
+            syncThread = new Thread(syncController);
+            syncThread.Start();
         }
 
         //关闭程序，结束自动挂票线程
@@ -122,6 +192,7 @@ namespace controller
                 {
                     _Form3.AutoVote.Abort();
                 }
+                syncThread.Abort();
                 this.FormClosing -= new FormClosingEventHandler(this.Form1_FormClosing);//为保证Application.Exit();时不再弹出提示，所以将FormClosing事件取消
                 Application.Exit();//退出整个应用程序
             }
@@ -139,6 +210,7 @@ namespace controller
             textBox3.Text = IniReadWriter.ReadIniKeys("Form", "vm2", "./controller.ini");
             textBox5.Text = IniReadWriter.ReadIniKeys("Command", "worker", PathShare + "/CF.ini");
             textBox6.Text = IniReadWriter.ReadIniKeys("Command", "cishu", PathShare + "/CF.ini");
+            label4.Text= IniReadWriter.ReadIniKeys("Command", "USER", PathShare + "/CF.ini");
             Downloads = IniReadWriter.ReadIniKeys("Command", "downloads", PathShare + "/CF.ini");
             VotePath = IniReadWriter.ReadIniKeys("Command", "votePath", PathShare + "/CF.ini");
             PathShareVm = IniReadWriter.ReadIniKeys("Command", "gongxiang", PathShare + "/CF.ini");

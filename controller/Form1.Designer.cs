@@ -54,6 +54,7 @@
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.button10 = new System.Windows.Forms.Button();
             this.button11 = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button1
@@ -271,19 +272,29 @@
             // 
             // button11
             // 
-            this.button11.Location = new System.Drawing.Point(484, 111);
+            this.button11.Location = new System.Drawing.Point(484, 107);
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(40, 25);
             this.button11.TabIndex = 25;
             this.button11.Text = "View";
             this.button11.UseVisualStyleBackColor = true;
+            this.button11.Visible = false;
             this.button11.Click += new System.EventHandler(this.button11_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(490, 136);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(0, 12);
+            this.label4.TabIndex = 26;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(536, 148);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.button11);
             this.Controls.Add(this.button10);
             this.Controls.Add(this.textBox6);
@@ -348,6 +359,7 @@
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Button button11;
+        private System.Windows.Forms.Label label4;
     }
 }
 
