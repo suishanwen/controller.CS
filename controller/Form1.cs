@@ -19,6 +19,7 @@ namespace controller
         private string pathShareVm; //虚拟机内的共享路径，用于分割字符串将主机路径转换为虚拟机路径
         private string user;//用户ID
         private Thread syncThread;//同步进程
+        private string overSwitchPath;//到票切换路径
 
         //取CPU编号   
         public String GetCpuID()
@@ -38,7 +39,7 @@ namespace controller
             }
             catch
             {
-                return textBox5.Text+"-unknown";
+                return textBox5.Text + "-unknown";
             }
         }
 
@@ -64,16 +65,15 @@ namespace controller
         private void syncController()
         {
             HttpManager httpUtil = HttpManager.getInstance();
-            if (StringUtil.isEmpty(label4.Text))
+            if (StringUtil.isEmpty(user))
             {
                 string url = "http://42.96.207.122:89/api/controller/register?cpu=" + GetCpuID() + "&hdd=" + GetHardDiskID() + "&t=" + DateTime.Now.Millisecond.ToString();
                 string result = "";
-                Log.writeLogs("./log.txt", "Register Url:"+url);
                 do
                 {
                     try
                     {
-                       
+
                         result = httpUtil.requestHttpGet(url, "", "");
                     }
                     catch (Exception e)
@@ -82,13 +82,31 @@ namespace controller
                         Thread.Sleep(10000);
                     }
                 } while (result == "");
-                label4.Text = result;
                 user = result;
                 IniReadWriter.WriteIniKeys("Command", "USER", result, PathShare + "/CF.ini");
-            }else
-            {
-
             }
+            label4.Text = user;
+            int i= 0;
+            do
+            {
+                Thread.Sleep(45000);
+                if (i % 10 == 0)
+                {
+                    //string url = "http://42.96.207.122:89/api/controller/sync?id=" + user + "&t=" + DateTime.Now.Millisecond.ToString();
+                    string url = "http://42.96.207.122:89/api/controller/report?id=" + user +"&workerId="+ textBox5.Text+"&vm1="+ VM1+"&vm2="+VM2+"&taskName="+IniReadWriter.ReadIniKeys("Command","taskName"+VM1, PathShare + "/Task.ini") +"&arrDrop="+ _Form3.arrDrop+ "&t=" + DateTime.Now.Millisecond.ToString();
+                    string result = "";
+                    try
+                    {
+                        result = httpUtil.requestHttpGet(url, "", "");
+                    }
+                    catch (Exception e)
+                    {
+                        Log.writeLogs("./log.txt", "sync Fail!");
+                    }
+                }
+                i++;
+            } while (true);
+
         }
 
         public string PathShare
@@ -172,6 +190,26 @@ namespace controller
                 return notifyIcon1;
             }
         }
+        public CheckBox CheckBox3
+        {
+            get
+            {
+                return checkBox3;
+            }
+        }
+
+        public string OverSwitchPath
+        {
+            get
+            {
+                return overSwitchPath;
+            }
+
+            set
+            {
+                overSwitchPath = value;
+            }
+        }
 
         public Form1()
         {
@@ -210,7 +248,7 @@ namespace controller
             textBox3.Text = IniReadWriter.ReadIniKeys("Form", "vm2", "./controller.ini");
             textBox5.Text = IniReadWriter.ReadIniKeys("Command", "worker", PathShare + "/CF.ini");
             textBox6.Text = IniReadWriter.ReadIniKeys("Command", "cishu", PathShare + "/CF.ini");
-            label4.Text= IniReadWriter.ReadIniKeys("Command", "USER", PathShare + "/CF.ini");
+            user = IniReadWriter.ReadIniKeys("Command", "USER", PathShare + "/CF.ini");
             Downloads = IniReadWriter.ReadIniKeys("Command", "downloads", PathShare + "/CF.ini");
             VotePath = IniReadWriter.ReadIniKeys("Command", "votePath", PathShare + "/CF.ini");
             PathShareVm = IniReadWriter.ReadIniKeys("Command", "gongxiang", PathShare + "/CF.ini");
@@ -433,7 +471,7 @@ namespace controller
         private void button11_Click(object sender, EventArgs e)
         {
 
-            if ( _Form3.VoteProjectMonitorList.Count > 0)
+            if (_Form3.VoteProjectMonitorList.Count > 0)
             {
                 String view = "";
                 foreach (VoteProject voteProject in _Form3.VoteProjectMonitorList)
@@ -457,11 +495,19 @@ namespace controller
                     {
                         remains += " ";
                     } while (remains.Length < 15);
-                    view += name + price + remains + voteProject.BackgroundNo+"\n";
+                    view += name + price + remains + voteProject.BackgroundNo + "\n";
                 }
                 MessageBox.Show(view);
             }
         }
 
+        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!checkBox3.Checked)
+            {
+                OverSwitchPath = "";
+                checkBox3.Text = "到票切换";
+            }
+        }
     }
 }

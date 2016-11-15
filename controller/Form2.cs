@@ -77,8 +77,16 @@ namespace controller
                     }
                 }
                 string pathName = executableFile.FullName.Replace(_mainForm.PathShare, _mainForm.PathShareVm);
-                SwitchUtil.clearAutoVote(_mainForm.PathShare);
-                SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm.VM3TextBox, pathName, "投票项目", _mainForm.PathShare);
+                if (_mainForm.CheckBox3.Checked)
+                {
+                    _mainForm.OverSwitchPath = pathName;
+                    _mainForm.CheckBox3.Text = "到票切换" + listBox1.SelectedItem.ToString();
+                }
+                else
+                {
+                    SwitchUtil.clearAutoVote(_mainForm.PathShare);
+                    SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm.VM3TextBox, pathName, "投票项目", _mainForm.PathShare);
+                }
                 _mainForm.Show();
                 _Instance.Hide();
             }

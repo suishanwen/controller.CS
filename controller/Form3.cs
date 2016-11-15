@@ -21,7 +21,7 @@ namespace controller
         private int val;
         private int over;
         private int kick;
-        private string arrDrop;
+        public string arrDrop;
         private string activeVm;
         private Thread autoVote;
         private VoteProject activeVoteProject;
@@ -354,7 +354,7 @@ namespace controller
         {
             count++;
             Console.WriteLine(count);
-            if (count == 1)
+            if (count == 2)
             {
                 val = 0;
                 over = 0;
@@ -388,7 +388,7 @@ namespace controller
 
 
             }
-            else if (count == 2)
+            else if (count == 3)
             {
                 if (val > 0)
                 {
@@ -430,6 +430,11 @@ namespace controller
                 {
                     IniReadWriter.WriteIniKeys("Command", "OVER", "0", _mainForm.PathShare + "/CF.ini");
                     _mainForm.NotifyIcon1.ShowBalloonTip(0, "项目已结束", DateTime.Now.ToLocalTime().ToString(), ToolTipIcon.Info);
+                    if (_mainForm.CheckBox3.Checked&& !StringUtil.isEmpty(_mainForm.OverSwitchPath))
+                    {
+                        SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm.VM3TextBox, _mainForm.OverSwitchPath, "投票项目", _mainForm.PathShare);
+                        _mainForm.CheckBox3.Checked = false;
+                    }
                 }
                 if (kick > 0)
                 {
@@ -438,7 +443,7 @@ namespace controller
                 }
 
             }
-            else if (count == 3||count == 5)
+            else if (count == 5)
             {
                 activeVm = "";
                 for (int i = int.Parse(_mainForm.VM1); i <= int.Parse(_mainForm.VM2); i++)
