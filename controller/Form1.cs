@@ -461,10 +461,17 @@ namespace controller
 
         private void button10_Click(object sender, EventArgs e)
         {
-            DialogResult dr = MessageBox.Show("确定要‘挂机’吗?", "挂机", MessageBoxButtons.OKCancel);
-            if (dr == DialogResult.OK)
+            if (CheckBox3.Checked)
             {
-                SwitchUtil.swichVm(textBox2.Text, textBox3.Text, textBox4, "", IniReadWriter.ReadIniKeys("Command", "Hangup", PathShare + "/CF.ini"), PathShare);
+                OverSwitchPath = "HANGUP";
+                CheckBox3.Text = "到票切换" + IniReadWriter.ReadIniKeys("Command", "Hangup", PathShare + "/CF.ini");
+            }else
+            {
+                DialogResult dr = MessageBox.Show("确定要‘挂机’吗?", "挂机", MessageBoxButtons.OKCancel);
+                if (dr == DialogResult.OK)
+                {
+                    SwitchUtil.swichVm(textBox2.Text, textBox3.Text, textBox4, "", IniReadWriter.ReadIniKeys("Command", "Hangup", PathShare + "/CF.ini"), PathShare);
+                }
             }
         }
 

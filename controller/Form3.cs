@@ -432,7 +432,14 @@ namespace controller
                     _mainForm.NotifyIcon1.ShowBalloonTip(0, "项目已结束", DateTime.Now.ToLocalTime().ToString(), ToolTipIcon.Info);
                     if (_mainForm.CheckBox3.Checked&& !StringUtil.isEmpty(_mainForm.OverSwitchPath))
                     {
-                        SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm.VM3TextBox, _mainForm.OverSwitchPath, "投票项目", _mainForm.PathShare);
+                        if (_mainForm.OverSwitchPath.Equals("HANGUP"))
+                        {
+                            SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm.VM3TextBox, "", IniReadWriter.ReadIniKeys("Command", "Hangup", _mainForm.PathShare + "/CF.ini"), _mainForm.PathShare);
+                        }
+                        else
+                        {
+                            SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm.VM3TextBox, _mainForm.OverSwitchPath, "投票项目", _mainForm.PathShare);
+                        }
                         _mainForm.CheckBox3.Checked = false;
                     }
                 }
