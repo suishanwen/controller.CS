@@ -18,7 +18,6 @@ namespace controller
         private string votePath; //投票路径，用于一键解压与OPT一键清空
         private string pathShareVm; //虚拟机内的共享路径，用于分割字符串将主机路径转换为虚拟机路径
         private string user;//用户ID
-        private Thread syncThread;//同步进程
         private string overSwitchPath;//到票切换路径
 
         //取CPU编号   
@@ -60,53 +59,6 @@ namespace controller
             {
                 return textBox5.Text + "-unknown";
             }
-        }
-
-        private void syncController()
-        {
-            HttpManager httpUtil = HttpManager.getInstance();
-            if (StringUtil.isEmpty(user))
-            {
-                string url = "http://42.96.207.122:89/api/controller/register?cpu=" + GetCpuID() + "&hdd=" + GetHardDiskID() + "&t=" + DateTime.Now.Millisecond.ToString();
-                string result = "";
-                do
-                {
-                    try
-                    {
-
-                        result = httpUtil.requestHttpGet(url, "", "");
-                    }
-                    catch (Exception e)
-                    {
-                        Log.writeLogs("./log.txt", "Register Fail!Retry in 10s...");
-                        Thread.Sleep(10000);
-                    }
-                } while (result == "");
-                user = result;
-                IniReadWriter.WriteIniKeys("Command", "USER", result, PathShare + "/CF.ini");
-            }
-            label4.Text = user;
-            int i= 0;
-            do
-            {
-                Thread.Sleep(45000);
-                if (i % 10 == 0)
-                {
-                    //string url = "http://42.96.207.122:89/api/controller/sync?id=" + user + "&t=" + DateTime.Now.Millisecond.ToString();
-                    string url = "http://42.96.207.122:89/api/controller/report?id=" + user +"&workerId="+ textBox5.Text+"&vm1="+ VM1+"&vm2="+VM2+"&taskName="+IniReadWriter.ReadIniKeys("Command","taskName"+VM1, PathShare + "/Task.ini") +"&arrDrop="+ _Form3.arrDrop+ "&t=" + DateTime.Now.Millisecond.ToString();
-                    string result = "";
-                    try
-                    {
-                        result = httpUtil.requestHttpGet(url, "", "");
-                    }
-                    catch (Exception e)
-                    {
-                        Log.writeLogs("./log.txt", "sync Fail!");
-                    }
-                }
-                i++;
-            } while (true);
-
         }
 
         public string PathShare
@@ -217,8 +169,6 @@ namespace controller
             initConfig();
             _Form3 = new Form3(this);
             _Form3.Show();
-            syncThread = new Thread(syncController);
-            syncThread.Start();
         }
 
         //关闭程序，结束自动挂票线程
@@ -230,7 +180,6 @@ namespace controller
                 {
                     _Form3.AutoVote.Abort();
                 }
-                syncThread.Abort();
                 this.FormClosing -= new FormClosingEventHandler(this.Form1_FormClosing);//为保证Application.Exit();时不再弹出提示，所以将FormClosing事件取消
                 Application.Exit();//退出整个应用程序
             }
