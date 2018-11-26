@@ -68,7 +68,7 @@ namespace controller
         private bool isDropedProject(string project, int checkType)
         {
             voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped", _mainForm.PathShare + "/AutoVote.ini");
-            if (checkType == 1)
+            if (checkType == 1 && voteProjectNameDroped!="")
             {
                 string[] dropedProjectList = voteProjectNameDroped.Split('|');
                 foreach (string dropedProject in dropedProjectList)
