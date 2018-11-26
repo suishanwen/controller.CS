@@ -196,7 +196,7 @@ namespace controller
                                 voteProject.BackgroundNo = innerTd;
                                 break;
                             case 13:
-                                voteProject.RefreshDate = Convert.ToDateTime("2016-" + innerTd + ":00");
+                                voteProject.RefreshDate = Convert.ToDateTime(DateTime.Now.Year+"-" + innerTd + ":00");
                                 break;
                         }
                         index++;
@@ -214,7 +214,7 @@ namespace controller
             foreach (VoteProject voteProject in voteProjectList)
             {
                 //不存在于黑名单，并且是九天项目
-                if (!isDropedProject(voteProject.ProjectName, 0) && voteProject.BackgroundAddress.IndexOf("http://61.153.107.108") != -1)
+                if (!isDropedProject(voteProject.ProjectName, 0) && voteProject.BackgroundAddress.IndexOf("http://www.jiutianvote.cn") != -1)
                 {
                     voteProjectMonitorList.Add(voteProject);
                 }
