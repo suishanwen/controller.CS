@@ -215,8 +215,14 @@ namespace controller
                     voteProjectMonitorList.Add(voteProject);
                 }
             }
-            dataGridView1.DataSource = voteProjectMonitorList;
-            dataGridView1.Refresh();
+            try
+            {
+                dataGridView1.DataSource = voteProjectMonitorList;
+                dataGridView1.Refresh();
+            }catch(Exception e)
+            {
+
+            }
         }
 
 
