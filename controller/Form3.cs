@@ -376,13 +376,22 @@ namespace controller
         {
             Log.writeLogs("./log.txt", "");
             Log.writeLogs("./log.txt", "AutoVoteSystem Thread Running");
+            string _isAutoVote = IniReadWriter.ReadIniKeys("Command", "isAutoVote", _mainForm.PathShare + "/CF.ini");
+            if (!StringUtil.isEmpty(_isAutoVote) && _isAutoVote.Equals("1"))
+            {
+                isAutoVote = true;
+            }
+            int count = 0;
             do
             {
+                count++;
                 voteProjectsAnalysis(getVoteProjects());
-                string _isAutoVote = IniReadWriter.ReadIniKeys("Command", "isAutoVote", _mainForm.PathShare + "/CF.ini");
-                if (!StringUtil.isEmpty(_isAutoVote) && _isAutoVote.Equals("1"))
-                {
-                    isAutoVote = true;
+                if (isAutoVote) {
+                    if (count > 10)
+                    {
+                        count = 0;
+                        IniReadWriter.WriteIniKeys("Command", "voteProjectNameDroped", "", _mainForm.PathShare + "/AutoVote.ini");
+                    }
                     testVoteProjectMonitorList();
                 }
                 Thread.Sleep(30000);
