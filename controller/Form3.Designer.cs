@@ -35,19 +35,19 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.projectNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.priceDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.totalRequireDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.finishQuantityDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.remainsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.backgroundNoDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.idTypeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.isRestrictDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.backgroundAddressDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.downloadAddressDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.refreshDateDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.voteProjectBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.button1 = new System.Windows.Forms.Button();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewCheckBoxColumn1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.voteProjectBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -104,17 +104,17 @@
             this.dataGridView1.AutoGenerateColumns = false;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.projectNameDataGridViewTextBoxColumn,
-            this.priceDataGridViewTextBoxColumn,
-            this.totalRequireDataGridViewTextBoxColumn,
-            this.finishQuantityDataGridViewTextBoxColumn,
-            this.remainsDataGridViewTextBoxColumn,
-            this.backgroundNoDataGridViewTextBoxColumn,
-            this.idTypeDataGridViewTextBoxColumn,
-            this.isRestrictDataGridViewCheckBoxColumn,
-            this.backgroundAddressDataGridViewTextBoxColumn,
-            this.downloadAddressDataGridViewTextBoxColumn,
-            this.refreshDateDataGridViewTextBoxColumn});
+            this.dataGridViewTextBoxColumn1,
+            this.dataGridViewTextBoxColumn2,
+            this.dataGridViewTextBoxColumn3,
+            this.dataGridViewTextBoxColumn4,
+            this.dataGridViewTextBoxColumn10,
+            this.dataGridViewTextBoxColumn5,
+            this.dataGridViewTextBoxColumn6,
+            this.dataGridViewTextBoxColumn7,
+            this.dataGridViewTextBoxColumn8,
+            this.dataGridViewCheckBoxColumn1,
+            this.dataGridViewTextBoxColumn9});
             this.dataGridView1.DataSource = this.voteProjectBindingSource;
             this.dataGridView1.Location = new System.Drawing.Point(3, 60);
             this.dataGridView1.Name = "dataGridView1";
@@ -122,99 +122,7 @@
             this.dataGridView1.RowTemplate.Height = 23;
             this.dataGridView1.Size = new System.Drawing.Size(546, 272);
             this.dataGridView1.TabIndex = 4;
-            this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
-            // 
-            // projectNameDataGridViewTextBoxColumn
-            // 
-            this.projectNameDataGridViewTextBoxColumn.DataPropertyName = "ProjectName";
-            this.projectNameDataGridViewTextBoxColumn.HeaderText = "项目";
-            this.projectNameDataGridViewTextBoxColumn.Name = "projectNameDataGridViewTextBoxColumn";
-            this.projectNameDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // priceDataGridViewTextBoxColumn
-            // 
-            this.priceDataGridViewTextBoxColumn.DataPropertyName = "Price";
-            this.priceDataGridViewTextBoxColumn.FillWeight = 55F;
-            this.priceDataGridViewTextBoxColumn.HeaderText = "价格";
-            this.priceDataGridViewTextBoxColumn.Name = "priceDataGridViewTextBoxColumn";
-            this.priceDataGridViewTextBoxColumn.ReadOnly = true;
-            this.priceDataGridViewTextBoxColumn.Width = 55;
-            // 
-            // totalRequireDataGridViewTextBoxColumn
-            // 
-            this.totalRequireDataGridViewTextBoxColumn.DataPropertyName = "TotalRequire";
-            this.totalRequireDataGridViewTextBoxColumn.HeaderText = "总数";
-            this.totalRequireDataGridViewTextBoxColumn.Name = "totalRequireDataGridViewTextBoxColumn";
-            this.totalRequireDataGridViewTextBoxColumn.ReadOnly = true;
-            this.totalRequireDataGridViewTextBoxColumn.Visible = false;
-            // 
-            // finishQuantityDataGridViewTextBoxColumn
-            // 
-            this.finishQuantityDataGridViewTextBoxColumn.DataPropertyName = "FinishQuantity";
-            this.finishQuantityDataGridViewTextBoxColumn.HeaderText = "完成";
-            this.finishQuantityDataGridViewTextBoxColumn.Name = "finishQuantityDataGridViewTextBoxColumn";
-            this.finishQuantityDataGridViewTextBoxColumn.ReadOnly = true;
-            this.finishQuantityDataGridViewTextBoxColumn.Visible = false;
-            // 
-            // remainsDataGridViewTextBoxColumn
-            // 
-            this.remainsDataGridViewTextBoxColumn.DataPropertyName = "Remains";
-            this.remainsDataGridViewTextBoxColumn.FillWeight = 80F;
-            this.remainsDataGridViewTextBoxColumn.HeaderText = "剩余";
-            this.remainsDataGridViewTextBoxColumn.Name = "remainsDataGridViewTextBoxColumn";
-            this.remainsDataGridViewTextBoxColumn.ReadOnly = true;
-            this.remainsDataGridViewTextBoxColumn.Width = 80;
-            // 
-            // backgroundNoDataGridViewTextBoxColumn
-            // 
-            this.backgroundNoDataGridViewTextBoxColumn.DataPropertyName = "BackgroundNo";
-            this.backgroundNoDataGridViewTextBoxColumn.HeaderText = "后台";
-            this.backgroundNoDataGridViewTextBoxColumn.Name = "backgroundNoDataGridViewTextBoxColumn";
-            this.backgroundNoDataGridViewTextBoxColumn.ReadOnly = true;
-            this.backgroundNoDataGridViewTextBoxColumn.Visible = false;
-            // 
-            // idTypeDataGridViewTextBoxColumn
-            // 
-            this.idTypeDataGridViewTextBoxColumn.DataPropertyName = "IdType";
-            this.idTypeDataGridViewTextBoxColumn.FillWeight = 55F;
-            this.idTypeDataGridViewTextBoxColumn.HeaderText = "平台";
-            this.idTypeDataGridViewTextBoxColumn.Name = "idTypeDataGridViewTextBoxColumn";
-            this.idTypeDataGridViewTextBoxColumn.ReadOnly = true;
-            this.idTypeDataGridViewTextBoxColumn.Width = 55;
-            // 
-            // isRestrictDataGridViewCheckBoxColumn
-            // 
-            this.isRestrictDataGridViewCheckBoxColumn.DataPropertyName = "IsRestrict";
-            this.isRestrictDataGridViewCheckBoxColumn.FillWeight = 55F;
-            this.isRestrictDataGridViewCheckBoxColumn.HeaderText = "限人";
-            this.isRestrictDataGridViewCheckBoxColumn.Name = "isRestrictDataGridViewCheckBoxColumn";
-            this.isRestrictDataGridViewCheckBoxColumn.ReadOnly = true;
-            this.isRestrictDataGridViewCheckBoxColumn.Width = 55;
-            // 
-            // backgroundAddressDataGridViewTextBoxColumn
-            // 
-            this.backgroundAddressDataGridViewTextBoxColumn.DataPropertyName = "BackgroundAddress";
-            this.backgroundAddressDataGridViewTextBoxColumn.HeaderText = "后台地址";
-            this.backgroundAddressDataGridViewTextBoxColumn.Name = "backgroundAddressDataGridViewTextBoxColumn";
-            this.backgroundAddressDataGridViewTextBoxColumn.ReadOnly = true;
-            this.backgroundAddressDataGridViewTextBoxColumn.Visible = false;
-            // 
-            // downloadAddressDataGridViewTextBoxColumn
-            // 
-            this.downloadAddressDataGridViewTextBoxColumn.DataPropertyName = "DownloadAddress";
-            this.downloadAddressDataGridViewTextBoxColumn.HeaderText = "下载地址";
-            this.downloadAddressDataGridViewTextBoxColumn.Name = "downloadAddressDataGridViewTextBoxColumn";
-            this.downloadAddressDataGridViewTextBoxColumn.ReadOnly = true;
-            this.downloadAddressDataGridViewTextBoxColumn.Visible = false;
-            // 
-            // refreshDateDataGridViewTextBoxColumn
-            // 
-            this.refreshDateDataGridViewTextBoxColumn.DataPropertyName = "RefreshDate";
-            this.refreshDateDataGridViewTextBoxColumn.FillWeight = 130F;
-            this.refreshDateDataGridViewTextBoxColumn.HeaderText = "时间";
-            this.refreshDateDataGridViewTextBoxColumn.Name = "refreshDateDataGridViewTextBoxColumn";
-            this.refreshDateDataGridViewTextBoxColumn.ReadOnly = true;
-            this.refreshDateDataGridViewTextBoxColumn.Width = 130;
+            this.dataGridView1.DoubleClick += new System.EventHandler(this.dataGridView1_DoubleClick);
             // 
             // voteProjectBindingSource
             // 
@@ -229,6 +137,96 @@
             this.button1.Text = "取消置顶";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.DataPropertyName = "ProjectName";
+            this.dataGridViewTextBoxColumn1.HeaderText = "项目";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.DataPropertyName = "Price";
+            this.dataGridViewTextBoxColumn2.FillWeight = 55F;
+            this.dataGridViewTextBoxColumn2.HeaderText = "价格";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            this.dataGridViewTextBoxColumn2.ReadOnly = true;
+            this.dataGridViewTextBoxColumn2.Width = 55;
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            this.dataGridViewTextBoxColumn3.DataPropertyName = "TotalRequire";
+            this.dataGridViewTextBoxColumn3.HeaderText = "TotalRequire";
+            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            this.dataGridViewTextBoxColumn3.ReadOnly = true;
+            this.dataGridViewTextBoxColumn3.Visible = false;
+            // 
+            // dataGridViewTextBoxColumn4
+            // 
+            this.dataGridViewTextBoxColumn4.DataPropertyName = "FinishQuantity";
+            this.dataGridViewTextBoxColumn4.HeaderText = "FinishQuantity";
+            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+            this.dataGridViewTextBoxColumn4.ReadOnly = true;
+            this.dataGridViewTextBoxColumn4.Visible = false;
+            // 
+            // dataGridViewTextBoxColumn10
+            // 
+            this.dataGridViewTextBoxColumn10.DataPropertyName = "Remains";
+            this.dataGridViewTextBoxColumn10.HeaderText = "剩余";
+            this.dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
+            this.dataGridViewTextBoxColumn10.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn5
+            // 
+            this.dataGridViewTextBoxColumn5.DataPropertyName = "BackgroundNo";
+            this.dataGridViewTextBoxColumn5.HeaderText = "BackgroundNo";
+            this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+            this.dataGridViewTextBoxColumn5.ReadOnly = true;
+            this.dataGridViewTextBoxColumn5.Visible = false;
+            // 
+            // dataGridViewTextBoxColumn6
+            // 
+            this.dataGridViewTextBoxColumn6.DataPropertyName = "BackgroundAddress";
+            this.dataGridViewTextBoxColumn6.HeaderText = "BackgroundAddress";
+            this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+            this.dataGridViewTextBoxColumn6.ReadOnly = true;
+            this.dataGridViewTextBoxColumn6.Visible = false;
+            // 
+            // dataGridViewTextBoxColumn7
+            // 
+            this.dataGridViewTextBoxColumn7.DataPropertyName = "DownloadAddress";
+            this.dataGridViewTextBoxColumn7.HeaderText = "DownloadAddress";
+            this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
+            this.dataGridViewTextBoxColumn7.ReadOnly = true;
+            this.dataGridViewTextBoxColumn7.Visible = false;
+            // 
+            // dataGridViewTextBoxColumn8
+            // 
+            this.dataGridViewTextBoxColumn8.DataPropertyName = "IdType";
+            this.dataGridViewTextBoxColumn8.FillWeight = 55F;
+            this.dataGridViewTextBoxColumn8.HeaderText = "平台";
+            this.dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
+            this.dataGridViewTextBoxColumn8.ReadOnly = true;
+            this.dataGridViewTextBoxColumn8.Width = 55;
+            // 
+            // dataGridViewCheckBoxColumn1
+            // 
+            this.dataGridViewCheckBoxColumn1.DataPropertyName = "IsRestrict";
+            this.dataGridViewCheckBoxColumn1.FillWeight = 55F;
+            this.dataGridViewCheckBoxColumn1.HeaderText = "限人";
+            this.dataGridViewCheckBoxColumn1.Name = "dataGridViewCheckBoxColumn1";
+            this.dataGridViewCheckBoxColumn1.ReadOnly = true;
+            this.dataGridViewCheckBoxColumn1.Width = 55;
+            // 
+            // dataGridViewTextBoxColumn9
+            // 
+            this.dataGridViewTextBoxColumn9.DataPropertyName = "RefreshDate";
+            this.dataGridViewTextBoxColumn9.FillWeight = 120F;
+            this.dataGridViewTextBoxColumn9.HeaderText = "时间";
+            this.dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
+            this.dataGridViewTextBoxColumn9.ReadOnly = true;
+            this.dataGridViewTextBoxColumn9.Width = 120;
             // 
             // Form3
             // 
@@ -267,7 +265,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.BindingSource voteProjectBindingSource;
         private System.Windows.Forms.DataGridViewTextBoxColumn projectNameDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn priceDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn totalRequireDataGridViewTextBoxColumn;
@@ -280,5 +277,17 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn downloadAddressDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn refreshDateDataGridViewTextBoxColumn;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.BindingSource voteProjectBindingSource;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn10;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn dataGridViewCheckBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
     }
 }

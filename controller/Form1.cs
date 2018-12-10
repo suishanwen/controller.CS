@@ -6,6 +6,7 @@ using System.Threading;
 using System.Management;
 using System.Text;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace controller
 {
@@ -130,6 +131,32 @@ namespace controller
                 return textBox3.Text;
             }
         }
+        //委托 解决线程间操作textBox4问题
+        delegate void SetTextBox4(String value);
+        private void SetVM3(String value)
+        {
+            if (this.textBox4.InvokeRequired)
+            {
+                SetTextBox4 d = new SetTextBox4(SetVM3);
+                this.Invoke(d, new object[] { value });
+            }
+            else
+            {
+                textBox4.Text = value;
+            }
+        }
+
+        public string VM3
+        {
+            get
+            {
+                return textBox4.Text;
+            }
+            set
+            {
+                SetVM3(value);
+            }
+        }
         public TextBox VM3TextBox
         {
             get
@@ -172,6 +199,7 @@ namespace controller
             _Form3 = new Form3(this);
             _Form3.Show();
         }
+
 
         //关闭程序，结束自动挂票线程
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -292,7 +320,7 @@ namespace controller
                 IniReadWriter.WriteIniKeys("Command", "Copy", "0", PathShare + "/CF.ini");
                 IniReadWriter.WriteIniKeys("Command", "Delete", "0", PathShare + "/CF.ini");
                 IniReadWriter.WriteIniKeys("Command", "Cookie", "0", PathShare + "/CF.ini");
-                SwitchUtil.swichVm(textBox2.Text, textBox3.Text, textBox4, "", "待命", PathShare);
+                SwitchUtil.swichVm(textBox2.Text, textBox3.Text, this, "", "待命", PathShare);
             }
         }
         //关机点击
@@ -301,7 +329,7 @@ namespace controller
             DialogResult dr = MessageBox.Show("确定要‘关机’吗?", "关机", MessageBoxButtons.OKCancel);
             if (dr == DialogResult.OK)
             {
-                SwitchUtil.swichVm(textBox2.Text, textBox3.Text, textBox4, "", "关机", PathShare);
+                SwitchUtil.swichVm(textBox2.Text, textBox3.Text, this, "", "关机", PathShare);
             }
         }
         //重启点击
@@ -310,7 +338,7 @@ namespace controller
             DialogResult dr = MessageBox.Show("确定要‘重启’吗?", "重启", MessageBoxButtons.OKCancel);
             if (dr == DialogResult.OK)
             {
-                SwitchUtil.swichVm(textBox2.Text, textBox3.Text, textBox4, "", "重启", PathShare);
+                SwitchUtil.swichVm(textBox2.Text, textBox3.Text, this, "", "重启", PathShare);
             }
         }
         //升级点击
@@ -319,7 +347,7 @@ namespace controller
             DialogResult dr = MessageBox.Show("确定要‘升级’吗?", "升级", MessageBoxButtons.OKCancel);
             if (dr == DialogResult.OK)
             {
-                SwitchUtil.swichVm(textBox2.Text, textBox3.Text, textBox4, "", "Update", PathShare);
+                SwitchUtil.swichVm(textBox2.Text, textBox3.Text, this, "", "Update", PathShare);
             }
         }
         //网络测试点击
@@ -328,7 +356,7 @@ namespace controller
             DialogResult dr = MessageBox.Show("确定要‘网络测试’吗?", "网络测试", MessageBoxButtons.OKCancel);
             if (dr == DialogResult.OK)
             {
-                SwitchUtil.swichVm(textBox2.Text, textBox3.Text, textBox4, "", "网络测试", PathShare);
+                SwitchUtil.swichVm(textBox2.Text, textBox3.Text, this, "", "网络测试", PathShare);
             }
         }
         //改变超时
@@ -421,7 +449,7 @@ namespace controller
                 DialogResult dr = MessageBox.Show("确定要‘挂机’吗?", "挂机", MessageBoxButtons.OKCancel);
                 if (dr == DialogResult.OK)
                 {
-                    SwitchUtil.swichVm(textBox2.Text, textBox3.Text, textBox4, "", IniReadWriter.ReadIniKeys("Command", "Hangup", PathShare + "/CF.ini"), PathShare);
+                    SwitchUtil.swichVm(textBox2.Text, textBox3.Text, this, "", IniReadWriter.ReadIniKeys("Command", "Hangup", PathShare + "/CF.ini"), PathShare);
                 }
             }
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace controller.util
 {
@@ -171,6 +172,11 @@ namespace controller.util
             {
                 remains = value;
             }
+        }
+
+        public static implicit operator VoteProject(DataGridViewCell v)
+        {
+            throw new NotImplementedException();
         }
     }
 }

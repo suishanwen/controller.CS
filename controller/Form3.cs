@@ -6,6 +6,8 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
+using System.Data;
+using System.ComponentModel;
 
 namespace controller
 {
@@ -25,6 +27,7 @@ namespace controller
         private string voteProjectNameGreen;
         private int downLoadCount;
         private bool isTop = true;
+        private bool isAutoVote = false;
 
         internal List<VoteProject> VoteProjectMonitorList
         {
@@ -42,6 +45,14 @@ namespace controller
             }
         }
 
+        public DataGridView DataGridView
+        {
+            get
+            {
+                return dataGridView1;
+            }
+        }
+
         public Form3()
         {
 
@@ -51,12 +62,8 @@ namespace controller
             _mainForm = form1;
             InitializeComponent();
             timer1.Enabled = true;
-            string isAutoVote= IniReadWriter.ReadIniKeys("Command", "isAutoVote", _mainForm.PathShare + "/CF.ini");
-            if(!StringUtil.isEmpty(isAutoVote)&& isAutoVote .Equals("1"))
-            {
-                autoVote = new Thread(autoVoteSystem);
-                autoVote.Start();
-            }
+            autoVote = new Thread(autoVoteSystem);
+            autoVote.Start();
         }
 
 
@@ -203,7 +210,23 @@ namespace controller
             }
             return voteProjectList;
         }
+        
+        //委托 解决线程间操作dataGrid问题
+        delegate void SetDataGridView(List<VoteProject> voteProjectList);
 
+        private void SetDataGrid(List<VoteProject> voteProjectList)
+        {
+            if (this.dataGridView1.InvokeRequired)
+            {
+                SetDataGridView d = new SetDataGridView(SetDataGrid);
+                this.Invoke(d, new object[] { voteProjectList });
+            }
+            else
+            {
+                this.dataGridView1.DataSource = new BindingList<VoteProject>(voteProjectList);
+                this.dataGridView1.Refresh();
+            }
+        }
         private void voteProjectsAnalysis(List<VoteProject> voteProjectList)
         {
             voteProjectMonitorList.Clear();
@@ -215,14 +238,7 @@ namespace controller
                     voteProjectMonitorList.Add(voteProject);
                 }
             }
-            try
-            {
-                dataGridView1.DataSource = voteProjectMonitorList;
-                dataGridView1.Refresh();
-            }catch(Exception e)
-            {
-
-            }
+            SetDataGrid(voteProjectMonitorList);
         }
 
 
@@ -261,6 +277,66 @@ namespace controller
             }
         }
 
+
+        private void startVoteProject(VoteProject voteProject,bool onlyWaitOrder)
+        {
+            Console.WriteLine("projectName：" + voteProject.ProjectName + ",price：" + voteProject.Price + ",remains：" + voteProject.Remains);
+            HttpManager httpManager = HttpManager.getInstance();
+            string pathName = IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini") + "\\" + voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1);
+            string url = voteProject.DownloadAddress;
+            string now = DateTime.Now.ToLocalTime().ToString();
+            Log.writeLogs("./log.txt", "开始下载:" + url);
+            downLoadCount = 0;
+            bool isDownloading = true;
+            do
+            {
+                try
+                {
+                    httpManager.HttpDownloadFile(url, pathName);
+                    isDownloading = false;
+                }
+                catch (Exception)
+                {
+                    Log.writeLogs("./log.txt", voteProject.ProjectName + "  下载异常，重新下载");
+                    File.Delete(pathName);
+                    Thread.Sleep(1000);
+                }
+            } while (isDownloading);
+            Log.writeLogs("./log.txt", pathName + "  下载完成");
+            Winrar.UnCompressRar(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName, IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini"), voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1));
+            if (!File.Exists(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName + "/启动九天.bat"))
+            {
+                String[] Lines = { @"start vote.exe" };
+                File.WriteAllLines(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName + "/启动九天.bat", Lines, Encoding.GetEncoding("GBK"));
+            }
+            try
+            {
+                File.Delete(pathName);
+            }
+            catch (IOException)
+            {
+                Log.writeLogs("./log.txt", pathName + "-->文件占用中，无法删除!");
+            }
+            activeVoteProject = voteProject;
+            writeAutoVoteProject();
+            if (isAutoVote)
+            {
+                setWorkerId();
+            }
+            _mainForm.VM3 = "";
+            Log.writeLogs("./log.txt", "AutoVote: " + voteProject.ProjectName + " " + voteProject.BackgroundNo + "    " + DateTime.Now.ToLocalTime().ToString());
+
+            for (int p = int.Parse(_mainForm.VM1); p <= int.Parse(_mainForm.VM2); p++)
+            {
+                String TaskName = IniReadWriter.ReadIniKeys("Command", "TaskName" + p, _mainForm.PathShare + "/Task.ini");
+                if (!onlyWaitOrder || TaskName.Equals("待命"))
+                {
+                    _mainForm.VM3 = p.ToString();
+                    SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm, _mainForm.PathShareVm + "\\投票项目\\" + voteProject.ProjectName + "\\vote.exe", "投票项目", _mainForm.PathShare);
+                }
+            }
+        }
+
         private void testVoteProjectMonitorList()
         {
             for (int i = 0; i < voteProjectMonitorList.Count; i++)
@@ -268,49 +344,7 @@ namespace controller
                 VoteProject voteProject = voteProjectMonitorList[i];
                 if (voteProject.Remains > 0 && (voteProject.Remains * voteProject.Price) > 100 && !voteProject.IsRestrict)
                 {
-                    Console.WriteLine("projectName：" + voteProject.ProjectName + ",price：" + voteProject.Price + ",remains：" + voteProject.Remains);
-                    HttpManager httpManager = HttpManager.getInstance();
-                    string pathName = IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini") + "\\" + voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1);
-                    string url = voteProject.DownloadAddress;
-                    string now = DateTime.Now.ToLocalTime().ToString();
-                    Log.writeLogs("./log.txt", "开始下载:" + url);
-                    downLoadCount = 0;
-                    bool isDownloading = true;
-                    do
-                    {
-                        try
-                        {
-                            httpManager.HttpDownloadFile(url, pathName);
-                            isDownloading = false;
-                        }
-                        catch (Exception)
-                        {
-                            Log.writeLogs("./log.txt", voteProject.ProjectName + "  下载异常，重新下载");
-                            File.Delete(pathName);
-                            Thread.Sleep(1000);
-                        }
-                    } while (isDownloading);
-                    Log.writeLogs("./log.txt", pathName + "  下载完成");
-                    Winrar.UnCompressRar(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName, IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini"), voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1));
-                    if (!File.Exists(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName + "/启动九天.bat"))
-                    {
-                        String[] Lines = { @"start vote.exe" };
-                        File.WriteAllLines(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName + "/启动九天.bat", Lines, Encoding.GetEncoding("GBK"));
-                    }
-                    try
-                    {
-                        File.Delete(pathName);
-                    }
-                    catch (IOException)
-                    {
-                        Log.writeLogs("./log.txt", pathName + "-->文件占用中，无法删除!");
-                    }
-                    activeVoteProject = voteProject;
-                    writeAutoVoteProject();
-                    setWorkerId();
-                    _mainForm.VM3TextBox.Text = "";
-                    Log.writeLogs("./log.txt", "AutoVote: " + voteProject.ProjectName + " " + voteProject.BackgroundNo+"    "+ DateTime.Now.ToLocalTime().ToString());
-                    SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm.VM3TextBox, _mainForm.PathShareVm + "\\投票项目\\" + voteProject.ProjectName + "\\vote.exe", "投票项目", _mainForm.PathShare);
+                    startVoteProject(voteProject, true);
                     break;
                 }
             }
@@ -344,9 +378,11 @@ namespace controller
             Log.writeLogs("./log.txt", "AutoVoteSystem Thread Running");
             do
             {
-                if (isWaitOrder())
+                voteProjectsAnalysis(getVoteProjects());
+                string _isAutoVote = IniReadWriter.ReadIniKeys("Command", "isAutoVote", _mainForm.PathShare + "/CF.ini");
+                if (!StringUtil.isEmpty(_isAutoVote) && _isAutoVote.Equals("1"))
                 {
-                    voteProjectsAnalysis(getVoteProjects());
+                    isAutoVote = true;
                     testVoteProjectMonitorList();
                 }
                 Thread.Sleep(30000);
@@ -357,7 +393,6 @@ namespace controller
         private void timer1_Tick(object sender, EventArgs e)
         {
             count++;
-            Console.WriteLine(count);
             if (count == 2)
             {
                 val = 0;
@@ -438,11 +473,11 @@ namespace controller
                     {
                         if (_mainForm.OverSwitchPath.Equals("HANGUP"))
                         {
-                            SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm.VM3TextBox, "", IniReadWriter.ReadIniKeys("Command", "Hangup", _mainForm.PathShare + "/CF.ini"), _mainForm.PathShare);
+                            SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm, "", IniReadWriter.ReadIniKeys("Command", "Hangup", _mainForm.PathShare + "/CF.ini"), _mainForm.PathShare);
                         }
                         else
                         {
-                            SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm.VM3TextBox, _mainForm.OverSwitchPath, "投票项目", _mainForm.PathShare);
+                            SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm, _mainForm.OverSwitchPath, "投票项目", _mainForm.PathShare);
                         }
                         _mainForm.CheckBox3.Checked = false;
                     }
@@ -486,16 +521,21 @@ namespace controller
             }
         }
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
 
         private void button1_Click(object sender, EventArgs e)
         {
             isTop = !isTop;
             TopMost = isTop;
             button1.Text = TopMost ? "取消置顶" : "置顶";
+        }
+
+        private void dataGridView1_DoubleClick(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count > 0)
+            {
+                int index = dataGridView1.SelectedRows[0].Index;
+                startVoteProject(VoteProjectMonitorList[index], false);
+            }
         }
     }
 }

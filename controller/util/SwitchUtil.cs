@@ -28,9 +28,9 @@ namespace controller.util
             IniReadWriter.WriteIniKeys("Command", "dropVote", "0", pathShare + "/AutoVote.ini");
         }
 
-        public static void swichVm(string vm1, string vm2, TextBox textBox, string customPath, string taskName, string pathShare)
+        public static void swichVm(string vm1, string vm2, Form1 _mainForm, string customPath, string taskName, string pathShare)
         {
-            if (StringUtil.isEmpty(textBox.Text))
+            if (StringUtil.isEmpty(_mainForm.VM3))
             {
                 if (!StringUtil.isEmpty(vm1) && !StringUtil.isEmpty(vm2))
                 {
@@ -50,12 +50,12 @@ namespace controller.util
                             String TaskChange = IniReadWriter.ReadIniKeys("Command", "TaskChange" + i, pathShare + "/Task.ini");
                             try
                             {
-                                if (CacheMemory.Equals("")&& CustomPath.Equals(customPath)&& TaskName.Equals(taskName)&& TaskChange.Equals("1"))
+                                if (CacheMemory.Equals("") && CustomPath.Equals(customPath) && TaskName.Equals(taskName) && TaskChange.Equals("1"))
                                 {
                                     pass = true;
                                 }
                             }
-                            catch(Exception){}
+                            catch (Exception) { }
                         } while (!pass);
                     }
                 }
@@ -67,11 +67,11 @@ namespace controller.util
             }
             else
             {
-                IniReadWriter.WriteIniKeys("Command", "CacheMemory" + textBox.Text, "", pathShare + "/TaskPlus.ini");
-                IniReadWriter.WriteIniKeys("Command", "CustomPath" + textBox.Text, customPath, pathShare + "/TaskPlus.ini");
-                IniReadWriter.WriteIniKeys("Command", "TaskName" + textBox.Text, taskName, pathShare + "/Task.ini");
-                IniReadWriter.WriteIniKeys("Command", "TaskChange" + textBox.Text, "1", pathShare + "/Task.ini");
-                textBox.Text = "";
+                IniReadWriter.WriteIniKeys("Command", "CacheMemory" + _mainForm.VM3, "", pathShare + "/TaskPlus.ini");
+                IniReadWriter.WriteIniKeys("Command", "CustomPath" + _mainForm.VM3, customPath, pathShare + "/TaskPlus.ini");
+                IniReadWriter.WriteIniKeys("Command", "TaskName" + _mainForm.VM3, taskName, pathShare + "/Task.ini");
+                IniReadWriter.WriteIniKeys("Command", "TaskChange" + _mainForm.VM3, "1", pathShare + "/Task.ini");
+                _mainForm.VM3 = "";
             }
         }
     }
