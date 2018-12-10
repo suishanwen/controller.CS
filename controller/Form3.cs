@@ -349,10 +349,9 @@ namespace controller
                     break;
                 }
             }
-
         }
 
-        private bool isWaitOrder()
+        private bool existWaitOrder()
         {
             string arrDrop= IniReadWriter.ReadIniKeys("Command", "ArrDrop", _mainForm.PathShare + "/CF.ini");
             for (int i = int.Parse(_mainForm.VM1); i <= int.Parse(_mainForm.VM2); i++)
@@ -364,13 +363,38 @@ namespace controller
                 if (arrDrop.IndexOf(" "+i+" |") == -1)
                 {
                     string taskName = IniReadWriter.ReadIniKeys("Command", "TaskName" + i, _mainForm.PathShare + "/Task.ini");
-                    if (!taskName.Equals("待命"))
+                    if (taskName.Equals("待命"))
                     {
-                        return false;
+                        return true;
                     }
                 }
             }
-            return true;
+            return false;
+        }
+
+        private void generateBlackList()
+        {
+            voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped", _mainForm.PathShare + "/AutoVote.ini");
+            if (voteProjectNameDroped != "")
+            {
+                string projectNameDroped = "";
+                string[] dropedProjectList = voteProjectNameDroped.Split('|');
+                foreach (String projectName in dropedProjectList)
+                {
+                    int times = 1;
+                    if (blackDictionary.ContainsKey(projectName))
+                    {
+                        times = blackDictionary[projectName]++;
+                    }
+                    blackDictionary.Add(projectName, times);
+                    //拉黑三次不再测试
+                    if (times >= 3)
+                    {
+                        projectNameDroped += StringUtil.isEmpty(projectNameDroped) ? projectName : "|" + projectName;
+                    }
+                }
+                IniReadWriter.WriteIniKeys("Command", "voteProjectNameDroped", projectNameDroped, _mainForm.PathShare + "/AutoVote.ini");
+            }
         }
 
         private void autoVoteSystem()
@@ -387,30 +411,11 @@ namespace controller
             {
                 count++;
                 voteProjectsAnalysis(getVoteProjects());
-                if (isAutoVote) {
+                if (isAutoVote && existWaitOrder()) {
                     if (count > 10)
                     {
                         count = 0;
-                        voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped", _mainForm.PathShare + "/AutoVote.ini");
-                        if (voteProjectNameDroped != "")
-                        {
-                            string projectNameDroped = "";
-                            string[] dropedProjectList = voteProjectNameDroped.Split('|');
-                            foreach(String projectName in dropedProjectList){
-                                int times = 1;
-                                if (blackDictionary.ContainsKey(projectName))
-                                {
-                                    times = blackDictionary[projectName]++;
-                                }
-                                blackDictionary.Add(projectName, times);
-                                //拉黑三次不再测试
-                                if (times >= 3)
-                                {
-                                    projectNameDroped += StringUtil.isEmpty(projectNameDroped) ? projectName : "|" + projectName;
-                                }
-                            }
-                            IniReadWriter.WriteIniKeys("Command", "voteProjectNameDroped", projectNameDroped, _mainForm.PathShare + "/AutoVote.ini");
-                        }
+                        generateBlackList();
                     }
                     testVoteProjectMonitorList();
                 }
