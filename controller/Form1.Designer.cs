@@ -95,7 +95,7 @@
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(251, 12);
+            this.textBox3.Location = new System.Drawing.Point(252, 12);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(20, 21);
             this.textBox3.TabIndex = 5;
@@ -277,9 +277,8 @@
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(40, 25);
             this.button11.TabIndex = 25;
-            this.button11.Text = "View";
+            this.button11.Text = "更新";
             this.button11.UseVisualStyleBackColor = true;
-            this.button11.Visible = false;
             this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
             // label4

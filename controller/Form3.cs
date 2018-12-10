@@ -1,13 +1,8 @@
 ﻿using controller.util;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.IO;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
@@ -29,6 +24,7 @@ namespace controller
         private string voteProjectNameDroped;
         private string voteProjectNameGreen;
         private int downLoadCount;
+        private bool isTop = true;
 
         internal List<VoteProject> VoteProjectMonitorList
         {
@@ -219,6 +215,8 @@ namespace controller
                     voteProjectMonitorList.Add(voteProject);
                 }
             }
+            dataGridView1.DataSource = voteProjectMonitorList;
+            dataGridView1.Refresh();
         }
 
 
@@ -480,6 +478,18 @@ namespace controller
                 count = 0;
                 this.Text = "实时监控(" + voteProjectMonitorList.Count + ")";
             }
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            isTop = !isTop;
+            TopMost = isTop;
+            button1.Text = TopMost ? "取消置顶" : "置顶";
         }
     }
 }

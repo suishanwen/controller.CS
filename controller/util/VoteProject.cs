@@ -22,6 +22,12 @@ namespace controller.util
 
         public VoteProject() { }
 
+        override
+        public string ToString()
+        {
+            string restrict = isRestrict?" 限人": " ";
+            return projectName + " " + price + " " + remains + " " + idType + restrict + " " + refreshDate;
+        }
 
         public string ProjectName
         {

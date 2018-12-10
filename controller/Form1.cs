@@ -4,6 +4,8 @@ using controller.util;
 using System.IO;
 using System.Threading;
 using System.Management;
+using System.Text;
+using System.Diagnostics;
 
 namespace controller
 {
@@ -424,37 +426,55 @@ namespace controller
             }
         }
 
+        //通过路径启动进程
+        private  void StartProcess(string pathName)
+        {
+            ProcessStartInfo info = new ProcessStartInfo();
+            info.FileName = pathName;
+            info.Arguments = "";
+            info.WorkingDirectory = pathName.Substring(0, pathName.LastIndexOf("\\"));
+            info.WindowStyle = ProcessWindowStyle.Normal;
+            Process pro = Process.Start(info);
+            Thread.Sleep(500);
+        }
+
         private void button11_Click(object sender, EventArgs e)
         {
-
-            if (_Form3.VoteProjectMonitorList.Count > 0)
+            Log.writeLogs("./log.txt", "开始下载:更新");
+            string pathName = "./controller-new.exe";
+            string url = "http://bitcoinrobot.cn/file/controller.exe";
+            bool isDownloading = true;
+            HttpManager httpManager = HttpManager.getInstance();
+            do
             {
-                String view = "";
-                foreach (VoteProject voteProject in _Form3.VoteProjectMonitorList)
+                try
                 {
-                    string name = voteProject.ProjectName;
-                    string price = voteProject.Price.ToString();
-                    string remains = voteProject.Remains.ToString();
-                    do
-                    {
-                        name += " ";
-                    } while (name.Length < 20);
-                    do
-                    {
-                        price += " ";
-                    } while (price.Length < 15);
-                    do
-                    {
-                        remains += " ";
-                    } while (remains.Length < 15);
-                    do
-                    {
-                        remains += " ";
-                    } while (remains.Length < 15);
-                    view += name + price + remains + voteProject.BackgroundNo + "\n";
+                    httpManager.HttpDownloadFile(url, pathName);
+                    isDownloading = false;
                 }
-                MessageBox.Show(view);
+                catch (Exception)
+                {
+                    Log.writeLogs("./log.txt", "更新下载异常，重新下载");
+                    File.Delete(pathName);
+                    Thread.Sleep(1000);
+                }
+            } while (isDownloading);
+            if (!File.Exists("./update.bat"))
+            {
+                string path = "";
+                string line1 = "Taskkill /F /IM controller.exe";
+                string line2 = "ping -n 3 127.0.0.1>nul";
+                string line3 = "del /s /Q " + Environment.CurrentDirectory + "\\controller.exe";
+                string line4 = "ping -n 3 127.0.0.1>nul";
+                string line5 = "ren " + Environment.CurrentDirectory + "\\controller-new.exe controller.exe";
+                string line6 = "ping -n 3 127.0.0.1>nul";
+                string line7 = "start " + Environment.CurrentDirectory + "\\controller.exe";
+                string[] lines = { "@echo off", line1, line2, line3, line4, line5, line6, line7 };
+                File.WriteAllLines(@"./update.bat", lines, Encoding.GetEncoding("GBK"));
             }
+
+            StartProcess(Environment.CurrentDirectory + "\\update.bat");
+            Application.Exit();//退出整个应用程序
         }
 
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
@@ -465,5 +485,6 @@ namespace controller
                 checkBox3.Text = "到票切换";
             }
         }
+
     }
 }
