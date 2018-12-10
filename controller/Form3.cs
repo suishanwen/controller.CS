@@ -23,6 +23,7 @@ namespace controller
         private Thread autoVote;
         private VoteProject activeVoteProject;
         private List<VoteProject> voteProjectMonitorList = new List<VoteProject>();
+        Dictionary<string,int> blackDictionary = new Dictionary<string,int >();
         private string voteProjectNameDroped;
         private string voteProjectNameGreen;
         private int downLoadCount;
@@ -390,7 +391,26 @@ namespace controller
                     if (count > 10)
                     {
                         count = 0;
-                        IniReadWriter.WriteIniKeys("Command", "voteProjectNameDroped", "", _mainForm.PathShare + "/AutoVote.ini");
+                        voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped", _mainForm.PathShare + "/AutoVote.ini");
+                        if (voteProjectNameDroped != "")
+                        {
+                            string projectNameDroped = "";
+                            string[] dropedProjectList = voteProjectNameDroped.Split('|');
+                            foreach(String projectName in dropedProjectList){
+                                int times = 1;
+                                if (blackDictionary.ContainsKey(projectName))
+                                {
+                                    times = blackDictionary[projectName]++;
+                                }
+                                blackDictionary.Add(projectName, times);
+                                //拉黑三次不再测试
+                                if (times >= 3)
+                                {
+                                    projectNameDroped += StringUtil.isEmpty(projectNameDroped) ? projectName : "|" + projectName;
+                                }
+                            }
+                            IniReadWriter.WriteIniKeys("Command", "voteProjectNameDroped", projectNameDroped, _mainForm.PathShare + "/AutoVote.ini");
+                        }
                     }
                     testVoteProjectMonitorList();
                 }
