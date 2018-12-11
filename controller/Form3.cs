@@ -460,30 +460,37 @@ namespace controller
             do
             {
                 count++;
-                voteProjectsAnalysis(getVoteProjects());
-                if (isAutoVote) {
-                    if (DateTime.Now.Hour  % 6 == 0 && DateTime.Now.Minute == 1)
+                try
+                {
+                    voteProjectsAnalysis(getVoteProjects());
+                    if (isAutoVote)
                     {
-                        Log.writeLogs("./log.txt", "Clear blackDictionary!");
-                        blackDictionary.Clear();
-                    }
-                    if (count > 10)
-                    {
-                        count = 0;
-                        generateBlackList();
-                    }
-                    if (existWaitOrder())
-                    {
+                        if (DateTime.Now.Hour % 6 == 0 && DateTime.Now.Minute == 1)
+                        {
+                            Log.writeLogs("./log.txt", "Clear blackDictionary!");
+                            blackDictionary.Clear();
+                        }
+                        if (count > 10)
+                        {
+                            count = 0;
+                            generateBlackList();
+                        }
+                        if (existWaitOrder())
+                        {
 
-                        testVoteProjectMonitorList();
+                            testVoteProjectMonitorList();
+                        }
+                        else
+                        {
+                            testHighReward();
+                        }
                     }
-                    else
-                    {
-                        testHighReward();
-                    }
+                    refreshWindowText();
+                    Thread.Sleep(30000);
+                }catch(Exception e)
+                {
+                    Log.writeLogs("./log.txt", e.ToString());
                 }
-                refreshWindowText();
-                Thread.Sleep(30000);
             }
             while (true);
         }
