@@ -462,7 +462,7 @@ namespace controller
                 count++;
                 voteProjectsAnalysis(getVoteProjects());
                 if (isAutoVote) {
-                    if (DateTime.Now.Hour  == 6 && DateTime.Now.Minute < 2)
+                    if (DateTime.Now.Hour  % 6 == 0 && DateTime.Now.Minute == 1)
                     {
                         Log.writeLogs("./log.txt", "Clear blackDictionary!");
                         blackDictionary.Clear();
