@@ -462,13 +462,19 @@ namespace controller
                 count++;
                 voteProjectsAnalysis(getVoteProjects());
                 if (isAutoVote) {
+                    if (DateTime.Now.Hour  == 6 && DateTime.Now.Minute < 2)
+                    {
+                        Log.writeLogs("./log.txt", "Clear blackDictionary!");
+                        blackDictionary.Clear();
+                    }
+                    if (count > 10)
+                    {
+                        count = 0;
+                        generateBlackList();
+                    }
                     if (existWaitOrder())
                     {
-                        if (count > 10)
-                        {
-                            count = 0;
-                            generateBlackList();
-                        }
+
                         testVoteProjectMonitorList();
                     }
                     else
