@@ -29,6 +29,7 @@ namespace controller
         private int downLoadCount;
         private bool isTop = true;
         private bool isAutoVote = false;
+        private double filter = 0.1;
 
         internal List<VoteProject> VoteProjectMonitorList
         {
@@ -51,6 +52,18 @@ namespace controller
             get
             {
                 return dataGridView1;
+            }
+        }
+
+        public string  WindowText
+        {
+            get
+            {
+                return Text;
+            }
+            set
+            {
+                 Text = value;
             }
         }
 
@@ -116,6 +129,7 @@ namespace controller
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine("Request Fail!Retry in 10s...");
                     Log.writeLogs("./log.txt", "Request Fail!Retry in 10s...");
                     Thread.Sleep(10000);
                 }
@@ -149,6 +163,10 @@ namespace controller
                             case 2:
                                 voteProject.ProjectName = HtmlMatch.GetContent(innerTd, "a");
                                 break;
+                            case 3:
+                                string text = innerTd.Substring(innerTd.IndexOf("(")+1);
+                                voteProject.Hot = int.Parse(text.Replace(")","").Trim());
+                                break;
                             case 5:
                                 voteProject.Price = double.Parse(innerTd);
                                 break;
@@ -165,7 +183,6 @@ namespace controller
 
                                     }
                                     voteProject.TotalRequire = long.Parse(quantityInfo[1].Substring(0, quantityInfo[1].IndexOf(" ")));
-
                                 }
                                 catch (Exception e) { }
                                 break;
@@ -234,7 +251,7 @@ namespace controller
             foreach (VoteProject voteProject in voteProjectList)
             {
                 //不存在于黑名单，并且是九天项目
-                if (!isDropedProject(voteProject.ProjectName, 0) && voteProject.BackgroundAddress.IndexOf("http://www.jiutianvote.cn") != -1)
+                if (!isDropedProject(voteProject.ProjectName, 0) && voteProject.Price>= filter && voteProject.BackgroundAddress.IndexOf("http://www.jiutianvote.cn") != -1)
                 {
                     voteProjectMonitorList.Add(voteProject);
                 }
@@ -293,13 +310,13 @@ namespace controller
             {
                 try
                 {
+                    File.Delete(pathName);
                     httpManager.HttpDownloadFile(url, pathName);
                     isDownloading = false;
                 }
                 catch (Exception)
                 {
                     Log.writeLogs("./log.txt", voteProject.ProjectName + "  下载异常，重新下载");
-                    File.Delete(pathName);
                     Thread.Sleep(1000);
                 }
             } while (isDownloading);
@@ -397,6 +414,39 @@ namespace controller
             }
         }
 
+
+        private void testHighReward()
+        {
+            if (activeVoteProject != null)
+            {
+                foreach (VoteProject project in voteProjectMonitorList)
+                {
+                    if (project.ProjectName.Equals(activeVoteProject.ProjectName))
+                    {
+                        break;
+                    }
+                    if (project.Price > activeVoteProject.Price)
+                    {
+                        startVoteProject(project, false);
+                    }
+
+                }
+            }
+        }
+
+        private void refreshWindowText()
+        {
+            int index = WindowText.IndexOf(" ");
+            if (index != -1)
+            {
+                WindowText = WindowText.Substring(0, index) + " " + DateTime.Now.ToString();
+            }
+            else
+            {
+                WindowText = WindowText + " " + DateTime.Now.ToString();
+            }
+        }
+
         private void autoVoteSystem()
         {
             Log.writeLogs("./log.txt", "");
@@ -411,14 +461,22 @@ namespace controller
             {
                 count++;
                 voteProjectsAnalysis(getVoteProjects());
-                if (isAutoVote && existWaitOrder()) {
-                    if (count > 10)
+                if (isAutoVote) {
+                    if (existWaitOrder())
                     {
-                        count = 0;
-                        generateBlackList();
+                        if (count > 10)
+                        {
+                            count = 0;
+                            generateBlackList();
+                        }
+                        testVoteProjectMonitorList();
                     }
-                    testVoteProjectMonitorList();
+                    else
+                    {
+                        testHighReward();
+                    }
                 }
+                refreshWindowText();
                 Thread.Sleep(30000);
             }
             while (true);
@@ -551,7 +609,9 @@ namespace controller
                     label4.Text = "无";
                 }
                 count = 0;
-                this.Text = "实时监控(" + voteProjectMonitorList.Count + ")";
+                int index = this.Text.IndexOf(" ");
+                string refreshD = index != -1 ? this.Text.Substring(this.Text.IndexOf(" ")) :"";
+                this.Text = "实时监控(" + voteProjectMonitorList.Count + ")"+ refreshD;
             }
         }
 
@@ -569,6 +629,14 @@ namespace controller
             {
                 int index = dataGridView1.SelectedRows[0].Index;
                 startVoteProject(VoteProjectMonitorList[index], false);
+            }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            if (!StringUtil.isEmpty(textBox1.Text))
+            {
+                filter = double.Parse(textBox1.Text);
             }
         }
     }

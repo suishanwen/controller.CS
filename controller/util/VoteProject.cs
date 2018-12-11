@@ -19,6 +19,7 @@ namespace controller.util
         private string downloadAddress;
         private bool isRestrict; // true 限人 false 不限
         private string idType;
+        private int hot;
         private DateTime refreshDate;
 
         public VoteProject() { }
@@ -174,6 +175,19 @@ namespace controller.util
             }
         }
 
+
+        public int Hot
+        {
+            get
+            {
+                return hot;
+            }
+
+            set
+            {
+                hot = value;
+            }
+        }
         public static implicit operator VoteProject(DataGridViewCell v)
         {
             throw new NotImplementedException();
