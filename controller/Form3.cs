@@ -515,22 +515,21 @@ namespace controller
                 try
                 {
                     voteProjectsAnalysis(getVoteProjects());
+                    if (DateTime.Now.Minute == 1 && DateTime.Now.Hour != clearBlackListHour)
+                    {
+                        clearBlackListHour = DateTime.Now.Hour;
+                        Log.writeLogs("./log.txt", "Clear blackDictionary!");
+                        blackDictionary.Clear();
+                    }
+                    if (count > 15)
+                    {
+                        count = 0;
+                        generateBlackList();
+                    }
                     if (isAutoVote)
                     {
-                        if (DateTime.Now.Minute == 1 && DateTime.Now.Hour != clearBlackListHour)
-                        {
-                            clearBlackListHour = DateTime.Now.Hour;
-                            Log.writeLogs("./log.txt", "Clear blackDictionary!");
-                            blackDictionary.Clear();
-                        }
-                        if (count > 15)
-                        {
-                            count = 0;
-                            generateBlackList();
-                        }
                         if (existWaitOrder())
                         {
-
                             testVoteProjectMonitorList();
                         }
                         else
