@@ -21,14 +21,22 @@ namespace controller.util
         private string idType;
         private int hot;
         private DateTime refreshDate;
-
+        private int index;
         public VoteProject() { }
+
+        public VoteProject(string projectName, double price, long remains, string backgroundNo)
+        {
+            this.projectName = projectName;
+            this.price = price;
+            this.remains = remains;
+            this.backgroundNo = backgroundNo;
+            this.index = -1;
+        }
 
         override
         public string ToString()
         {
-            string restrict = isRestrict?" 限人": " ";
-            return projectName + " " + price + " " + remains + " " + idType + restrict + " " + refreshDate;
+            return projectName + " " + backgroundNo + " " + price + " " + remains ;
         }
 
         public string ProjectName
@@ -186,6 +194,18 @@ namespace controller.util
             set
             {
                 hot = value;
+            }
+        }
+        public int Index
+        {
+            get
+            {
+                return index;
+            }
+
+            set
+            {
+                index = value;
             }
         }
         public static implicit operator VoteProject(DataGridViewCell v)

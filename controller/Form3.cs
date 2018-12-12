@@ -55,15 +55,25 @@ namespace controller
             }
         }
 
+        //委托 解决线程间操作dataGrid问题
+        delegate void DelegateWindowText(String value);
+        public void SetWindowText(String value)
+        {
+            if (this.InvokeRequired)
+            {
+                DelegateWindowText d = new DelegateWindowText(SetWindowText);
+                this.Invoke(d, new object[] { value });
+            }
+            else
+            {
+                this.Text = value;
+            }
+        }
         public string  WindowText
         {
             get
             {
                 return Text;
-            }
-            set
-            {
-                 Text = value;
             }
         }
 
@@ -126,22 +136,19 @@ namespace controller
                 try
                 {
                     result = httpUtil.requestHttpGet("http://butingzhuan.com/tasks.php?t="+ DateTime.Now.Millisecond.ToString(), "", "");
+                    result = result.Substring(result.IndexOf("时间</td>"));
+                    result = result.Substring(0, result.IndexOf("qzd_yj"));
+                    result = result.Substring(result.IndexOf("<tr class='blank'>"));
+                    result = result.Substring(0, result.LastIndexOf("<tr class='blank'>"));
                 }
                 catch (Exception e)
                 {
+                    result = "";
                     Console.WriteLine("Request Fail!Retry in 10s...");
                     Log.writeLogs("./log.txt", "Request Fail!Retry in 10s...");
                     Thread.Sleep(10000);
                 }
             } while (result == "");
-            result = result.Substring(result.IndexOf("时间</td>"));
-            result = result.Substring(0, result.IndexOf("qzd_yj"));
-            result = result.Substring(result.IndexOf("<tr class='blank'>"));
-            result = result.Substring(0, result.LastIndexOf("<tr class='blank'>"));
-            if (DateTime.Now.Minute % 30 == 0)
-            {
-                Log.writeLogs("./log.txt", "AutoVote: Keep Alive! Finished Request!     "+ DateTime.Now.ToString());
-            }
             Regex regTR = new Regex(@"(?is)<tr[^>]*>(?:(?!</tr>).)*</tr>");
             Regex regTD = new Regex(@"(?is)<t[dh][^>]*>((?:(?!</td>).)*)</t[dh]>");
             MatchCollection mcTR = regTR.Matches(result);
@@ -242,18 +249,27 @@ namespace controller
             else
             {
                 this.dataGridView1.DataSource = new BindingList<VoteProject>(voteProjectList);
+                this.dataGridView1.CurrentCell = this.dataGridView1[0, activeVoteProject.Index];
                 this.dataGridView1.Refresh();
             }
         }
         private void voteProjectsAnalysis(List<VoteProject> voteProjectList)
         {
             voteProjectMonitorList.Clear();
+            int i = -1;
+            activeVoteProject.Index = -1;
             foreach (VoteProject voteProject in voteProjectList)
             {
                 //不存在于黑名单，并且是九天项目
                 if (!isDropedProject(voteProject.ProjectName, 0) && voteProject.Price>= filter && voteProject.BackgroundAddress.IndexOf("http://www.jiutianvote.cn") != -1)
                 {
+                    i++;
+                    voteProject.Index = i;
                     voteProjectMonitorList.Add(voteProject);
+                    if (activeVoteProject != null && voteProject.ProjectName.Equals(activeVoteProject.ProjectName))
+                    {
+                        activeVoteProject = voteProject;
+                    }
                 }
             }
             SetDataGrid(voteProjectMonitorList);
@@ -342,7 +358,7 @@ namespace controller
                 setWorkerId();
             }
             _mainForm.VM3 = "";
-            Log.writeLogs("./log.txt", "AutoVote: " + voteProject.ProjectName + " " + voteProject.BackgroundNo + "    " + DateTime.Now.ToLocalTime().ToString());
+            Log.writeLogs("./log.txt", "AutoVote: " + voteProject.ToString() + "    " + DateTime.Now.ToLocalTime().ToString());
 
             for (int p = int.Parse(_mainForm.VM1); p <= int.Parse(_mainForm.VM2); p++)
             {
@@ -398,14 +414,16 @@ namespace controller
                 string[] dropedProjectList = voteProjectNameDroped.Split('|');
                 foreach (String projectName in dropedProjectList)
                 {
-                    int times = 1;
                     if (blackDictionary.ContainsKey(projectName))
                     {
-                        times = blackDictionary[projectName]++;
+                        blackDictionary[projectName] = blackDictionary[projectName]++;
                     }
-                    blackDictionary.Add(projectName, times);
+                    else
+                    {
+                        blackDictionary.Add(projectName, 1);
+                    }
                     //拉黑三次不再测试
-                    if (times >= 3)
+                    if (blackDictionary[projectName] >= 3)
                     {
                         projectNameDroped += StringUtil.isEmpty(projectNameDroped) ? projectName : "|" + projectName;
                     }
@@ -417,19 +435,20 @@ namespace controller
 
         private void testHighReward()
         {
-            if (activeVoteProject != null)
+            if (activeVoteProject != null && voteProjectMonitorList.Count > 0)
             {
-                foreach (VoteProject project in voteProjectMonitorList)
+                for (int i = 0; i < voteProjectMonitorList.Count; i++)
                 {
-                    if (project.ProjectName.Equals(activeVoteProject.ProjectName))
-                    {
-                        break;
-                    }
+                    VoteProject project = voteProjectMonitorList[i];
+                    //价格更高
                     if (project.Price > activeVoteProject.Price)
                     {
-                        startVoteProject(project, false);
+                        //排序更前 或 同项目价更高切换
+                        if (i < activeVoteProject.Index || (activeVoteProject.ProjectName.Split('_')[0] == project.ProjectName.Split('_')[0]))
+                        {
+                            startVoteProject(project, false);
+                        }
                     }
-
                 }
             }
         }
@@ -439,11 +458,11 @@ namespace controller
             int index = WindowText.IndexOf(" ");
             if (index != -1)
             {
-                WindowText = WindowText.Substring(0, index) + " " + DateTime.Now.ToString();
+                SetWindowText(WindowText.Substring(0, index) + " " + DateTime.Now.ToString());
             }
             else
             {
-                WindowText = WindowText + " " + DateTime.Now.ToString();
+                SetWindowText(WindowText + " " + DateTime.Now.ToString());
             }
         }
 
@@ -455,6 +474,22 @@ namespace controller
             if (!StringUtil.isEmpty(_isAutoVote) && _isAutoVote.Equals("1"))
             {
                 isAutoVote = true;
+                string projectName = IniReadWriter.ReadIniKeys("Command", "ProjectName", _mainForm.PathShare + "/AutoVote.ini");
+                if (!StringUtil.isEmpty(projectName))
+                {
+                    try
+                    {
+                        double price = double.Parse(IniReadWriter.ReadIniKeys("Command", "Price", _mainForm.PathShare + "/AutoVote.ini"));
+                        long remains = long.Parse(IniReadWriter.ReadIniKeys("Command", "Remains", _mainForm.PathShare + "/AutoVote.ini"));
+                        string backgroundNo = IniReadWriter.ReadIniKeys("Command", "BackgroundNo", _mainForm.PathShare + "/AutoVote.ini");
+                        activeVoteProject = new VoteProject(projectName, price, remains, backgroundNo);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.writeLogs("./log.txt", "加载ActiveVoteProject异常:" + e.ToString());
+                    }
+                }
+
             }
             int count = 0;
             do
@@ -489,6 +524,7 @@ namespace controller
                     Thread.Sleep(30000);
                 }catch(Exception e)
                 {
+                    Console.WriteLine(e.ToString());
                     Log.writeLogs("./log.txt", e.ToString());
                 }
             }
@@ -624,7 +660,7 @@ namespace controller
                 count = 0;
                 int index = this.Text.IndexOf(" ");
                 string refreshD = index != -1 ? this.Text.Substring(this.Text.IndexOf(" ")) :"";
-                this.Text = "实时监控(" + voteProjectMonitorList.Count + ")"+ refreshD;
+                SetWindowText("实时监控(" + voteProjectMonitorList.Count + ")"+ refreshD);
             }
         }
 
