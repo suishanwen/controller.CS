@@ -376,14 +376,25 @@ namespace controller
             }
             _mainForm.VM3 = "";
             Log.writeLogs("./log.txt", "AutoVote: " + voteProject.ToString() + "    " + DateTime.Now.ToLocalTime().ToString());
-
+            DirectoryInfo theFolder = new DirectoryInfo(_mainForm.PathShare + "/投票项目/" +voteProject.ProjectName);
+            FileInfo[] fileInfo = theFolder.GetFiles();
+            FileInfo executableFile = null;
+            for (int i = 0; i < fileInfo.Length; i++)
+            {
+                if (fileInfo[i].Name.IndexOf(".exe") != -1)
+                {
+                    executableFile = fileInfo[i];
+                    break;
+                }
+            }
+           
             for (int p = int.Parse(_mainForm.VM1); p <= int.Parse(_mainForm.VM2); p++)
             {
                 String TaskName = IniReadWriter.ReadIniKeys("Command", "TaskName" + p, _mainForm.PathShare + "/Task.ini");
                 if (!onlyWaitOrder || TaskName.Equals("待命"))
                 {
                     _mainForm.VM3 = p.ToString();
-                    SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm, _mainForm.PathShareVm + "\\投票项目\\" + voteProject.ProjectName + "\\vote.exe", "投票项目", _mainForm.PathShare);
+                    SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm, _mainForm.PathShareVm + "\\投票项目\\" + voteProject.ProjectName + "\\" + executableFile.Name, "投票项目", _mainForm.PathShare);
                 }
             }
         }
