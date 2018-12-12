@@ -537,7 +537,7 @@ namespace controller
                             Log.writeLogs("./log.txt", "Clear blackDictionary!");
                             blackDictionary.Clear();
                         }
-                        if (count > 15)
+                        if (count > 30)
                         {
                             count = 0;
                             generateBlackList();
