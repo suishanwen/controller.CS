@@ -22,6 +22,7 @@ namespace controller.util
         private int hot;
         private DateTime refreshDate;
         private int index;
+        private string type;
         public VoteProject() { }
 
         public VoteProject(string projectName, double price, long remains, string backgroundNo)
@@ -31,6 +32,35 @@ namespace controller.util
             this.remains = remains;
             this.backgroundNo = backgroundNo;
             this.index = -1;
+        }
+
+
+        public void setProjectType()
+        {
+            if (this.BackgroundAddress.IndexOf("jiutianvote.cn") != -1)
+            {
+                this.Type = "九天";
+            }
+            else if (this.BackgroundAddress.IndexOf("120.25.13.127") != -1)
+            {
+                this.Type = "圆球";
+            }
+            else if (this.BackgroundAddress.IndexOf("mmtp.com") != -1)
+            {
+                this.Type = "MM";
+            }
+            else if (this.BackgroundAddress.IndexOf("jzlsoft.com") != -1)
+            {
+                this.Type = "JZ";
+            }
+            else if (this.BackgroundAddress.IndexOf("hinyun.com") != -1)
+            {
+                this.Type = "HY";
+            }
+            else
+            {
+                this.Type = "未定义";
+            }
         }
 
         override
@@ -206,6 +236,18 @@ namespace controller.util
             set
             {
                 index = value;
+            }
+        }
+        public string Type
+        {
+            get
+            {
+                return type;
+            }
+
+            set
+            {
+                type = value;
             }
         }
         public static implicit operator VoteProject(DataGridViewCell v)

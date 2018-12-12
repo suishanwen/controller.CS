@@ -35,7 +35,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.Hot = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.voteProjectBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.button1 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -47,10 +47,11 @@
             this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Hot = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Type = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewCheckBoxColumn1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.voteProjectBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.voteProjectBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -115,9 +116,10 @@
             this.dataGridViewTextBoxColumn5,
             this.dataGridViewTextBoxColumn6,
             this.dataGridViewTextBoxColumn7,
-            this.dataGridViewTextBoxColumn8,
-            this.dataGridViewCheckBoxColumn1,
             this.Hot,
+            this.dataGridViewTextBoxColumn8,
+            this.Type,
+            this.dataGridViewCheckBoxColumn1,
             this.dataGridViewTextBoxColumn9});
             this.dataGridView1.DataSource = this.voteProjectBindingSource;
             this.dataGridView1.Location = new System.Drawing.Point(3, 60);
@@ -128,14 +130,9 @@
             this.dataGridView1.TabIndex = 4;
             this.dataGridView1.DoubleClick += new System.EventHandler(this.dataGridView1_DoubleClick);
             // 
-            // Hot
+            // voteProjectBindingSource
             // 
-            this.Hot.DataPropertyName = "Hot";
-            this.Hot.FillWeight = 55F;
-            this.Hot.HeaderText = "热度";
-            this.Hot.Name = "Hot";
-            this.Hot.ReadOnly = true;
-            this.Hot.Width = 55;
+            this.voteProjectBindingSource.DataSource = typeof(controller.util.VoteProject);
             // 
             // button1
             // 
@@ -167,6 +164,7 @@
             // 
             // dataGridViewTextBoxColumn1
             // 
+            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.dataGridViewTextBoxColumn1.DataPropertyName = "ProjectName";
             this.dataGridViewTextBoxColumn1.HeaderText = "项目";
             this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
@@ -174,12 +172,12 @@
             // 
             // dataGridViewTextBoxColumn2
             // 
+            this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.dataGridViewTextBoxColumn2.DataPropertyName = "Price";
             this.dataGridViewTextBoxColumn2.FillWeight = 55F;
             this.dataGridViewTextBoxColumn2.HeaderText = "价格";
             this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
             this.dataGridViewTextBoxColumn2.ReadOnly = true;
-            this.dataGridViewTextBoxColumn2.Width = 55;
             // 
             // dataGridViewTextBoxColumn3
             // 
@@ -199,6 +197,7 @@
             // 
             // dataGridViewTextBoxColumn10
             // 
+            this.dataGridViewTextBoxColumn10.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.dataGridViewTextBoxColumn10.DataPropertyName = "Remains";
             this.dataGridViewTextBoxColumn10.HeaderText = "剩余";
             this.dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
@@ -228,6 +227,15 @@
             this.dataGridViewTextBoxColumn7.ReadOnly = true;
             this.dataGridViewTextBoxColumn7.Visible = false;
             // 
+            // Hot
+            // 
+            this.Hot.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Hot.DataPropertyName = "Hot";
+            this.Hot.FillWeight = 55F;
+            this.Hot.HeaderText = "热度";
+            this.Hot.Name = "Hot";
+            this.Hot.ReadOnly = true;
+            // 
             // dataGridViewTextBoxColumn8
             // 
             this.dataGridViewTextBoxColumn8.DataPropertyName = "IdType";
@@ -235,7 +243,17 @@
             this.dataGridViewTextBoxColumn8.HeaderText = "平台";
             this.dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
             this.dataGridViewTextBoxColumn8.ReadOnly = true;
+            this.dataGridViewTextBoxColumn8.Visible = false;
             this.dataGridViewTextBoxColumn8.Width = 55;
+            // 
+            // Type
+            // 
+            this.Type.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Type.DataPropertyName = "Type";
+            this.Type.FillWeight = 55F;
+            this.Type.HeaderText = "类型";
+            this.Type.Name = "Type";
+            this.Type.ReadOnly = true;
             // 
             // dataGridViewCheckBoxColumn1
             // 
@@ -249,16 +267,12 @@
             // 
             // dataGridViewTextBoxColumn9
             // 
+            this.dataGridViewTextBoxColumn9.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.dataGridViewTextBoxColumn9.DataPropertyName = "RefreshDate";
             this.dataGridViewTextBoxColumn9.FillWeight = 120F;
             this.dataGridViewTextBoxColumn9.HeaderText = "时间";
             this.dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
             this.dataGridViewTextBoxColumn9.ReadOnly = true;
-            this.dataGridViewTextBoxColumn9.Width = 120;
-            // 
-            // voteProjectBindingSource
-            // 
-            this.voteProjectBindingSource.DataSource = typeof(controller.util.VoteProject);
             // 
             // Form3
             // 
@@ -322,9 +336,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn dataGridViewCheckBoxColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Hot;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Type;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn dataGridViewCheckBoxColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
     }
 }

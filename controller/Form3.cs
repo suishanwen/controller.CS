@@ -263,6 +263,7 @@ namespace controller
                 this.dataGridView1.Refresh();
             }
         }
+
         private void voteProjectsAnalysis(List<VoteProject> voteProjectList)
         {
             voteProjectMonitorList.Clear();
@@ -274,11 +275,12 @@ namespace controller
             }
             foreach (VoteProject voteProject in voteProjectList)
             {
-                //不存在于黑名单，并且是九天项目
-                if (!isDropedProject(voteProject.ProjectName, 0) && voteProject.Price>= filter && voteProject.BackgroundAddress.IndexOf("http://www.jiutianvote.cn") != -1)
+                //黑名单，价格过滤
+                if (!isDropedProject(voteProject.ProjectName, 0) && voteProject.Price >= filter)
                 {
                     i++;
                     voteProject.Index = i;
+                    voteProject.setProjectType();
                     voteProjectMonitorList.Add(voteProject);
                     if (activeVoteProject != null && voteProject.ProjectName.Equals(activeVoteProject.ProjectName))
                     {
@@ -352,7 +354,8 @@ namespace controller
             } while (isDownloading);
            // Log.writeLogs("./log.txt", pathName + "  下载完成");
             Winrar.UnCompressRar(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName, IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini"), voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1));
-            if (!File.Exists(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName + "/启动九天.bat"))
+            if (voteProject.Type == "九天" &&
+                !File.Exists(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName + "/启动九天.bat"))
             {
                 String[] Lines = { @"start vote.exe" };
                 File.WriteAllLines(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName + "/启动九天.bat", Lines, Encoding.GetEncoding("GBK"));
