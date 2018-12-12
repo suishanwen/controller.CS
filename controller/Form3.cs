@@ -369,9 +369,9 @@ namespace controller
                 Log.writeLogs("./log.txt", pathName + "-->文件占用中，无法删除!");
             }
             activeVoteProject = voteProject;
-            writeAutoVoteProject();
             if (isAutoVote)
             {
+                writeAutoVoteProject();
                 setWorkerId();
             }
             _mainForm.VM3 = "";
@@ -515,19 +515,19 @@ namespace controller
                 try
                 {
                     voteProjectsAnalysis(getVoteProjects());
-                    if (DateTime.Now.Minute == 1 && DateTime.Now.Hour != clearBlackListHour)
-                    {
-                        clearBlackListHour = DateTime.Now.Hour;
-                        Log.writeLogs("./log.txt", "Clear blackDictionary!");
-                        blackDictionary.Clear();
-                    }
-                    if (count > 15)
-                    {
-                        count = 0;
-                        generateBlackList();
-                    }
                     if (isAutoVote)
                     {
+                        if (DateTime.Now.Minute == 1 && DateTime.Now.Hour != clearBlackListHour)
+                        {
+                            clearBlackListHour = DateTime.Now.Hour;
+                            Log.writeLogs("./log.txt", "Clear blackDictionary!");
+                            blackDictionary.Clear();
+                        }
+                        if (count > 15)
+                        {
+                            count = 0;
+                            generateBlackList();
+                        }
                         if (existWaitOrder())
                         {
                             testVoteProjectMonitorList();
