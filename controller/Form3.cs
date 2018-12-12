@@ -249,15 +249,23 @@ namespace controller
             else
             {
                 this.dataGridView1.DataSource = new BindingList<VoteProject>(voteProjectList);
-                this.dataGridView1.CurrentCell = this.dataGridView1[0, activeVoteProject.Index];
                 this.dataGridView1.Refresh();
+                this.dataGridView1.ClearSelection();
+                if (activeVoteProject != null && activeVoteProject.Index != -1)
+                {
+                    this.dataGridView1.CurrentCell = this.dataGridView1[0, activeVoteProject.Index];
+                }
             }
         }
         private void voteProjectsAnalysis(List<VoteProject> voteProjectList)
         {
             voteProjectMonitorList.Clear();
             int i = -1;
-            activeVoteProject.Index = -1;
+            if (activeVoteProject != null)
+            {
+                activeVoteProject.Index = -1;
+
+            }
             foreach (VoteProject voteProject in voteProjectList)
             {
                 //不存在于黑名单，并且是九天项目
