@@ -249,12 +249,17 @@ namespace controller
             else
             {
                 this.dataGridView1.DataSource = new BindingList<VoteProject>(voteProjectList);
-                this.dataGridView1.Refresh();
-                this.dataGridView1.ClearSelection();
-                if (activeVoteProject != null && activeVoteProject.Index != -1)
+                if (activeVoteProject != null)
                 {
-                    this.dataGridView1.CurrentCell = this.dataGridView1[0, activeVoteProject.Index];
+                    if (activeVoteProject.Index != 0)
+                    {
+                        this.dataGridView1.ClearSelection();
+                    }else if(activeVoteProject.Index != -1)
+                    {
+                        this.dataGridView1.CurrentCell = this.dataGridView1[0, activeVoteProject.Index];
+                    }
                 }
+                this.dataGridView1.Refresh();
             }
         }
         private void voteProjectsAnalysis(List<VoteProject> voteProjectList)
