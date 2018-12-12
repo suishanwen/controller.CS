@@ -30,6 +30,7 @@ namespace controller
         private bool isTop = true;
         private bool isAutoVote = false;
         private double filter = 0.1;
+        private int clearBlackListHour;
 
         internal List<VoteProject> VoteProjectMonitorList
         {
@@ -332,7 +333,7 @@ namespace controller
             string pathName = IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini") + "\\" + voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1);
             string url = voteProject.DownloadAddress;
             string now = DateTime.Now.ToLocalTime().ToString();
-            Log.writeLogs("./log.txt", "开始下载:" + url);
+            //Log.writeLogs("./log.txt", "开始下载:" + url);
             downLoadCount = 0;
             bool isDownloading = true;
             do
@@ -349,7 +350,7 @@ namespace controller
                     Thread.Sleep(1000);
                 }
             } while (isDownloading);
-            Log.writeLogs("./log.txt", pathName + "  下载完成");
+           // Log.writeLogs("./log.txt", pathName + "  下载完成");
             Winrar.UnCompressRar(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName, IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini"), voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1));
             if (!File.Exists(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName + "/启动九天.bat"))
             {
@@ -513,12 +514,13 @@ namespace controller
                     voteProjectsAnalysis(getVoteProjects());
                     if (isAutoVote)
                     {
-                        if (DateTime.Now.Minute == 1)
+                        if (DateTime.Now.Minute == 1 && DateTime.Now.Hour != clearBlackListHour)
                         {
+                            clearBlackListHour = DateTime.Now.Hour;
                             Log.writeLogs("./log.txt", "Clear blackDictionary!");
                             blackDictionary.Clear();
                         }
-                        if (count > 10)
+                        if (count > 15)
                         {
                             count = 0;
                             generateBlackList();
@@ -534,7 +536,7 @@ namespace controller
                         }
                     }
                     refreshWindowText();
-                    Thread.Sleep(30000);
+                    Thread.Sleep(20000);
                 }catch(Exception e)
                 {
                     Console.WriteLine(e.ToString());
