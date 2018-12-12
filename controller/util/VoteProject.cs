@@ -23,6 +23,8 @@ namespace controller.util
         private DateTime refreshDate;
         private int index;
         private string type;
+        private bool auto;
+
         public VoteProject() { }
 
         public VoteProject(string projectName, double price, long remains, string backgroundNo)
@@ -60,6 +62,15 @@ namespace controller.util
             else
             {
                 this.Type = "未定义";
+            }
+            this.auto = this.type == "九天";
+        }
+
+        public bool VoteRemains
+        {
+            get
+            {
+                return remains * price > 100;
             }
         }
 
@@ -248,6 +259,19 @@ namespace controller.util
             set
             {
                 type = value;
+            }
+        }
+
+        public bool Auto
+        {
+            get
+            {
+                return auto;
+            }
+
+            set
+            {
+                auto = value;
             }
         }
         public static implicit operator VoteProject(DataGridViewCell v)
