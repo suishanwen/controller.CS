@@ -59,7 +59,7 @@ namespace controller.util
             {
                 this.Type = "未定义";
             }
-            this.auto = this.type == "九天";
+            this.auto = this.type == "九天" || this.type == "MM";
         }
 
         public bool VoteRemains
