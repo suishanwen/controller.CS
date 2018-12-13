@@ -86,6 +86,12 @@ namespace controller
         {
             _mainForm = form1;
             InitializeComponent();
+            string _isAutoVote = IniReadWriter.ReadIniKeys("Command", "isAutoVote", _mainForm.PathShare + "/CF.ini");
+            if (!StringUtil.isEmpty(_isAutoVote) && _isAutoVote.Equals("1"))
+            {
+                isAutoVote = true;
+                button2.Text = "取消自动";
+            }
             timer1.Enabled = true;
             autoVote = new Thread(autoVoteSystem);
             autoVote.Start();
@@ -501,10 +507,8 @@ namespace controller
         {
             Log.writeLogs("./log.txt", "");
             Log.writeLogs("./log.txt", "AutoVoteSystem Thread Running");
-            string _isAutoVote = IniReadWriter.ReadIniKeys("Command", "isAutoVote", _mainForm.PathShare + "/CF.ini");
-            if (!StringUtil.isEmpty(_isAutoVote) && _isAutoVote.Equals("1"))
+            if (isAutoVote)
             {
-                isAutoVote = true;
                 string projectName = IniReadWriter.ReadIniKeys("Command", "ProjectName", _mainForm.PathShare + "/AutoVote.ini");
                 if (!StringUtil.isEmpty(projectName))
                 {
@@ -719,6 +723,13 @@ namespace controller
             {
                 filter = double.Parse(textBox1.Text);
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            isAutoVote = !isAutoVote;
+            IniReadWriter.WriteIniKeys("Command", "isAutoVote", isAutoVote ? "1" : "0", _mainForm.PathShare + "/CF.ini");
+            button2.Text = isAutoVote ? "取消自动" : "开启自动";
         }
     }
 }
