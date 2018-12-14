@@ -369,7 +369,7 @@ namespace controller
                 catch (Exception)
                 {
                     Log.writeLogs("./log.txt", voteProject.ProjectName + "  下载异常，重新下载");
-                    Thread.Sleep(1000);
+                    Thread.Sleep(10000);
                 }
             } while (isDownloading);
             // Log.writeLogs("./log.txt", pathName + "  下载完成");
