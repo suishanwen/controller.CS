@@ -25,6 +25,7 @@ namespace controller
         private List<VoteProject> voteProjectMonitorList = new List<VoteProject>();
         Dictionary<string, int> blackDictionary = new Dictionary<string, int>();
         private string voteProjectNameDroped;
+        private string voteProjectNameDropedTemp;
         private string voteProjectNameGreen;
         private int downLoadCount;
         private bool isTop = true;
@@ -102,10 +103,19 @@ namespace controller
         private bool isDropedProject(string project, int checkType)
         {
             voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped", _mainForm.PathShare + "/AutoVote.ini");
+            voteProjectNameDropedTemp = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDropedTemp", _mainForm.PathShare + "/AutoVote.ini");
             if (checkType == 1 && voteProjectNameDroped != "")
             {
                 string[] dropedProjectList = voteProjectNameDroped.Split('|');
                 foreach (string dropedProject in dropedProjectList)
+                {
+                    if (project.IndexOf(dropedProject) != -1)
+                    {
+                        return true;
+                    }
+                }
+                string[] dropedProjectListTemp = voteProjectNameDropedTemp.Split('|');
+                foreach (string dropedProject in dropedProjectListTemp)
                 {
                     if (project.IndexOf(dropedProject) != -1)
                     {
@@ -442,6 +452,11 @@ namespace controller
             return false;
         }
 
+        private void generateBlackListTemp()
+        {
+            IniReadWriter.WriteIniKeys("Command", "voteProjectNameDropedTemp", "", _mainForm.PathShare + "/AutoVote.ini");
+        }
+
         private void generateBlackList()
         {
             voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped", _mainForm.PathShare + "/AutoVote.ini");
@@ -540,6 +555,10 @@ namespace controller
                             clearBlackListHour = DateTime.Now.Hour;
                             Log.writeLogs("./log.txt", "Clear blackDictionary!");
                             blackDictionary.Clear();
+                        }
+                        if (count == 15)
+                        {
+                            generateBlackListTemp();
                         }
                         if (count > 30)
                         {
