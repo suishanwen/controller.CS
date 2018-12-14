@@ -114,6 +114,9 @@ namespace controller
                         return true;
                     }
                 }
+            }
+            if (checkType == 1 && voteProjectNameDropedTemp != "")
+            {
                 string[] dropedProjectListTemp = voteProjectNameDropedTemp.Split('|');
                 foreach (string dropedProject in dropedProjectListTemp)
                 {
@@ -122,10 +125,8 @@ namespace controller
                         return true;
                     }
                 }
-                return false;
             }
-
-            return voteProjectNameDroped.IndexOf(project) != -1;
+            return voteProjectNameDroped.IndexOf(project) != -1 || voteProjectNameDropedTemp.IndexOf(project) != -1;
         }
 
         private bool isGreenProject(string project, int checkType)
