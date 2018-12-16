@@ -468,6 +468,11 @@ namespace controller
 
         private void button11_Click(object sender, EventArgs e)
         {
+            DialogResult dr = MessageBox.Show("确定要从服务器更新控制端吗?", "更新", MessageBoxButtons.OKCancel);
+            if (dr != DialogResult.OK)
+            {
+                return;
+            }
             Log.writeLogs("./log.txt", "开始下载:更新");
             string pathName = "./controller-new.exe";
             string url = "http://bitcoinrobot.cn/file/controller.exe";
@@ -513,5 +518,15 @@ namespace controller
             }
         }
 
+        private void button12_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = MessageBox.Show("确定要清理虚拟机投票文件吗?", "清理", MessageBoxButtons.OKCancel);
+            if (dr == DialogResult.OK)
+            {
+                Log.writeLogs("./log.txt", "清理虚拟机投票文件");
+                SwitchUtil.swichVm(textBox2.Text, textBox3.Text, this, "", "CLEAN", PathShare);
+            }
+
+        }
     }
 }

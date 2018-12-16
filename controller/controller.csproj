@@ -133,7 +133,6 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="ClassDiagram1.cd" />
-    <None Include="controller_TemporaryKey.pfx" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\DataSources\controller.util.VoteProject.datasource" />
     <None Include="Properties\Settings.settings">

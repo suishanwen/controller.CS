@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace controller.util
 {
@@ -16,7 +17,7 @@ namespace controller.util
             else
             {
                 StreamWriter sw = File.AppendText(pathName);
-                sw.WriteLine(content);
+                sw.WriteLine(content + " " + DateTime.Now.ToLocalTime().ToString());
                 sw.Close();
             }
         }

@@ -56,6 +56,7 @@
             this.button11 = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
+            this.button12 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -273,7 +274,7 @@
             // 
             // button11
             // 
-            this.button11.Location = new System.Drawing.Point(484, 107);
+            this.button11.Location = new System.Drawing.Point(488, 118);
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(40, 25);
             this.button11.TabIndex = 25;
@@ -284,7 +285,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(490, 136);
+            this.label4.Location = new System.Drawing.Point(494, 142);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(0, 12);
             this.label4.TabIndex = 26;
@@ -300,11 +301,22 @@
             this.checkBox3.UseVisualStyleBackColor = true;
             this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
             // 
+            // button12
+            // 
+            this.button12.Location = new System.Drawing.Point(488, 87);
+            this.button12.Name = "button12";
+            this.button12.Size = new System.Drawing.Size(40, 25);
+            this.button12.TabIndex = 28;
+            this.button12.Text = "清理";
+            this.button12.UseVisualStyleBackColor = true;
+            this.button12.Click += new System.EventHandler(this.button12_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(536, 148);
+            this.Controls.Add(this.button12);
             this.Controls.Add(this.checkBox3);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.button11);
@@ -373,6 +385,7 @@
         private System.Windows.Forms.Button button11;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.CheckBox checkBox3;
+        private System.Windows.Forms.Button button12;
     }
 }
 

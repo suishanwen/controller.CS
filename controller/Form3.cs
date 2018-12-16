@@ -327,7 +327,7 @@ namespace controller
             else
             {
                 string projectName = IniReadWriter.ReadIniKeys("Command", "ProjectName", _mainForm.PathShare + "/AutoVote.ini");
-                if(projectName != activeVoteProject.ProjectName)
+                if (projectName != activeVoteProject.ProjectName)
                 {
                     IniReadWriter.WriteIniKeys("Command", "ProjectName", activeVoteProject.ProjectName, _mainForm.PathShare + "/AutoVote.ini");
                     IniReadWriter.WriteIniKeys("Command", "Price", activeVoteProject.Price.ToString(), _mainForm.PathShare + "/AutoVote.ini");
@@ -363,33 +363,37 @@ namespace controller
             Console.WriteLine("projectName：" + voteProject.ProjectName + ",price：" + voteProject.Price + ",remains：" + voteProject.Remains);
             HttpManager httpManager = HttpManager.getInstance();
             string pathName = IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini") + "\\" + voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1);
-            string url = voteProject.DownloadAddress;
-            string now = DateTime.Now.ToLocalTime().ToString();
-            //Log.writeLogs("./log.txt", "开始下载:" + url);
-            downLoadCount = 0;
-            bool isDownloading = true;
-            do
+            if (false == Directory.Exists(pathName))
             {
-                try
+                string url = voteProject.DownloadAddress;
+                string now = DateTime.Now.ToLocalTime().ToString();
+                Log.writeLogs("./log.txt", "开始下载:" + url);
+                downLoadCount = 0;
+                bool isDownloading = true;
+                do
                 {
-                    downLoadCount++;
-                    File.Delete(pathName);
-                    httpManager.HttpDownloadFile(url, pathName);
-                    isDownloading = false;
-                }
-                catch (Exception)
-                {
-                    Log.writeLogs("./log.txt", voteProject.ProjectName + "  下载异常，重新下载");
-                    Thread.Sleep(10000);
-                    if (downLoadCount >= 6)
+                    try
                     {
-                        Log.writeLogs("./log.txt", voteProject.ProjectName + "  下载异常6次，返回");
-                        return;
+                        downLoadCount++;
+                        File.Delete(pathName);
+                        httpManager.HttpDownloadFile(url, pathName);
+                        isDownloading = false;
                     }
-                }
-            } while (isDownloading);
-            // Log.writeLogs("./log.txt", pathName + "  下载完成");
-            Winrar.UnCompressRar(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName, IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini"), voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1));
+                    catch (Exception)
+                    {
+                        Log.writeLogs("./log.txt", voteProject.ProjectName + "  下载异常，重新下载");
+                        Thread.Sleep(10000);
+                        if (downLoadCount >= 6)
+                        {
+                            Log.writeLogs("./log.txt", voteProject.ProjectName + "  下载异常6次，返回");
+                            return;
+                        }
+                    }
+                } while (isDownloading);
+                Log.writeLogs("./log.txt", pathName + "  下载完成");
+                Winrar.UnCompressRar(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName, IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini"), voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1));
+
+            }
             if (voteProject.Type == "九天" &&
                 !File.Exists(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName + "/启动九天.bat"))
             {
@@ -588,7 +592,7 @@ namespace controller
                             Log.writeLogs("./log.txt", "Clear blackDictionary!");
                             blackDictionary.Clear();
                         }
-                        if(count == 15)
+                        if (count == 15)
                         {
                             generateBlackListTemp();
                         }
