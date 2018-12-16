@@ -25,6 +25,16 @@ namespace controller.util
             pathName = iniPathName;
         }
 
+        public static void Clear(int vm)
+        {
+            Dictionary<int, TaskInfo> taskInfoDict = Get();
+            if (taskInfoDict.ContainsKey(vm))
+            {
+                taskInfoDict.Remove(vm);
+            }
+            Set(taskInfoDict);
+        }
+
         public static void Set(Dictionary<int, TaskInfo> taskInfoDict)
         {
             string taskInfos = "";

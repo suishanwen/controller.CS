@@ -459,6 +459,7 @@ namespace controller
 
         private bool existWaitOrder()
         {
+            bool result = false;
             string arrDrop = IniReadWriter.ReadIniKeys("Command", "ArrDrop", _mainForm.PathShare + "/CF.ini");
             for (int i = int.Parse(_mainForm.VM1); i <= int.Parse(_mainForm.VM2); i++)
             {
@@ -471,11 +472,12 @@ namespace controller
                     string taskName = IniReadWriter.ReadIniKeys("Command", "TaskName" + i, _mainForm.PathShare + "/Task.ini");
                     if (taskName.Equals("待命"))
                     {
-                        return true;
+                        result = true;
+                        TaskInfos.Clear(i);
                     }
                 }
             }
-            return false;
+            return result;
         }
 
         private void generateBlackListTemp()
