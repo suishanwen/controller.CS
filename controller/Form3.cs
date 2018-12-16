@@ -592,17 +592,20 @@ namespace controller
                     voteProjectsAnalysis(getVoteProjects());
                     if (isAutoVote)
                     {
-                        if (DateTime.Now.Minute == 1 && DateTime.Now.Hour != clearBlackListHour)
+                        //2小时解封黑名单
+                        if (DateTime.Now.Minute == 1 && DateTime.Now.Hour % 2 == 0 && DateTime.Now.Hour != clearBlackListHour)
                         {
                             clearBlackListHour = DateTime.Now.Hour;
                             Log.writeLogs("./log.txt", "Clear blackDictionary!");
                             blackDictionary.Clear();
                         }
+                        //5分钟临时黑名单解锁
                         if (count == 15)
                         {
                             generateBlackListTemp();
                         }
-                        if (count > 30)
+                        //20分钟黑名单解锁
+                        if (count > 60)
                         {
                             count = 0;
                             generateBlackList();
