@@ -87,6 +87,12 @@ namespace controller
             _mainForm = form1;
             InitializeComponent();
             string _isAutoVote = IniReadWriter.ReadIniKeys("Command", "isAutoVote", _mainForm.PathShare + "/CF.ini");
+            try
+            {
+                filter = double.Parse(IniReadWriter.ReadIniKeys("Command", "filter", _mainForm.PathShare + "/AutoVote.ini"));
+            }
+            catch (Exception) { };
+            textBox1.Text = filter.ToString();
             if (!StringUtil.isEmpty(_isAutoVote) && _isAutoVote.Equals("1"))
             {
                 isAutoVote = true;
@@ -363,7 +369,7 @@ namespace controller
             Console.WriteLine("projectName：" + voteProject.ProjectName + ",price：" + voteProject.Price + ",remains：" + voteProject.Remains);
             HttpManager httpManager = HttpManager.getInstance();
             string pathName = IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini") + "\\" + voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1);
-            if (false == Directory.Exists(pathName))
+            if (!Directory.Exists(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName))
             {
                 string url = voteProject.DownloadAddress;
                 string now = DateTime.Now.ToLocalTime().ToString();
@@ -746,7 +752,7 @@ namespace controller
                 }
                 else
                 {
-                    label4.Text = "无";
+                    label4.Text = TaskInfos.Active();
                 }
                 count = 0;
                 int index = this.Text.IndexOf(" ");
@@ -777,6 +783,7 @@ namespace controller
             if (!StringUtil.isEmpty(textBox1.Text))
             {
                 filter = double.Parse(textBox1.Text);
+                IniReadWriter.WriteIniKeys("Command", "filter", filter.ToString(), _mainForm.PathShare + "/AutoVote.ini");
             }
         }
 

@@ -87,5 +87,41 @@ namespace controller.util
             Set(taskInfoDict);
         }
 
+        public static string Active()
+        {
+            Dictionary<String, List<String>> taskInfoVMDict = new Dictionary<String, List<String>>();
+            Dictionary<int, TaskInfo> taskInfoDict = Get();
+            foreach (int key in taskInfoDict.Keys)
+            {
+               TaskInfo taskInfo = taskInfoDict[key];
+                if (taskInfoVMDict.ContainsKey(taskInfo.ProjectName))
+                {
+                    taskInfoVMDict[taskInfo.ProjectName].Add(key.ToString());
+                }
+                else
+                {
+                    List<String> list = new List<String>();
+                    list.Add(key.ToString());
+                    taskInfoVMDict.Add(taskInfo.ProjectName, list);
+                }
+            }
+            if(taskInfoVMDict.Keys.Count > 0)
+            {
+                List<string> projectList = new List<string>();
+                foreach (string projectName in taskInfoVMDict.Keys)
+                {
+                    projectList.Add(string.Format("{0}({1}):{2}", projectName,
+                        taskInfoDict[int.Parse(taskInfoVMDict[projectName][0])].Price,
+                        string.Join(",", taskInfoVMDict[projectName].ToArray())));
+                }
+                return string.Join("\n", projectList.ToArray());
+            }
+            else
+            {
+                return "无";
+            }
+        }
+
+
     }
 }

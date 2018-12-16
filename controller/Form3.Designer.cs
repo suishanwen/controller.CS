@@ -35,6 +35,12 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.Hot = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Type = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.button1 = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -43,16 +49,10 @@
             this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Hot = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Type = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewCheckBoxColumn1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.voteProjectBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.button1 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.voteProjectBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -123,13 +123,69 @@
             this.dataGridViewCheckBoxColumn1,
             this.dataGridViewTextBoxColumn9});
             this.dataGridView1.DataSource = this.voteProjectBindingSource;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 60);
+            this.dataGridView1.Location = new System.Drawing.Point(3, 73);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowTemplate.Height = 23;
             this.dataGridView1.Size = new System.Drawing.Size(546, 275);
             this.dataGridView1.TabIndex = 4;
             this.dataGridView1.DoubleClick += new System.EventHandler(this.dataGridView1_DoubleClick);
+            // 
+            // Hot
+            // 
+            this.Hot.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Hot.DataPropertyName = "Hot";
+            this.Hot.FillWeight = 55F;
+            this.Hot.HeaderText = "热度";
+            this.Hot.Name = "Hot";
+            this.Hot.ReadOnly = true;
+            // 
+            // Type
+            // 
+            this.Type.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Type.DataPropertyName = "Type";
+            this.Type.FillWeight = 55F;
+            this.Type.HeaderText = "类型";
+            this.Type.Name = "Type";
+            this.Type.ReadOnly = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(473, 41);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 5;
+            this.button1.Text = "取消置顶";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(512, 6);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(32, 21);
+            this.textBox1.TabIndex = 6;
+            this.textBox1.Text = "0.1";
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(477, 9);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(29, 12);
+            this.label5.TabIndex = 7;
+            this.label5.Text = "过滤";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(392, 41);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 8;
+            this.button2.Text = "开启自动";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // dataGridViewTextBoxColumn1
             // 
@@ -196,15 +252,6 @@
             this.dataGridViewTextBoxColumn7.ReadOnly = true;
             this.dataGridViewTextBoxColumn7.Visible = false;
             // 
-            // Hot
-            // 
-            this.Hot.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Hot.DataPropertyName = "Hot";
-            this.Hot.FillWeight = 55F;
-            this.Hot.HeaderText = "热度";
-            this.Hot.Name = "Hot";
-            this.Hot.ReadOnly = true;
-            // 
             // dataGridViewTextBoxColumn8
             // 
             this.dataGridViewTextBoxColumn8.DataPropertyName = "IdType";
@@ -214,15 +261,6 @@
             this.dataGridViewTextBoxColumn8.ReadOnly = true;
             this.dataGridViewTextBoxColumn8.Visible = false;
             this.dataGridViewTextBoxColumn8.Width = 55;
-            // 
-            // Type
-            // 
-            this.Type.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Type.DataPropertyName = "Type";
-            this.Type.FillWeight = 55F;
-            this.Type.HeaderText = "类型";
-            this.Type.Name = "Type";
-            this.Type.ReadOnly = true;
             // 
             // dataGridViewCheckBoxColumn1
             // 
@@ -247,51 +285,13 @@
             // 
             this.voteProjectBindingSource.DataSource = typeof(controller.util.VoteProject);
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(474, 32);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "取消置顶";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(517, 5);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(32, 21);
-            this.textBox1.TabIndex = 6;
-            this.textBox1.Text = "0.1";
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(482, 8);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(29, 12);
-            this.label5.TabIndex = 7;
-            this.label5.Text = "过滤";
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(393, 32);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 8;
-            this.button2.Text = "开启自动";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
             // Form3
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(550, 336);
+            this.ClientSize = new System.Drawing.Size(550, 350);
             this.ControlBox = false;
             this.Controls.Add(this.button2);
             this.Controls.Add(this.label5);
