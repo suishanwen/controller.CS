@@ -125,7 +125,7 @@ namespace controller
                     }
                 }
             }
-            return voteProjectNameDroped.IndexOf(project) != -1 || voteProjectNameDropedTemp.IndexOf(project) != -1;
+            return voteProjectNameDroped.IndexOf(project) != -1 && voteProjectNameDropedTemp.IndexOf(project) != -1;
         }
 
         private bool isGreenProject(string project, int checkType)
