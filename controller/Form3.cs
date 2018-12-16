@@ -326,18 +326,22 @@ namespace controller
             }
             else
             {
-                IniReadWriter.WriteIniKeys("Command", "ProjectName", activeVoteProject.ProjectName, _mainForm.PathShare + "/AutoVote.ini");
-                IniReadWriter.WriteIniKeys("Command", "Price", activeVoteProject.Price.ToString(), _mainForm.PathShare + "/AutoVote.ini");
-                IniReadWriter.WriteIniKeys("Command", "TotalRequire", activeVoteProject.TotalRequire.ToString(), _mainForm.PathShare + "/AutoVote.ini");
-                IniReadWriter.WriteIniKeys("Command", "FinishQuantity", activeVoteProject.FinishQuantity.ToString(), _mainForm.PathShare + "/AutoVote.ini");
-                IniReadWriter.WriteIniKeys("Command", "Remains", activeVoteProject.Remains.ToString(), _mainForm.PathShare + "/AutoVote.ini");
-                IniReadWriter.WriteIniKeys("Command", "BackgroundNo", activeVoteProject.BackgroundNo, _mainForm.PathShare + "/AutoVote.ini");
-                IniReadWriter.WriteIniKeys("Command", "BackgroundAddress", activeVoteProject.BackgroundAddress, _mainForm.PathShare + "/AutoVote.ini");
-                IniReadWriter.WriteIniKeys("Command", "DownloadAddress", activeVoteProject.DownloadAddress, _mainForm.PathShare + "/AutoVote.ini");
-                IniReadWriter.WriteIniKeys("Command", "IsRestrict", activeVoteProject.IsRestrict.ToString(), _mainForm.PathShare + "/AutoVote.ini");
-                IniReadWriter.WriteIniKeys("Command", "IdType", activeVoteProject.IdType, _mainForm.PathShare + "/AutoVote.ini");
-                IniReadWriter.WriteIniKeys("Command", "RefreshDate", activeVoteProject.RefreshDate.ToLocalTime().ToString(), _mainForm.PathShare + "/AutoVote.ini");
-                IniReadWriter.WriteIniKeys("Command", "dropVote", "0", _mainForm.PathShare + "/AutoVote.ini");
+                string projectName = IniReadWriter.ReadIniKeys("Command", "ProjectName", _mainForm.PathShare + "/AutoVote.ini");
+                if(projectName != activeVoteProject.ProjectName)
+                {
+                    IniReadWriter.WriteIniKeys("Command", "ProjectName", activeVoteProject.ProjectName, _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "Price", activeVoteProject.Price.ToString(), _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "TotalRequire", activeVoteProject.TotalRequire.ToString(), _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "FinishQuantity", activeVoteProject.FinishQuantity.ToString(), _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "Remains", activeVoteProject.Remains.ToString(), _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "BackgroundNo", activeVoteProject.BackgroundNo, _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "BackgroundAddress", activeVoteProject.BackgroundAddress, _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "DownloadAddress", activeVoteProject.DownloadAddress, _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "IsRestrict", activeVoteProject.IsRestrict.ToString(), _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "IdType", activeVoteProject.IdType, _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "RefreshDate", activeVoteProject.RefreshDate.ToLocalTime().ToString(), _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "dropVote", "0", _mainForm.PathShare + "/AutoVote.ini");
+                }
             }
         }
 
