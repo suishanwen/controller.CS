@@ -103,6 +103,7 @@ namespace controller
         private bool isDropedProject(string project, int checkType)
         {
             voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped", _mainForm.PathShare + "/AutoVote.ini");
+            voteProjectNameDropedTemp = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDropedTemp", _mainForm.PathShare + "/AutoVote.ini");
             if (checkType == 1 && voteProjectNameDroped != "")
             {
                 string[] dropedProjectList = voteProjectNameDroped.Split('|');
@@ -113,28 +114,9 @@ namespace controller
                         return true;
                     }
                 }
-                return false;
             }
+
             return voteProjectNameDroped.IndexOf(project) != -1;
-        }
-
-        private bool isDropedProjectTemp(string project, int checkType)
-        {
-            voteProjectNameDropedTemp = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDropedTemp", _mainForm.PathShare + "/AutoVote.ini");
-            if (checkType == 1 && voteProjectNameDropedTemp != "")
-            {
-                string[] dropedProjectList = voteProjectNameDropedTemp.Split('|');
-                foreach (string dropedProject in dropedProjectList)
-                {
-                    if (project.IndexOf(dropedProject) != -1)
-                    {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            return voteProjectNameDropedTemp.IndexOf(project) != -1;
         }
 
         private bool isGreenProject(string project, int checkType)
@@ -382,7 +364,7 @@ namespace controller
                 catch (Exception)
                 {
                     Log.writeLogs("./log.txt", voteProject.ProjectName + "  下载异常，重新下载");
-                    Thread.Sleep(1000);
+                    Thread.Sleep(10000);
                 }
             } while (isDownloading);
             // Log.writeLogs("./log.txt", pathName + "  下载完成");
@@ -464,6 +446,11 @@ namespace controller
                 }
             }
             return false;
+        }
+
+        private void generateBlackListTemp()
+        {
+            IniReadWriter.WriteIniKeys("Command", "voteProjectNameDropedTemp", "", _mainForm.PathShare + "/AutoVote.ini");
         }
 
         private void generateBlackList()
@@ -567,10 +554,6 @@ namespace controller
                             clearBlackListHour = DateTime.Now.Hour;
                             Log.writeLogs("./log.txt", "Clear blackDictionary!");
                             blackDictionary.Clear();
-                        }
-                        if(count == 15)
-                        {
-                            generateBlackListTemp();
                         }
                         if (count > 30)
                         {
