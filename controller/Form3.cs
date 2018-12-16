@@ -25,6 +25,7 @@ namespace controller
         private List<VoteProject> voteProjectMonitorList = new List<VoteProject>();
         Dictionary<string, int> blackDictionary = new Dictionary<string, int>();
         private string voteProjectNameDroped;
+        private string voteProjectNameDropedTemp;
         private string voteProjectNameGreen;
         private int downLoadCount;
         private bool isTop = true;
@@ -114,8 +115,26 @@ namespace controller
                 }
                 return false;
             }
-
             return voteProjectNameDroped.IndexOf(project) != -1;
+        }
+
+        private bool isDropedProjectTemp(string project, int checkType)
+        {
+            voteProjectNameDropedTemp = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDropedTemp", _mainForm.PathShare + "/AutoVote.ini");
+            if (checkType == 1 && voteProjectNameDropedTemp != "")
+            {
+                string[] dropedProjectList = voteProjectNameDropedTemp.Split('|');
+                foreach (string dropedProject in dropedProjectList)
+                {
+                    if (project.IndexOf(dropedProject) != -1)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            return voteProjectNameDropedTemp.IndexOf(project) != -1;
         }
 
         private bool isGreenProject(string project, int checkType)
@@ -136,6 +155,7 @@ namespace controller
 
         private List<VoteProject> getVoteProjects()
         {
+            String isAdsl = IniReadWriter.ReadIniKeys("Command", "isAdsl", _mainForm.PathShare + "/CF.ini");
             HttpManager httpUtil = HttpManager.getInstance();
             string result = "";
             do
@@ -162,8 +182,12 @@ namespace controller
             List<VoteProject> voteProjectList = new List<VoteProject>();
             foreach (Match mTR in mcTR)
             {
-                if (mTR.Value.IndexOf("不换") == -1 && !isDropedProject(mTR.Value, 1))
+                if (!isDropedProject(mTR.Value, 1) && !isDropedProjectTemp(mTR.Value, 1))
                 {
+                    if (mTR.Value.IndexOf("不换") != -1 && isAdsl != "1")
+                    {
+                        continue;
+                    }
                     MatchCollection mcTD = regTD.Matches(mTR.Value);
                     int index = 0;
                     VoteProject voteProject = new VoteProject();
@@ -284,7 +308,7 @@ namespace controller
             foreach (VoteProject voteProject in voteProjectList)
             {
                 //黑名单，价格过滤
-                if (!isDropedProject(voteProject.ProjectName, 0) && voteProject.Price >= filter)
+                if (!isDropedProject(voteProject.ProjectName, 0)&& !isDropedProjectTemp(voteProject.ProjectName, 0) && voteProject.Price >= filter)
                 {
                     i++;
                     voteProject.Index = i;
@@ -468,7 +492,10 @@ namespace controller
                 IniReadWriter.WriteIniKeys("Command", "voteProjectNameDroped", projectNameDroped, _mainForm.PathShare + "/AutoVote.ini");
             }
         }
-
+        private void generateBlackListTemp()
+        {
+            IniReadWriter.WriteIniKeys("Command", "voteProjectNameDropedTemp", "", _mainForm.PathShare + "/AutoVote.ini");
+        }
 
         private void testHighReward()
         {
@@ -540,6 +567,10 @@ namespace controller
                             clearBlackListHour = DateTime.Now.Hour;
                             Log.writeLogs("./log.txt", "Clear blackDictionary!");
                             blackDictionary.Clear();
+                        }
+                        if(count == 15)
+                        {
+                            generateBlackListTemp();
                         }
                         if (count > 30)
                         {
