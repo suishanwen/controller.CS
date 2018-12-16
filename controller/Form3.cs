@@ -6,7 +6,6 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using System.Data;
 using System.ComponentModel;
 
 namespace controller
@@ -115,8 +114,18 @@ namespace controller
                     }
                 }
             }
-
-            return voteProjectNameDroped.IndexOf(project) != -1;
+            if (checkType == 1 && voteProjectNameDropedTemp != "")
+            {
+                string[] dropedProjectList = voteProjectNameDropedTemp.Split('|');
+                foreach (string dropedProject in dropedProjectList)
+                {
+                    if (project.IndexOf(dropedProject) != -1)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return voteProjectNameDroped.IndexOf(project) != -1 || voteProjectNameDropedTemp.IndexOf(project) != -1;
         }
 
         private bool isGreenProject(string project, int checkType)
@@ -164,7 +173,7 @@ namespace controller
             List<VoteProject> voteProjectList = new List<VoteProject>();
             foreach (Match mTR in mcTR)
             {
-                if (!isDropedProject(mTR.Value, 1) && !isDropedProjectTemp(mTR.Value, 1))
+                if (!isDropedProject(mTR.Value, 1))
                 {
                     if (mTR.Value.IndexOf("不换") != -1 && isAdsl != "1")
                     {
@@ -290,7 +299,7 @@ namespace controller
             foreach (VoteProject voteProject in voteProjectList)
             {
                 //黑名单，价格过滤
-                if (!isDropedProject(voteProject.ProjectName, 0)&& !isDropedProjectTemp(voteProject.ProjectName, 0) && voteProject.Price >= filter)
+                if (!isDropedProject(voteProject.ProjectName, 0) && voteProject.Price >= filter)
                 {
                     i++;
                     voteProject.Index = i;
@@ -479,10 +488,6 @@ namespace controller
                 IniReadWriter.WriteIniKeys("Command", "voteProjectNameDroped", projectNameDroped, _mainForm.PathShare + "/AutoVote.ini");
             }
         }
-        private void generateBlackListTemp()
-        {
-            IniReadWriter.WriteIniKeys("Command", "voteProjectNameDropedTemp", "", _mainForm.PathShare + "/AutoVote.ini");
-        }
 
         private void testHighReward()
         {
@@ -554,6 +559,10 @@ namespace controller
                             clearBlackListHour = DateTime.Now.Hour;
                             Log.writeLogs("./log.txt", "Clear blackDictionary!");
                             blackDictionary.Clear();
+                        }
+                        if(count == 15)
+                        {
+                            generateBlackListTemp();
                         }
                         if (count > 30)
                         {
