@@ -431,7 +431,7 @@ namespace controller
                 {
                     if (vmInfo.ContainsKey(p))
                     {
-                        if (voteProject.Price <= vmInfo[p].Price)
+                        if (isAutoVote && voteProject.Price <= vmInfo[p].Price)
                         {
                             continue;
                         }
