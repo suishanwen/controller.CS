@@ -159,7 +159,7 @@ namespace controller
                     result = result.Substring(result.IndexOf("<tr class='blank'>"));
                     result = result.Substring(0, result.LastIndexOf("<tr class='blank'>"));
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     result = "";
                     Console.WriteLine("Request Fail!Retry in 10s...");
@@ -211,7 +211,7 @@ namespace controller
                                     }
                                     voteProject.TotalRequire = long.Parse(quantityInfo[1].Substring(0, quantityInfo[1].IndexOf(" ")));
                                 }
-                                catch (Exception e)
+                                catch (Exception)
                                 {
                                 }
                                 break;
@@ -226,7 +226,7 @@ namespace controller
                                 {
                                     voteProject.IdType = HtmlMatch.GetAttr(innerTd, "input", "value").Substring(0, 2);
                                 }
-                                catch (Exception e)
+                                catch (Exception)
                                 {
                                     if (innerTd.IndexOf("BT-") != -1)
                                     {
@@ -311,6 +311,8 @@ namespace controller
                     }
                 }
             }
+            //更新taskInfoDict
+            TaskInfos.Update(voteProjectList);
             SetDataGrid(voteProjectMonitorList);
 
         }
@@ -366,6 +368,7 @@ namespace controller
             {
                 try
                 {
+                    downLoadCount++;
                     File.Delete(pathName);
                     httpManager.HttpDownloadFile(url, pathName);
                     isDownloading = false;
@@ -374,6 +377,11 @@ namespace controller
                 {
                     Log.writeLogs("./log.txt", voteProject.ProjectName + "  下载异常，重新下载");
                     Thread.Sleep(10000);
+                    if (downLoadCount >= 6)
+                    {
+                        Log.writeLogs("./log.txt", voteProject.ProjectName + "  下载异常6次，返回");
+                        return;
+                    }
                 }
             } while (isDownloading);
             // Log.writeLogs("./log.txt", pathName + "  下载完成");
@@ -411,16 +419,29 @@ namespace controller
                     break;
                 }
             }
-
+            Dictionary<int, TaskInfo> vmInfo = TaskInfos.Get();
             for (int p = int.Parse(_mainForm.VM1); p <= int.Parse(_mainForm.VM2); p++)
             {
-                String TaskName = IniReadWriter.ReadIniKeys("Command", "TaskName" + p, _mainForm.PathShare + "/Task.ini");
-                if (!onlyWaitOrder || TaskName.Equals("待命"))
+                String taskName = IniReadWriter.ReadIniKeys("Command", "TaskName" + p, _mainForm.PathShare + "/Task.ini");
+                if (!onlyWaitOrder || taskName.Equals("待命"))
                 {
+                    if (vmInfo.ContainsKey(p))
+                    {
+                        if (voteProject.Price <= vmInfo[p].Price)
+                        {
+                            continue;
+                        }
+                        vmInfo[p] = new TaskInfo(voteProject.ProjectName, voteProject.Price);
+                    }
+                    else
+                    {
+                        vmInfo.Add(p, new TaskInfo(voteProject.ProjectName, voteProject.Price));
+                    }
                     _mainForm.VM3 = p.ToString();
                     SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm, _mainForm.PathShareVm + "\\投票项目\\" + voteProject.ProjectName + "\\" + executableFile.Name, "投票项目", _mainForm.PathShare);
                 }
             }
+            TaskInfos.Set(vmInfo);
         }
 
         private void testVoteProjectMonitorList()
@@ -526,6 +547,7 @@ namespace controller
         {
             Log.writeLogs("./log.txt", "");
             Log.writeLogs("./log.txt", "AutoVoteSystem Thread Running");
+            TaskInfos.Init(_mainForm.PathShare + "/AutoVote.ini");
             if (isAutoVote)
             {
                 string projectName = IniReadWriter.ReadIniKeys("Command", "ProjectName", _mainForm.PathShare + "/AutoVote.ini");

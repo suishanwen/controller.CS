@@ -489,7 +489,6 @@ namespace controller
             } while (isDownloading);
             if (!File.Exists("./update.bat"))
             {
-                string path = "";
                 string line1 = "Taskkill /F /IM controller.exe";
                 string line2 = "ping -n 3 127.0.0.1>nul";
                 string line3 = "del /s /Q " + Environment.CurrentDirectory + "\\controller.exe";
