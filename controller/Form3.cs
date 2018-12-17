@@ -98,6 +98,7 @@ namespace controller
             {
                 isAutoVote = true;
                 button2.Text = "取消自动";
+                button3.Visible = false;
             }
             timer1.Enabled = true;
             autoVote = new Thread(autoVoteSystem);
@@ -730,9 +731,9 @@ namespace controller
                     _mainForm.NotifyIcon1.ShowBalloonTip(0, "项目已结束", DateTime.Now.ToLocalTime().ToString(), ToolTipIcon.Info);
                     if (overAuto)
                     {
-                        IniReadWriter.WriteIniKeys("Command", "AutoVote", "1", _mainForm.PathShare + "/CF.ini");
                         button3.Text = "到票自动";
                         overAuto = false;
+                        setAutoVote();
                     }
                     if (_mainForm.CheckBox3.Checked && !StringUtil.isEmpty(_mainForm.OverSwitchPath))
                     {
@@ -814,11 +815,17 @@ namespace controller
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void setAutoVote()
         {
             isAutoVote = !isAutoVote;
             IniReadWriter.WriteIniKeys("Command", "isAutoVote", isAutoVote ? "1" : "0", _mainForm.PathShare + "/CF.ini");
             button2.Text = isAutoVote ? "取消自动" : "开启自动";
+            button3.Visible = !isAutoVote;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            setAutoVote();
         }
 
         private void button3_Click(object sender, EventArgs e)
