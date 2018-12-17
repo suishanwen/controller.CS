@@ -30,6 +30,7 @@ namespace controller
         private bool isTop = true;
         private bool isAutoVote = false;
         private double filter = 0.1;
+        private double blackRate = 1;
         private bool overAuto = false;
         private int clearBlackListHour;
 
@@ -91,9 +92,12 @@ namespace controller
             try
             {
                 filter = double.Parse(IniReadWriter.ReadIniKeys("Command", "filter", _mainForm.PathShare + "/AutoVote.ini"));
+                blackRate = double.Parse(IniReadWriter.ReadIniKeys("Command", "blackRate", _mainForm.PathShare + "/AutoVote.ini"));
             }
             catch (Exception) { };
             textBox1.Text = filter.ToString();
+            textBox2.Text = IniReadWriter.ReadIniKeys("Command", "maxKb", _mainForm.PathShare + "/CF.ini");
+            textBox3.Text = blackRate.ToString();
             if (!StringUtil.isEmpty(_isAutoVote) && _isAutoVote.Equals("1"))
             {
                 isAutoVote = true;
@@ -611,20 +615,20 @@ namespace controller
                     voteProjectsAnalysis(getVoteProjects());
                     if (isAutoVote)
                     {
-                        //2小时解封黑名单
-                        if (DateTime.Now.Minute == 1 && DateTime.Now.Hour % 2 == 0 && DateTime.Now.Hour != clearBlackListHour)
+                        //每2小时  * 倍率 解封黑名单
+                        if (DateTime.Now.Minute == 1 && DateTime.Now.Hour % (2 * blackRate) == 0 && DateTime.Now.Hour != clearBlackListHour)
                         {
                             clearBlackListHour = DateTime.Now.Hour;
                             Log.writeLogs("./log.txt", "Clear blackDictionary!");
                             blackDictionary.Clear();
                         }
                         //5分钟临时黑名单解锁
-                        if (count == 15)
+                        if (count == 5 * 3)
                         {
                             generateBlackListTemp();
                         }
-                        //20分钟黑名单解锁
-                        if (count > 60)
+                        //20分钟 * 倍率 黑名单解锁
+                        if (count > 20 * 3 * blackRate)
                         {
                             count = 0;
                             generateBlackList();
@@ -832,6 +836,25 @@ namespace controller
         {
             overAuto = !overAuto;
             button3.Text = overAuto ? "撤销" : "到票自动";
+        }
+
+
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            if (!StringUtil.isEmpty(textBox2.Text))
+            {
+                IniReadWriter.WriteIniKeys("Command", "maxKb", textBox2.Text, _mainForm.PathShare + "/CF.ini");
+            }
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            if (!StringUtil.isEmpty(textBox3.Text))
+            {
+                blackRate = double.Parse(textBox3.Text);
+                IniReadWriter.WriteIniKeys("Command", "blackRate", textBox3.Text, _mainForm.PathShare + "/AutoVote.ini");
+            }
         }
     }
 }
