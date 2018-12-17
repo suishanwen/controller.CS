@@ -30,6 +30,7 @@ namespace controller
         private bool isTop = true;
         private bool isAutoVote = false;
         private double filter = 0.1;
+        private bool overAuto = false;
         private int clearBlackListHour;
 
         internal List<VoteProject> VoteProjectMonitorList
@@ -727,6 +728,12 @@ namespace controller
                 {
                     IniReadWriter.WriteIniKeys("Command", "OVER", "0", _mainForm.PathShare + "/CF.ini");
                     _mainForm.NotifyIcon1.ShowBalloonTip(0, "项目已结束", DateTime.Now.ToLocalTime().ToString(), ToolTipIcon.Info);
+                    if (overAuto)
+                    {
+                        IniReadWriter.WriteIniKeys("Command", "AutoVote", "1", _mainForm.PathShare + "/CF.ini");
+                        button3.Text = "到票自动";
+                        overAuto = false;
+                    }
                     if (_mainForm.CheckBox3.Checked && !StringUtil.isEmpty(_mainForm.OverSwitchPath))
                     {
                         if (_mainForm.OverSwitchPath.Equals("HANGUP"))
@@ -812,6 +819,12 @@ namespace controller
             isAutoVote = !isAutoVote;
             IniReadWriter.WriteIniKeys("Command", "isAutoVote", isAutoVote ? "1" : "0", _mainForm.PathShare + "/CF.ini");
             button2.Text = isAutoVote ? "取消自动" : "开启自动";
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            overAuto = !overAuto;
+            button3.Text = overAuto ? "撤销" : "到票自动";
         }
     }
 }
