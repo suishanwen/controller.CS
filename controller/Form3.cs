@@ -353,13 +353,30 @@ namespace controller
 
         private void setWorkerId()
         {
-            if (activeVoteProject.IdType.Equals("Q7"))
+            string[] user1 = { "AQ-239356", "Q7-21173" };
+            string[] user2 = { "AQ-14", "Q7-43" };
+            string id = IniReadWriter.ReadIniKeys("Command", "worker", _mainForm.PathShare + "/CF.ini");
+            if (id == user2[0] || id == user2[1])
             {
-                IniReadWriter.WriteIniKeys("Command", "worker", "Q7-21173", _mainForm.PathShare + "/CF.ini");
+                if (activeVoteProject.IdType.Equals("Q7"))
+                {
+                    IniReadWriter.WriteIniKeys("Command", "worker", user2[1], _mainForm.PathShare + "/CF.ini");
+                }
+                else
+                {
+                    IniReadWriter.WriteIniKeys("Command", "worker", user2[0], _mainForm.PathShare + "/CF.ini");
+                }
             }
             else
             {
-                IniReadWriter.WriteIniKeys("Command", "worker", "AQ-239356", _mainForm.PathShare + "/CF.ini");
+                if (activeVoteProject.IdType.Equals("Q7"))
+                {
+                    IniReadWriter.WriteIniKeys("Command", "worker", user1[1], _mainForm.PathShare + "/CF.ini");
+                }
+                else
+                {
+                    IniReadWriter.WriteIniKeys("Command", "worker", user1[0], _mainForm.PathShare + "/CF.ini");
+                }
             }
         }
 
