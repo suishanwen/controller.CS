@@ -12,6 +12,7 @@ namespace controller
 {
     public partial class Form3 : Form
     {
+        private static Form3 _form3;
         private static Form1 _mainForm;
         private int count;
         private int val;
@@ -80,6 +81,48 @@ namespace controller
             }
         }
 
+        //委托 解决线程间操作textBox4问题
+        delegate void SetProNameDelegate(string value);
+        public static void SetProName(string value)
+        {
+            if (_form3.progressBar1.InvokeRequired)
+            {
+                SetProNameDelegate d = new SetProNameDelegate(SetProName);
+                _form3.Invoke(d, new object[] { value });
+            }
+            else
+            {
+                _form3.label8.Text = value;
+            }
+        }
+
+        //委托 解决线程间操作textBox4问题
+        delegate void SetProgressDelegate(int value);
+        public static void SetProgress(int value)
+        {
+            if (_form3.progressBar1.InvokeRequired)
+            {
+                SetProgressDelegate d = new SetProgressDelegate(SetProgress);
+                _form3.Invoke(d, new object[] { value });
+            }
+            else
+            {
+                if(value == 100)
+                {
+                    _form3.progressBar1.Visible = false;
+                }
+                else
+                {
+                    if(_form3.progressBar1.Visible == false)
+                    {
+                        _form3.progressBar1.Visible = true;
+                    }
+                    _form3.progressBar1.Value = value;
+                }
+            }
+        }
+
+
         public Form3()
         {
 
@@ -87,6 +130,7 @@ namespace controller
         public Form3(Form1 form1)
         {
             _mainForm = form1;
+            _form3 = this;
             InitializeComponent();
             string _isAutoVote = IniReadWriter.ReadIniKeys("Command", "isAutoVote", _mainForm.PathShare + "/CF.ini");
             try
@@ -397,29 +441,36 @@ namespace controller
             {
                 string url = voteProject.DownloadAddress;
                 string now = DateTime.Now.ToLocalTime().ToString();
+                Form3.SetProName(voteProject.ProjectName);
                 Log.writeLogs("./log.txt", "开始下载:" + url);
                 downLoadCount = 0;
-                bool isDownloading = true;
+                bool result = true;
                 do
                 {
-                    try
+                    //try
+                    //{
+                    downLoadCount++;
+                    //File.Delete(pathName);
+                    //httpManager.HttpDownloadFile(url, pathName);
+                    result = HttpDownLoad.Download(url, pathName);
+                    //}
+                    //catch (Exception)
+                    //{
+                    if (!result)
                     {
-                        downLoadCount++;
-                        File.Delete(pathName);
-                        httpManager.HttpDownloadFile(url, pathName);
-                        isDownloading = false;
-                    }
-                    catch (Exception)
-                    {
-                        Log.writeLogs("./log.txt", voteProject.ProjectName + "  下载异常，重新下载");
-                        Thread.Sleep(10000);
+                        Form3.SetProName(string.Format("第{0}次下载失败",downLoadCount));
+                        Log.writeLogs("./log.txt", voteProject.ProjectName + "  下载失败，5秒后重新下载");
+                        Thread.Sleep(5000);
                         if (downLoadCount >= 6)
                         {
-                            Log.writeLogs("./log.txt", voteProject.ProjectName + "  下载异常6次，返回");
+                            Log.writeLogs("./log.txt", voteProject.ProjectName + "  下载失败3次，返回");
                             return;
                         }
                     }
-                } while (isDownloading);
+
+                    //}
+                } while (!result);
+                Form3.SetProName("");
                 Log.writeLogs("./log.txt", pathName + "  下载完成");
                 Winrar.UnCompressRar(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName, IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini"), voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1));
 
@@ -478,8 +529,24 @@ namespace controller
                     {
                         vmInfo.Add(p, new TaskInfo(voteProject.ProjectName, voteProject.Price));
                     }
-                    _mainForm.VM3 = p.ToString();
+                    Form1.SetVM3(p.ToString());
                     SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm, _mainForm.PathShareVm + "\\投票项目\\" + voteProject.ProjectName + "\\" + executableFile.Name, "投票项目", _mainForm.PathShare);
+                }
+            }
+            if (isAutoVote)
+            {
+                bool allSameProject = true;
+                foreach(int key in vmInfo.Keys)
+                {
+                    if(vmInfo[key].ProjectName != activeVoteProject.ProjectName)
+                    {
+                        allSameProject = false;
+                        break;
+                    }
+                }
+                if (allSameProject)
+                {
+                    writeAutoVoteProject();
                 }
             }
             TaskInfos.Set(vmInfo);
@@ -492,7 +559,7 @@ namespace controller
                 VoteProject voteProject = voteProjectMonitorList[i];
                 if (voteProject.Auto && voteProject.VoteRemains)
                 {
-                    startVoteProject(voteProject, allWaitOrder());
+                    startVoteProject(voteProject, !allWaitOrder());
                     break;
                 }
             }

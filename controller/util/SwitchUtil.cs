@@ -66,7 +66,7 @@ namespace controller.util
                 IniReadWriter.WriteIniKeys("Command", "CustomPath" + _mainForm.VM3, customPath, pathShare + "/TaskPlus.ini");
                 IniReadWriter.WriteIniKeys("Command", "TaskName" + _mainForm.VM3, taskName, pathShare + "/Task.ini");
                 IniReadWriter.WriteIniKeys("Command", "TaskChange" + _mainForm.VM3, "1", pathShare + "/Task.ini");
-                _mainForm.VM3 = "";
+                Form1.SetVM3("");
             }
         }
     }

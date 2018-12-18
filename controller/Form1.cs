@@ -15,6 +15,7 @@ namespace controller
 
     public partial class Form1 : Form
     {
+        private static Form1 _Form1;
         private static Form3 _Form3;
         private string pathShare; //主机共享路径
         private string downloads; //下载路径，用于RAR一键解压
@@ -133,16 +134,16 @@ namespace controller
         }
         //委托 解决线程间操作textBox4问题
         delegate void SetTextBox4(String value);
-        private void SetVM3(String value)
+        public static void SetVM3(String value)
         {
-            if (this.textBox4.InvokeRequired)
+            if (_Form1.textBox4.InvokeRequired)
             {
                 SetTextBox4 d = new SetTextBox4(SetVM3);
-                this.Invoke(d, new object[] { value });
+                _Form1.Invoke(d, new object[] { value });
             }
             else
             {
-                textBox4.Text = value;
+                _Form1.textBox4.Text = value;
             }
         }
 
@@ -196,6 +197,7 @@ namespace controller
         {
             InitializeComponent();
             initConfig();
+            _Form1 = this;
             _Form3 = new Form3(this);
             _Form3.Show();
         }
