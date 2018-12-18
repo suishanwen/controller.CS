@@ -384,6 +384,7 @@ namespace controller
                     IniReadWriter.WriteIniKeys("Command", "worker", user1[0], _mainForm.PathShare + "/CF.ini");
                 }
             }
+            IniReadWriter.WriteIniKeys("Command", "printgonghao", "1", _mainForm.PathShare + "/CF.ini");
         }
 
 
@@ -440,7 +441,10 @@ namespace controller
             activeVoteProject = voteProject;
             if (isAutoVote)
             {
-                writeAutoVoteProject();
+                if (!onlyWaitOrder)
+                {
+                    writeAutoVoteProject();
+                }
                 setWorkerId();
             }
             _mainForm.VM3 = "";
@@ -488,7 +492,7 @@ namespace controller
                 VoteProject voteProject = voteProjectMonitorList[i];
                 if (voteProject.Auto && voteProject.VoteRemains)
                 {
-                    startVoteProject(voteProject, true);
+                    startVoteProject(voteProject, allWaitOrder());
                     break;
                 }
             }
@@ -515,6 +519,27 @@ namespace controller
                 }
             }
             return result;
+        }
+
+        private bool allWaitOrder()
+        {
+            string arrDrop = IniReadWriter.ReadIniKeys("Command", "ArrDrop", _mainForm.PathShare + "/CF.ini");
+            for (int i = int.Parse(_mainForm.VM1); i <= int.Parse(_mainForm.VM2); i++)
+            {
+                if (!StringUtil.isEmpty(arrDrop))
+                {
+                    arrDrop = " " + arrDrop;
+                }
+                if (arrDrop.IndexOf(" " + i + " |") == -1)
+                {
+                    string taskName = IniReadWriter.ReadIniKeys("Command", "TaskName" + i, _mainForm.PathShare + "/Task.ini");
+                    if (!taskName.Equals("待命"))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         private void generateBlackListTemp()
