@@ -561,7 +561,7 @@ namespace controller
             for (int i = 0; i < voteProjectMonitorList.Count; i++)
             {
                 VoteProject voteProject = voteProjectMonitorList[i];
-                if (voteProject.Auto && voteProject.VoteRemains)
+                if (voteProject.Auto && voteProject.Drop != "撤销" && voteProject.VoteRemains)
                 {
                     startVoteProject(voteProject, !allWaitOrder());
                     break;
@@ -653,7 +653,7 @@ namespace controller
                 {
                     VoteProject project = voteProjectMonitorList[i];
                     //价格更高
-                    if (project.Price > activeVoteProject.Price && project.Auto && project.VoteRemains)
+                    if (project.Drop != "撤销" && project.Price > activeVoteProject.Price && project.Auto && project.VoteRemains)
                     {
                         //排序更前 或 同项目价更高切换
                         if (i < activeVoteProject.Index || (activeVoteProject.ProjectName.Split('_')[0] == project.ProjectName.Split('_')[0]))
