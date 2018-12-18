@@ -7,6 +7,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.ComponentModel;
+using System.Data;
+using System.Drawing;
 
 namespace controller
 {
@@ -181,7 +183,7 @@ namespace controller
                     }
                 }
             }
-            return voteProjectNameDroped.IndexOf(project) != -1 && voteProjectNameDropedTemp.IndexOf(project) != -1;
+            return voteProjectNameDroped.IndexOf(project) != -1 || voteProjectNameDropedTemp.IndexOf(project) != -1;
         }
 
         private bool isGreenProject(string project, int checkType)
@@ -229,7 +231,8 @@ namespace controller
             List<VoteProject> voteProjectList = new List<VoteProject>();
             foreach (Match mTR in mcTR)
             {
-                if (!isDropedProject(mTR.Value, 1))
+                //if (!isDropedProject(mTR.Value, 1))
+                if (true)
                 {
                     if (mTR.Value.IndexOf("不换") != -1 && isAdsl != "1")
                     {
@@ -354,8 +357,9 @@ namespace controller
             voteProjectList.Sort((a, b) => -a.Price.CompareTo(b.Price));
             foreach (VoteProject voteProject in voteProjectList)
             {
+                voteProject.Drop = isDropedProject(voteProject.ProjectName, 0)?"撤销":"拉黑";
                 //黑名单，价格过滤
-                if (!isDropedProject(voteProject.ProjectName, 0) && voteProject.Price >= filter)
+                if (voteProject.Price >= filter)
                 {
                     i++;
                     voteProject.Index = i;
@@ -946,6 +950,53 @@ namespace controller
             {
                 blackRate = double.Parse(textBox3.Text);
                 IniReadWriter.WriteIniKeys("Command", "blackRate", textBox3.Text, _mainForm.PathShare + "/AutoVote.ini");
+            }
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewColumn column = dataGridView1.Columns[e.ColumnIndex];
+                if (column is DataGridViewButtonColumn)
+                {
+                    string projectName = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
+                    string text = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
+                    string voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped", _mainForm.PathShare + "/AutoVote.ini");
+                    if (text == "拉黑")
+                    {
+                        voteProjectNameDroped += StringUtil.isEmpty(voteProjectNameDroped) ? projectName : "|" + projectName;
+                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = "撤销";
+                    }
+                    else
+                    {
+                        voteProjectNameDroped = voteProjectNameDroped.Replace("|" + projectName, "")
+                            .Replace(projectName, "");
+                        if (voteProjectNameDropedTemp.IndexOf(projectName) != -1)
+                        {
+                            string voteProjectNameDropedTemp = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDropedTemp", _mainForm.PathShare + "/AutoVote.ini");
+                            voteProjectNameDropedTemp = voteProjectNameDropedTemp.Replace("|" + projectName, "")
+                                .Replace(projectName, ""); 
+                            IniReadWriter.WriteIniKeys("Command", "voteProjectNameDropedTemp", voteProjectNameDropedTemp, _mainForm.PathShare + "/AutoVote.ini");
+
+                        }
+                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = "拉黑";
+                    }
+                    IniReadWriter.WriteIniKeys("Command", "voteProjectNameDroped", voteProjectNameDroped, _mainForm.PathShare + "/AutoVote.ini");
+
+                }
+            }
+        }
+
+        private void dataGridView1_DataSourceChanged(object sender, EventArgs e)
+        {
+            BindingList<VoteProject> voteProjects = (BindingList<VoteProject>)this.dataGridView1.DataSource;
+            for(int i=0; i<voteProjects.Count;i++ ) {
+                this.dataGridView1.Rows[i].Cells[5].Value = voteProjects[i].Drop;
+                if(voteProjects[i].Drop == "撤销")
+                {
+                    this.dataGridView1.Rows[i].Cells[5].Style.BackColor = Color.Black;
+                }
             }
         }
     }

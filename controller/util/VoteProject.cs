@@ -20,6 +20,7 @@ namespace controller.util
         private int index;
         private string type;
         private bool auto;
+        private string drop;//是否拉黑
 
         public VoteProject() { }
 
@@ -270,6 +271,9 @@ namespace controller.util
                 auto = value;
             }
         }
+
+        public string Drop { get => drop; set => drop = value; }
+
         public static implicit operator VoteProject(DataGridViewCell v)
         {
             throw new NotImplementedException();

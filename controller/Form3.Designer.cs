@@ -35,8 +35,13 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Hot = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Type = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Drop = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.voteProjectBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.button1 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -48,18 +53,6 @@
             this.label7 = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label8 = new System.Windows.Forms.Label();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewCheckBoxColumn1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.voteProjectBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.voteProjectBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -118,25 +111,45 @@
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dataGridViewTextBoxColumn1,
             this.dataGridViewTextBoxColumn2,
-            this.dataGridViewTextBoxColumn3,
-            this.dataGridViewTextBoxColumn4,
             this.dataGridViewTextBoxColumn10,
-            this.dataGridViewTextBoxColumn5,
-            this.dataGridViewTextBoxColumn6,
-            this.dataGridViewTextBoxColumn7,
             this.Hot,
-            this.dataGridViewTextBoxColumn8,
             this.Type,
-            this.dataGridViewCheckBoxColumn1,
-            this.dataGridViewTextBoxColumn9});
+            this.Drop});
             this.dataGridView1.DataSource = this.voteProjectBindingSource;
             this.dataGridView1.Location = new System.Drawing.Point(3, 73);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowTemplate.Height = 23;
-            this.dataGridView1.Size = new System.Drawing.Size(546, 275);
+            this.dataGridView1.Size = new System.Drawing.Size(486, 275);
             this.dataGridView1.TabIndex = 4;
+            this.dataGridView1.DataSourceChanged += new System.EventHandler(this.dataGridView1_DataSourceChanged);
+            this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.DoubleClick += new System.EventHandler(this.dataGridView1_DoubleClick);
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn1.DataPropertyName = "ProjectName";
+            this.dataGridViewTextBoxColumn1.HeaderText = "项目";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn2.DataPropertyName = "Price";
+            this.dataGridViewTextBoxColumn2.FillWeight = 55F;
+            this.dataGridViewTextBoxColumn2.HeaderText = "价格";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            this.dataGridViewTextBoxColumn2.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn10
+            // 
+            this.dataGridViewTextBoxColumn10.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn10.DataPropertyName = "Remains";
+            this.dataGridViewTextBoxColumn10.HeaderText = "剩余";
+            this.dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
+            this.dataGridViewTextBoxColumn10.ReadOnly = true;
             // 
             // Hot
             // 
@@ -156,11 +169,25 @@
             this.Type.Name = "Type";
             this.Type.ReadOnly = true;
             // 
+            // Drop
+            // 
+            this.Drop.DataPropertyName = "Drop";
+            this.Drop.FillWeight = 60F;
+            this.Drop.HeaderText = "操作";
+            this.Drop.Name = "Drop";
+            this.Drop.ReadOnly = true;
+            this.Drop.Text = "拉黑";
+            this.Drop.Width = 60;
+            // 
+            // voteProjectBindingSource
+            // 
+            this.voteProjectBindingSource.DataSource = typeof(controller.util.VoteProject);
+            // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(473, 41);
+            this.button1.Location = new System.Drawing.Point(416, 40);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(70, 20);
             this.button1.TabIndex = 5;
             this.button1.Text = "取消置顶";
             this.button1.UseVisualStyleBackColor = true;
@@ -168,7 +195,7 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(512, 6);
+            this.textBox1.Location = new System.Drawing.Point(455, 6);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(32, 21);
             this.textBox1.TabIndex = 6;
@@ -178,7 +205,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(478, 9);
+            this.label5.Location = new System.Drawing.Point(421, 9);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(29, 12);
             this.label5.TabIndex = 7;
@@ -186,9 +213,9 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(392, 41);
+            this.button2.Location = new System.Drawing.Point(335, 40);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.Size = new System.Drawing.Size(70, 20);
             this.button2.TabIndex = 8;
             this.button2.Text = "开启自动";
             this.button2.UseVisualStyleBackColor = true;
@@ -196,9 +223,9 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(311, 41);
+            this.button3.Location = new System.Drawing.Point(254, 40);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.Size = new System.Drawing.Size(70, 20);
             this.button3.TabIndex = 9;
             this.button3.Text = "到票自动";
             this.button3.UseVisualStyleBackColor = true;
@@ -206,7 +233,7 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(432, 6);
+            this.textBox2.Location = new System.Drawing.Point(375, 6);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(36, 21);
             this.textBox2.TabIndex = 10;
@@ -215,7 +242,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(410, 9);
+            this.label6.Location = new System.Drawing.Point(353, 9);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(17, 12);
             this.label6.TabIndex = 11;
@@ -223,7 +250,7 @@
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(358, 6);
+            this.textBox3.Location = new System.Drawing.Point(301, 6);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(36, 21);
             this.textBox3.TabIndex = 12;
@@ -232,7 +259,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(323, 9);
+            this.label7.Location = new System.Drawing.Point(266, 9);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(29, 12);
             this.label7.TabIndex = 13;
@@ -240,117 +267,19 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(243, 4);
+            this.progressBar1.Location = new System.Drawing.Point(186, 7);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(74, 23);
+            this.progressBar1.Size = new System.Drawing.Size(74, 18);
             this.progressBar1.TabIndex = 14;
             this.progressBar1.Visible = false;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(247, 34);
+            this.label8.Location = new System.Drawing.Point(189, 30);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(0, 12);
             this.label8.TabIndex = 15;
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewTextBoxColumn1.DataPropertyName = "ProjectName";
-            this.dataGridViewTextBoxColumn1.HeaderText = "项目";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.ReadOnly = true;
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewTextBoxColumn2.DataPropertyName = "Price";
-            this.dataGridViewTextBoxColumn2.FillWeight = 55F;
-            this.dataGridViewTextBoxColumn2.HeaderText = "价格";
-            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            this.dataGridViewTextBoxColumn2.ReadOnly = true;
-            // 
-            // dataGridViewTextBoxColumn3
-            // 
-            this.dataGridViewTextBoxColumn3.DataPropertyName = "TotalRequire";
-            this.dataGridViewTextBoxColumn3.HeaderText = "TotalRequire";
-            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-            this.dataGridViewTextBoxColumn3.ReadOnly = true;
-            this.dataGridViewTextBoxColumn3.Visible = false;
-            // 
-            // dataGridViewTextBoxColumn4
-            // 
-            this.dataGridViewTextBoxColumn4.DataPropertyName = "FinishQuantity";
-            this.dataGridViewTextBoxColumn4.HeaderText = "FinishQuantity";
-            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-            this.dataGridViewTextBoxColumn4.ReadOnly = true;
-            this.dataGridViewTextBoxColumn4.Visible = false;
-            // 
-            // dataGridViewTextBoxColumn10
-            // 
-            this.dataGridViewTextBoxColumn10.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewTextBoxColumn10.DataPropertyName = "Remains";
-            this.dataGridViewTextBoxColumn10.HeaderText = "剩余";
-            this.dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
-            this.dataGridViewTextBoxColumn10.ReadOnly = true;
-            // 
-            // dataGridViewTextBoxColumn5
-            // 
-            this.dataGridViewTextBoxColumn5.DataPropertyName = "BackgroundNo";
-            this.dataGridViewTextBoxColumn5.HeaderText = "BackgroundNo";
-            this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
-            this.dataGridViewTextBoxColumn5.ReadOnly = true;
-            this.dataGridViewTextBoxColumn5.Visible = false;
-            // 
-            // dataGridViewTextBoxColumn6
-            // 
-            this.dataGridViewTextBoxColumn6.DataPropertyName = "BackgroundAddress";
-            this.dataGridViewTextBoxColumn6.HeaderText = "BackgroundAddress";
-            this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
-            this.dataGridViewTextBoxColumn6.ReadOnly = true;
-            this.dataGridViewTextBoxColumn6.Visible = false;
-            // 
-            // dataGridViewTextBoxColumn7
-            // 
-            this.dataGridViewTextBoxColumn7.DataPropertyName = "DownloadAddress";
-            this.dataGridViewTextBoxColumn7.HeaderText = "DownloadAddress";
-            this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
-            this.dataGridViewTextBoxColumn7.ReadOnly = true;
-            this.dataGridViewTextBoxColumn7.Visible = false;
-            // 
-            // dataGridViewTextBoxColumn8
-            // 
-            this.dataGridViewTextBoxColumn8.DataPropertyName = "IdType";
-            this.dataGridViewTextBoxColumn8.FillWeight = 55F;
-            this.dataGridViewTextBoxColumn8.HeaderText = "平台";
-            this.dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
-            this.dataGridViewTextBoxColumn8.ReadOnly = true;
-            this.dataGridViewTextBoxColumn8.Visible = false;
-            this.dataGridViewTextBoxColumn8.Width = 55;
-            // 
-            // dataGridViewCheckBoxColumn1
-            // 
-            this.dataGridViewCheckBoxColumn1.DataPropertyName = "IsRestrict";
-            this.dataGridViewCheckBoxColumn1.FillWeight = 55F;
-            this.dataGridViewCheckBoxColumn1.HeaderText = "限人";
-            this.dataGridViewCheckBoxColumn1.Name = "dataGridViewCheckBoxColumn1";
-            this.dataGridViewCheckBoxColumn1.ReadOnly = true;
-            this.dataGridViewCheckBoxColumn1.Visible = false;
-            this.dataGridViewCheckBoxColumn1.Width = 55;
-            // 
-            // dataGridViewTextBoxColumn9
-            // 
-            this.dataGridViewTextBoxColumn9.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewTextBoxColumn9.DataPropertyName = "RefreshDate";
-            this.dataGridViewTextBoxColumn9.FillWeight = 120F;
-            this.dataGridViewTextBoxColumn9.HeaderText = "时间";
-            this.dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
-            this.dataGridViewTextBoxColumn9.ReadOnly = true;
-            // 
-            // voteProjectBindingSource
-            // 
-            this.voteProjectBindingSource.DataSource = typeof(controller.util.VoteProject);
             // 
             // Form3
             // 
@@ -358,7 +287,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(550, 350);
+            this.ClientSize = new System.Drawing.Size(506, 350);
             this.ControlBox = false;
             this.Controls.Add(this.label8);
             this.Controls.Add(this.progressBar1);
@@ -414,19 +343,6 @@
         private System.Windows.Forms.BindingSource voteProjectBindingSource;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn10;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Hot;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Type;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn dataGridViewCheckBoxColumn1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.TextBox textBox2;
@@ -435,5 +351,11 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn10;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Hot;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Type;
+        private System.Windows.Forms.DataGridViewButtonColumn Drop;
     }
 }
