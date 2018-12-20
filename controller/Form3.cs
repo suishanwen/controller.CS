@@ -458,7 +458,6 @@ namespace controller
         private void startVoteProject(VoteProject voteProject, bool onlyWaitOrder)
         {
             Console.WriteLine("projectName：" + voteProject.ProjectName + ",price：" + voteProject.Price + ",remains：" + voteProject.Remains);
-            HttpManager httpManager = HttpManager.getInstance();
             string pathName = IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini") + "\\" + voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1);
             if (!Directory.Exists(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName))
             {
@@ -470,33 +469,23 @@ namespace controller
                 bool result = true;
                 do
                 {
-                    //try
-                    //{
                     downLoadCount++;
-                    //File.Delete(pathName);
-                    //httpManager.HttpDownloadFile(url, pathName);
                     result = HttpDownLoad.Download(url, pathName);
-                    //}
-                    //catch (Exception)
-                    //{
                     if (!result)
                     {
-                        Form3.SetProName(string.Format("第{0}次下载失败",downLoadCount));
+                        Form3.SetProName($"{voteProject.ProjectName}[{downLoadCount}次]下");
                         Log.writeLogs("./log.txt", voteProject.ProjectName + "  下载失败，5秒后重新下载");
                         Thread.Sleep(5000);
-                        if (downLoadCount >= 6)
+                        if (downLoadCount >= 3)
                         {
                             Log.writeLogs("./log.txt", voteProject.ProjectName + "  下载失败3次，返回");
                             return;
                         }
                     }
-
-                    //}
                 } while (!result);
                 Form3.SetProName("");
                 Log.writeLogs("./log.txt", pathName + "  下载完成");
                 Winrar.UnCompressRar(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName, IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini"), voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1));
-
             }
             if (voteProject.Type == "九天" &&
                 !File.Exists(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName + "/启动九天.bat"))
@@ -515,10 +504,10 @@ namespace controller
             activeVoteProject = voteProject;
             if (isAutoVote)
             {
-                if (!onlyWaitOrder)
-                {
+//                if (!onlyWaitOrder)
+//                {
                     writeAutoVoteProject();
-                }
+//                }
                 setWorkerId();
             }
             _mainForm.VM3 = "";
