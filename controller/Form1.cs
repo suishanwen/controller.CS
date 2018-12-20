@@ -6,7 +6,6 @@ using System.Threading;
 using System.Management;
 using System.Text;
 using System.Diagnostics;
-using System.Collections.Generic;
 
 namespace controller
 {
