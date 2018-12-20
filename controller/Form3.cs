@@ -1036,7 +1036,10 @@ namespace controller
                     string voteProjectNameToped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameToped", _mainForm.PathShare + "/AutoVote.ini");
                     if (!val)
                     {
-                        voteProjectNameToped += StringUtil.isEmpty(voteProjectNameToped) ? allProjectName : "|" + allProjectName;
+                        if (voteProjectNameToped.IndexOf(allProjectName) == -1)
+                        {
+                            voteProjectNameToped += StringUtil.isEmpty(voteProjectNameToped) ? allProjectName : "|" + allProjectName;
+                        }
                         dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = true;
                     }
                     else
