@@ -109,13 +109,13 @@ namespace controller
             }
             else
             {
-                if(value == 100)
+                if (value == 100)
                 {
                     _form3.progressBar1.Visible = false;
                 }
                 else
                 {
-                    if(_form3.progressBar1.Visible == false)
+                    if (_form3.progressBar1.Visible == false)
                     {
                         _form3.progressBar1.Visible = true;
                     }
@@ -155,7 +155,23 @@ namespace controller
             autoVote.Start();
         }
 
-
+        private bool isTopedProject(string project)
+        {
+            string voteProjectNameToped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameToped", _mainForm.PathShare + "/AutoVote.ini").Trim();
+            if (StringUtil.isEmpty(voteProjectNameToped))
+            {
+                return false;
+            }
+            string[] topedProjectList = voteProjectNameToped.Split('|');
+            foreach (string topedProject in topedProjectList)
+            {
+                if (project.IndexOf(topedProject) != -1)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         private bool isDropedProject(string project, int checkType)
         {
@@ -257,6 +273,10 @@ namespace controller
                                 break;
                             case 5:
                                 voteProject.Price = double.Parse(innerTd);
+                                if (voteProject.Price < filter)
+                                {
+                                    continue;
+                                }
                                 break;
                             case 7:
                                 String[] quantityInfo = mTD.Value.Split('"');
@@ -336,8 +356,6 @@ namespace controller
                 }
             }
         }
-            
-
 
         //委托 解决线程间操作dataGrid问题
         delegate void SetDataGridView(List<VoteProject> voteProjectList);
@@ -364,30 +382,44 @@ namespace controller
             }
         }
 
+
         private void voteProjectsAnalysis(List<VoteProject> voteProjectList)
         {
             voteProjectMonitorList.Clear();
-            int i = -1;
+            foreach (VoteProject voteProject in voteProjectList)
+            {
+                voteProject.Drop = isDropedProject(voteProject.ProjectName, 0);
+                voteProject.Top = isTopedProject(voteProject.ProjectName);
+                voteProject.setProjectType();
+            }
+            voteProjectList.Sort((a, b) =>
+            {
+                if (a.Top && !b.Top)
+                {
+                    return -1;
+                }
+                else if (!a.Top && b.Top)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return -a.Price.CompareTo(b.Price);
+                }
+            });
             if (activeVoteProject != null)
             {
                 activeVoteProject.Index = -1;
 
             }
-            voteProjectList.Sort((a, b) => -a.Price.CompareTo(b.Price));
-            foreach (VoteProject voteProject in voteProjectList)
+            for (int i = 0; i < voteProjectList.Count; i++)
             {
-                voteProject.Drop = isDropedProject(voteProject.ProjectName, 0)?"撤销":"拉黑";
-                //黑名单，价格过滤
-                if (voteProject.Price >= filter)
+                VoteProject voteProject = voteProjectList[i];
+                voteProject.Index = i;
+                voteProjectMonitorList.Add(voteProject);
+                if (activeVoteProject != null && voteProject.ProjectName.Equals(activeVoteProject.ProjectName))
                 {
-                    i++;
-                    voteProject.Index = i;
-                    voteProject.setProjectType();
-                    voteProjectMonitorList.Add(voteProject);
-                    if (activeVoteProject != null && voteProject.ProjectName.Equals(activeVoteProject.ProjectName))
-                    {
-                        activeVoteProject = voteProject;
-                    }
+                    activeVoteProject = voteProject;
                 }
             }
             //更新taskInfoDict
@@ -504,10 +536,10 @@ namespace controller
             activeVoteProject = voteProject;
             if (isAutoVote)
             {
-//                if (!onlyWaitOrder)
-//                {
-                    writeAutoVoteProject();
-//                }
+                //                if (!onlyWaitOrder)
+                //                {
+                writeAutoVoteProject();
+                //                }
                 setWorkerId();
             }
             _mainForm.VM3 = "";
@@ -548,9 +580,9 @@ namespace controller
             if (isAutoVote)
             {
                 bool allSameProject = true;
-                foreach(int key in vmInfo.Keys)
+                foreach (int key in vmInfo.Keys)
                 {
-                    if(vmInfo[key].ProjectName != activeVoteProject.ProjectName)
+                    if (vmInfo[key].ProjectName != activeVoteProject.ProjectName)
                     {
                         allSameProject = false;
                         break;
@@ -570,7 +602,7 @@ namespace controller
             for (int i = 0; i < voteProjectMonitorList.Count; i++)
             {
                 VoteProject voteProject = voteProjectMonitorList[i];
-                if (voteProject.Auto && voteProject.Drop != "撤销" && voteProject.VoteRemains)
+                if (voteProject.Auto && !voteProject.Drop && voteProject.VoteRemains)
                 {
                     startVoteProject(voteProject, !allWaitOrder());
                     break;
@@ -662,7 +694,7 @@ namespace controller
                 {
                     VoteProject project = voteProjectMonitorList[i];
                     //价格更高
-                    if (project.Drop != "撤销" && project.Price > activeVoteProject.Price && project.Auto && project.VoteRemains)
+                    if (!project.Drop && project.Price > activeVoteProject.Price && project.Auto && project.VoteRemains)
                     {
                         //排序更前 或 同项目价更高切换
                         if (i < activeVoteProject.Index || (activeVoteProject.ProjectName.Split('_')[0] == project.ProjectName.Split('_')[0]))
@@ -969,18 +1001,17 @@ namespace controller
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0)
+            if (e.RowIndex >= 0 && dataGridView1.Columns[e.ColumnIndex] is DataGridViewCheckBoxColumn)
             {
-                DataGridViewColumn column = dataGridView1.Columns[e.ColumnIndex];
-                if (column is DataGridViewButtonColumn)
+                string projectName = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
+                bool val = (bool)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+                if (e.ColumnIndex == 5)
                 {
-                    string projectName = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
-                    string text = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
                     string voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped", _mainForm.PathShare + "/AutoVote.ini");
-                    if (text == "拉黑")
+                    if (!val)
                     {
                         voteProjectNameDroped += StringUtil.isEmpty(voteProjectNameDroped) ? projectName : "|" + projectName;
-                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = "撤销";
+                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = true;
                     }
                     else
                     {
@@ -990,28 +1021,35 @@ namespace controller
                         {
                             string voteProjectNameDropedTemp = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDropedTemp", _mainForm.PathShare + "/AutoVote.ini");
                             voteProjectNameDropedTemp = voteProjectNameDropedTemp.Replace("|" + projectName, "")
-                                .Replace(projectName, ""); 
+                                .Replace(projectName, "");
                             IniReadWriter.WriteIniKeys("Command", "voteProjectNameDropedTemp", voteProjectNameDropedTemp, _mainForm.PathShare + "/AutoVote.ini");
 
                         }
-                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = "拉黑";
+                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = false;
                     }
                     IniReadWriter.WriteIniKeys("Command", "voteProjectNameDroped", voteProjectNameDroped, _mainForm.PathShare + "/AutoVote.ini");
 
                 }
-            }
-        }
-
-        private void dataGridView1_DataSourceChanged(object sender, EventArgs e)
-        {
-            BindingList<VoteProject> voteProjects = (BindingList<VoteProject>)this.dataGridView1.DataSource;
-            for(int i=0; i<voteProjects.Count;i++ ) {
-                this.dataGridView1.Rows[i].Cells[5].Value = voteProjects[i].Drop;
-                if(voteProjects[i].Drop == "撤销")
+                else if (e.ColumnIndex == 6)
                 {
-                    this.dataGridView1.Rows[i].Cells[5].Style.BackColor = Color.Black;
+                    string allProjectName = projectName.Split('_')[0];
+                    string voteProjectNameToped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameToped", _mainForm.PathShare + "/AutoVote.ini");
+                    if (!val)
+                    {
+                        voteProjectNameToped += StringUtil.isEmpty(voteProjectNameToped) ? allProjectName : "|" + allProjectName;
+                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = true;
+                    }
+                    else
+                    {
+                        voteProjectNameToped = voteProjectNameToped.Replace("|" + allProjectName, "")
+                            .Replace(allProjectName, "");
+                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = false;
+                    }
+                    IniReadWriter.WriteIniKeys("Command", "voteProjectNameToped", voteProjectNameToped, _mainForm.PathShare + "/AutoVote.ini");
+
                 }
             }
         }
+
     }
 }

@@ -20,7 +20,9 @@ namespace controller.util
         private int index;
         private string type;
         private bool auto;
-        private string drop;//是否拉黑
+        private bool drop;//是否拉黑
+        private bool top;//是否置顶
+
 
         public VoteProject() { }
 
@@ -58,7 +60,7 @@ namespace controller.util
             }
             else
             {
-                this.Type = "未定义";
+                this.Type = "未定";
             }
             this.auto = this.type == "九天" || this.type == "MM" || this.Type == "圆球";
         }
@@ -77,202 +79,25 @@ namespace controller.util
             return projectName + " " + backgroundNo + " " + price + " " + remains ;
         }
 
-        public string ProjectName
-        {
-            get
-            {
-                return projectName;
-            }
-
-            set
-            {
-                projectName = value;
-            }
-        }
 
 
-        public double Price
-        {
-            get
-            {
-                return price;
-            }
-
-            set
-            {
-                price = value;
-            }
-        }
-
-        public long TotalRequire
-        {
-            get
-            {
-                return totalRequire;
-            }
-
-            set
-            {
-                totalRequire = value;
-            }
-        }
-
-        public long FinishQuantity
-        {
-            get
-            {
-                return finishQuantity;
-            }
-
-            set
-            {
-                finishQuantity = value;
-            }
-        }
-
-        public string BackgroundNo
-        {
-            get
-            {
-                return backgroundNo;
-            }
-
-            set
-            {
-                backgroundNo = value;
-            }
-        }
-
-        public string BackgroundAddress
-        {
-            get
-            {
-                return backgroundAddress;
-            }
-
-            set
-            {
-                backgroundAddress = value;
-            }
-        }
-
-        public string DownloadAddress
-        {
-            get
-            {
-                return downloadAddress;
-            }
-
-            set
-            {
-                downloadAddress = value;
-            }
-        }
-
-        public bool IsRestrict
-        {
-            get
-            {
-                return isRestrict;
-            }
-
-            set
-            {
-                isRestrict = value;
-            }
-        }
-
-        public string IdType
-        {
-            get
-            {
-                return idType;
-            }
-
-            set
-            {
-                idType = value;
-            }
-        }
-
-        public DateTime RefreshDate
-        {
-            get
-            {
-                return refreshDate;
-            }
-
-            set
-            {
-                refreshDate = value;
-            }
-        }
-
-        public long Remains
-        {
-            get
-            {
-                return remains;
-            }
-
-            set
-            {
-                remains = value;
-            }
-        }
-
-
-        public int Hot
-        {
-            get
-            {
-                return hot;
-            }
-
-            set
-            {
-                hot = value;
-            }
-        }
-        public int Index
-        {
-            get
-            {
-                return index;
-            }
-
-            set
-            {
-                index = value;
-            }
-        }
-        public string Type
-        {
-            get
-            {
-                return type;
-            }
-
-            set
-            {
-                type = value;
-            }
-        }
-
-        public bool Auto
-        {
-            get
-            {
-                return auto;
-            }
-
-            set
-            {
-                auto = value;
-            }
-        }
-
-        public string Drop { get => drop; set => drop = value; }
+        public bool Drop { get => drop; set => drop = value; }
+        public bool Top { get => top; set => top = value; }
+        public string ProjectName { get => projectName; set => projectName = value; }
+        public double Price { get => price; set => price = value; }
+        public long TotalRequire { get => totalRequire; set => totalRequire = value; }
+        public long FinishQuantity { get => finishQuantity; set => finishQuantity = value; }
+        public long Remains { get => remains; set => remains = value; }
+        public string BackgroundNo { get => backgroundNo; set => backgroundNo = value; }
+        public string BackgroundAddress { get => backgroundAddress; set => backgroundAddress = value; }
+        public string DownloadAddress { get => downloadAddress; set => downloadAddress = value; }
+        public bool IsRestrict { get => isRestrict; set => isRestrict = value; }
+        public string IdType { get => idType; set => idType = value; }
+        public int Hot { get => hot; set => hot = value; }
+        public DateTime RefreshDate { get => refreshDate; set => refreshDate = value; }
+        public int Index { get => index; set => index = value; }
+        public string Type { get => type; set => type = value; }
+        public bool Auto { get => auto; set => auto = value; }
 
         public static implicit operator VoteProject(DataGridViewCell v)
         {
