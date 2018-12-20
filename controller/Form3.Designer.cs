@@ -299,7 +299,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(382, 348);
+            this.ClientSize = new System.Drawing.Size(382, 347);
             this.ControlBox = false;
             this.Controls.Add(this.label8);
             this.Controls.Add(this.progressBar1);
