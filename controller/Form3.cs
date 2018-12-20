@@ -906,13 +906,18 @@ namespace controller
             button1.Text = TopMost ? "取消置顶" : "置顶";
         }
 
-        private void dataGridView1_DoubleClick(object sender, EventArgs e)
+        private void selectVoteProject()
         {
             if (dataGridView1.SelectedRows.Count > 0)
             {
                 int index = dataGridView1.SelectedRows[0].Index;
                 startVoteProject(VoteProjectMonitorList[index], false);
             }
+        }
+
+        private void dataGridView1_DoubleClick(object sender, EventArgs e)
+        {
+            new Thread(selectVoteProject).Start();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
