@@ -317,6 +317,28 @@ namespace controller
             return voteProjectList;
         }
 
+
+        //委托 解决线程间操作dataGrid问题
+        delegate void SetSelectedDataGridView();
+
+        private void SetSelectedDataGrid()
+        {
+            if (this.dataGridView1.InvokeRequired)
+            {
+                SetSelectedDataGridView d = new SetSelectedDataGridView(SetSelectedDataGrid);
+                this.Invoke(d, new object[] { });
+            }
+            else
+            {
+                if (activeVoteProject != null && activeVoteProject.Index != -1)
+                {
+                    this.dataGridView1.CurrentCell = this.dataGridView1[0, activeVoteProject.Index];
+                }
+            }
+        }
+            
+
+
         //委托 解决线程间操作dataGrid问题
         delegate void SetDataGridView(List<VoteProject> voteProjectList);
 
@@ -336,10 +358,7 @@ namespace controller
                     {
                         this.dataGridView1.ClearSelection();
                     }
-                    if (activeVoteProject.Index != -1)
-                    {
-                        this.dataGridView1.CurrentCell = this.dataGridView1[0, activeVoteProject.Index];
-                    }
+                    SetSelectedDataGrid();
                 }
                 this.dataGridView1.Refresh();
             }
@@ -554,6 +573,7 @@ namespace controller
                 }
             }
             TaskInfos.Set(vmInfo);
+            SetSelectedDataGrid();
         }
 
         private void testVoteProjectMonitorList()
