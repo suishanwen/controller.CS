@@ -147,6 +147,7 @@ namespace controller
             textBox1.Text = filter.ToString();
             textBox2.Text = IniReadWriter.ReadIniKeys("Command", "maxKb", _mainForm.PathShare + "/CF.ini");
             textBox3.Text = blackRate.ToString();
+            button4.Text = dataSource.Equals("NEW") ? "服" : "网";
             if (!StringUtil.isEmpty(_isAutoVote) && _isAutoVote.Equals("1"))
             {
                 isAutoVote = true;
@@ -1166,5 +1167,20 @@ namespace controller
             }
         }
 
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if(dataSource.Equals("NEW"))
+            {
+                dataSource = "";
+                this.button4.Text = "网";
+            }
+            else
+            {
+                dataSource = "NEW";
+                this.button4.Text = "服";
+            }
+            IniReadWriter.WriteIniKeys("Command", "dataSource", dataSource, _mainForm.PathShare + "/AutoVote.ini");
+
+        }
     }
 }
