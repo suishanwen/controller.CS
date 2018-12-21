@@ -218,7 +218,66 @@ namespace controller
 
         }
 
+        private string getJsonVal(string json, string name)
+        {
+            json = json.Substring(json.IndexOf($"{name}:"));
+            int index = json.IndexOf(",");
+            if (index == -1)
+            {
+                return json.Substring(name.Length + 2, json.IndexOf("}") - (name.Length + 2));
+            }
+            return json.Substring(name.Length+2, index-(name.Length + 2));
+        }
+
         private List<VoteProject> getVoteProjects()
+        {
+            HttpManager httpUtil = HttpManager.getInstance();
+            string result = "";
+            do
+            {
+                try
+                {
+                    result = httpUtil.requestHttpGet("http://bitcoinrobot.cn:8000/", "voteInfo", "");
+                }
+                catch (Exception)
+                {
+                    result = "";
+                    Console.WriteLine("Request Fail!Retry in 10s...");
+                    Log.writeLogs("./log.txt", "Request Fail!Retry in 10s...");
+                    Thread.Sleep(10000);
+                }
+            } while (result == "" || result == "timeout");
+            List<VoteProject> voteProjectList = new List<VoteProject>();
+            string pat = @"(\[).*?(\])";
+            Match matched = Regex.Match(result.Replace("'", ""), pat, RegexOptions.IgnoreCase);
+            pat = @"(\{).*?(\})";
+            MatchCollection matches = Regex.Matches(matched.Value.Replace("[", "")
+                .Replace("]", ""), pat, RegexOptions.IgnoreCase);
+            foreach (Match m in matches)
+            {
+                string json = m.Value;
+                VoteProject voteProject = new VoteProject();
+                voteProject.ProjectName = getJsonVal(json, "projectName");
+                voteProject.Hot = int.Parse(getJsonVal(json, "hot"));
+                voteProject.Price = double.Parse(getJsonVal(json, "price"));
+                voteProject.FinishQuantity = long.Parse(getJsonVal(json, "finishQuantity"));
+                voteProject.TotalRequire = long.Parse(getJsonVal(json, "totalRequire"));
+                voteProject.Remains = long.Parse(getJsonVal(json, "remains"));
+                voteProject.BackgroundAddress = getJsonVal(json, "backgroundAddress");
+                voteProject.DownloadAddress = getJsonVal(json, "downloadAddress");
+                voteProject.IdType = getJsonVal(json, "idType");
+                voteProject.BackgroundNo = getJsonVal(json, "backgroundNo");
+                voteProject.RefreshDate = Convert.ToDateTime(DateTime.Now.Year + "-" + getJsonVal(json, "refreshDate") + ":00");
+                if(voteProject.Price>= filter)
+                {
+                    voteProjectList.Add(voteProject);
+                }
+            }
+            return voteProjectList;
+        }
+
+
+        private List<VoteProject> getVoteProjectsBT()
         {
             String isAdsl = IniReadWriter.ReadIniKeys("Command", "isAdsl", _mainForm.PathShare + "/CF.ini");
             HttpManager httpUtil = HttpManager.getInstance();
