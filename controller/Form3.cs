@@ -229,7 +229,7 @@ namespace controller
             {
                 return json.Substring(name.Length + 2, json.IndexOf("}") - (name.Length + 2));
             }
-            return json.Substring(name.Length+2, index-(name.Length + 2));
+            return json.Substring(name.Length + 2, index - (name.Length + 2));
         }
 
         private List<VoteProject> getVoteProjects()
@@ -261,17 +261,37 @@ namespace controller
                 string json = m.Value;
                 VoteProject voteProject = new VoteProject();
                 voteProject.ProjectName = getJsonVal(json, "projectName");
-                voteProject.Hot = int.Parse(getJsonVal(json, "hot"));
-                voteProject.Price = double.Parse(getJsonVal(json, "price"));
-                voteProject.FinishQuantity = long.Parse(getJsonVal(json, "finishQuantity"));
-                voteProject.TotalRequire = long.Parse(getJsonVal(json, "totalRequire"));
-                voteProject.Remains = long.Parse(getJsonVal(json, "remains"));
+                string hot = getJsonVal(json, "hot");
+                if (!StringUtil.isEmpty(hot))
+                {
+                    voteProject.Hot = int.Parse(hot);
+                }
+                string price = getJsonVal(json, "price");
+                if (!StringUtil.isEmpty(price))
+                {
+                    voteProject.Price = double.Parse(price);
+                }
+                string finish = getJsonVal(json, "finishQuantity");
+                if (!StringUtil.isEmpty(finish))
+                {
+                    voteProject.FinishQuantity = long.Parse(finish);
+                }
+                string require = getJsonVal(json, "totalRequire");
+                if (!StringUtil.isEmpty(require))
+                {
+                    voteProject.TotalRequire = long.Parse(require);
+                }
+                string remains = getJsonVal(json, "remains");
+                if (!StringUtil.isEmpty(remains))
+                {
+                    voteProject.Remains = long.Parse(remains);
+                }
                 voteProject.BackgroundAddress = getJsonVal(json, "backgroundAddress");
                 voteProject.DownloadAddress = getJsonVal(json, "downloadAddress");
                 voteProject.IdType = getJsonVal(json, "idType");
                 voteProject.BackgroundNo = getJsonVal(json, "backgroundNo");
                 voteProject.RefreshDate = Convert.ToDateTime(DateTime.Now.Year + "-" + getJsonVal(json, "refreshDate") + ":00");
-                if(voteProject.Price>= filter)
+                if (voteProject.Price >= filter)
                 {
                     voteProjectList.Add(voteProject);
                 }
@@ -551,12 +571,34 @@ namespace controller
         private void startVoteProject(VoteProject voteProject, bool onlyWaitOrder)
         {
             Console.WriteLine("projectName：" + voteProject.ProjectName + ",price：" + voteProject.Price + ",remains：" + voteProject.Remains);
-            string pathName = IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini") + "\\" + voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1);
+            string fileName = voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1);
+            string pathName = IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini") + "\\" + fileName;
             if (!Directory.Exists(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName))
             {
                 string url = voteProject.DownloadAddress;
                 string now = DateTime.Now.ToLocalTime().ToString();
                 Form3.SetProName(voteProject.ProjectName);
+                if (dataSource.Equals("NEW"))
+                {
+                    string checkUrl = $"http://bitcoinrobot.cn:8000/download?url={url}";
+                    HttpManager httpUtil = HttpManager.getInstance();
+                    string re = "";
+                    do
+                    {
+                        try
+                        {
+                            re = httpUtil.requestHttpGet(checkUrl, "", "");
+                        }
+                        catch (Exception)
+                        {
+                            re = "";
+                            Console.WriteLine("Request Download Fail!Retry in 10s...");
+                            Log.writeLogs("./log.txt", "Request Fail!Retry in 10s...");
+                            Thread.Sleep(10000);
+                        }
+                    } while (re != "ok");
+                    url = $"http://bitcoinrobot.cn/vote/dl/{fileName}";
+                }
                 Log.writeLogs("./log.txt", "开始下载:" + url);
                 downLoadCount = 0;
                 bool result = true;
@@ -811,13 +853,13 @@ namespace controller
                 try
                 {
                     List<VoteProject> voteProjects;
-                    if (dataSource.Equals("BT"))
+                    if (dataSource.Equals("NEW"))
                     {
-                        voteProjects = getVoteProjectsBT();
+                        voteProjects = getVoteProjects();
                     }
                     else
                     {
-                        voteProjects = getVoteProjects();
+                        voteProjects = getVoteProjectsBT();
                     }
                     voteProjectsAnalysis(voteProjects);
                     if (isAutoVote)
