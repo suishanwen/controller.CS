@@ -36,6 +36,8 @@ namespace controller
         private double blackRate = 1;
         private bool overAuto = false;
         private int clearBlackListHour;
+        private string dataSource;
+
 
         internal List<VoteProject> VoteProjectMonitorList
         {
@@ -134,6 +136,7 @@ namespace controller
             _mainForm = form1;
             _form3 = this;
             InitializeComponent();
+            dataSource = IniReadWriter.ReadIniKeys("Command", "dataSource", _mainForm.PathShare + "/CF.ini");
             string _isAutoVote = IniReadWriter.ReadIniKeys("Command", "isAutoVote", _mainForm.PathShare + "/CF.ini");
             try
             {
@@ -807,7 +810,16 @@ namespace controller
                 count++;
                 try
                 {
-                    voteProjectsAnalysis(getVoteProjects());
+                    List<VoteProject> voteProjects;
+                    if (dataSource.Equals("BT"))
+                    {
+                        voteProjects = getVoteProjectsBT();
+                    }
+                    else
+                    {
+                        voteProjects = getVoteProjects();
+                    }
+                    voteProjectsAnalysis(voteProjects);
                     if (isAutoVote)
                     {
                         //每2小时  * 倍率 解封黑名单
