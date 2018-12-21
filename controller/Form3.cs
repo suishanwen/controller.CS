@@ -136,7 +136,7 @@ namespace controller
             _mainForm = form1;
             _form3 = this;
             InitializeComponent();
-            dataSource = IniReadWriter.ReadIniKeys("Command", "dataSource", _mainForm.PathShare + "/CF.ini");
+            dataSource = IniReadWriter.ReadIniKeys("Command", "dataSource", _mainForm.PathShare + "/AutoVote.ini");
             string _isAutoVote = IniReadWriter.ReadIniKeys("Command", "isAutoVote", _mainForm.PathShare + "/CF.ini");
             try
             {
