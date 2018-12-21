@@ -273,10 +273,6 @@ namespace controller
                                 break;
                             case 5:
                                 voteProject.Price = double.Parse(innerTd);
-                                if (voteProject.Price < filter)
-                                {
-                                    continue;
-                                }
                                 break;
                             case 7:
                                 String[] quantityInfo = mTD.Value.Split('"');
@@ -330,8 +326,11 @@ namespace controller
                         }
                         index++;
                     }
-                    voteProject.IsRestrict = voteProject.BackgroundNo.IndexOf("限制") != -1;
-                    voteProjectList.Add(voteProject);
+                    if (voteProject.Price >= filter)
+                    {
+                        voteProjectList.Add(voteProject);
+                    }
+
                 }
             }
             return voteProjectList;
