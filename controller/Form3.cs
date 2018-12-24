@@ -386,11 +386,7 @@ namespace controller
                                 }
                                 catch (Exception)
                                 {
-                                    if (innerTd.IndexOf("BT-") != -1)
-                                    {
-                                        voteProject.IdType = "BT";
-                                    }
-                                    else if (innerTd.IndexOf("AQ-") != -1)
+                                    if (innerTd == null || innerTd.IndexOf("AQ-") != -1)
                                     {
                                         voteProject.IdType = "AQ";
                                     }

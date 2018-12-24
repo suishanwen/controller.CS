@@ -50,7 +50,8 @@ namespace controller.util
                     int len = streamReader.Read(buf, 0, buf.Length);
                     if (len <= 0)
                         break;
-                    responseContent += System.Text.Encoding.GetEncoding("gbk").GetString(buf, 0, len);
+                    responseContent += System.Text.Encoding.GetEncoding("utf-8").GetString(buf, 0, len);//指定编码格式
+                    //responseContent += System.Text.Encoding.GetEncoding("gbk").GetString(buf, 0, len);
 
                 }
 
