@@ -972,13 +972,13 @@ namespace controller
                         }
 
                         //5分钟临时黑名单解锁
-                        if (count == 5 * 3)
+                        if (count == 5 * 4)
                         {
                             generateBlackListTemp();
                         }
 
                         //20分钟 * 倍率 黑名单解锁
-                        if (count > 20 * 3 * blackRate)
+                        if (count > 20 * 4 * blackRate)
                         {
                             count = 0;
                             generateBlackList();
@@ -995,7 +995,7 @@ namespace controller
                     }
 
                     refreshWindowText();
-                    Thread.Sleep(20000);
+                    Thread.Sleep(15000);
                 }
                 catch (Exception e)
                 {
