@@ -44,6 +44,7 @@ namespace controller.util
                 content += "\n</table>";
                 content += "\n</div><br/>";
                 reward += subReward;
+                IniReadWriter.WriteIniKeys(section, null, null, path);
             });
             content += $"\n<h2>合计:{reward}</h2>";
             content += "\n</div>\n</body>\n</html>";
