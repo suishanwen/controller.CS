@@ -1238,6 +1238,11 @@ namespace controller
                 bool val = (bool) dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
                 if (e.ColumnIndex == 5)
                 {
+                    //关联拉黑 禁用button
+                    if (voteProjectMonitorList[e.RowIndex].RelDrop)
+                    {
+                        return;
+                    }
                     string voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped",
                         _mainForm.PathShare + "/AutoVote.ini");
                     if (!val)
@@ -1318,9 +1323,10 @@ namespace controller
             {
                 if (voteProjects[i].RelDrop)
                 {
-                    this.dataGridView1.Rows[i].Cells[5].ReadOnly = false;
+                    this.dataGridView1.Rows[i].Cells[5].Style.BackColor = Color.LightGray;
                 }
             }
         }
+
     }
 }
