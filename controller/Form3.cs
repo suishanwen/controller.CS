@@ -36,7 +36,9 @@ namespace controller
         private double blackRate = 1;
         private bool overAuto = false;
         private int clearBlackListHour;
+        private int statisticDay;
         private string dataSource;
+        private string email;
 
 
         internal List<VoteProject> VoteProjectMonitorList
@@ -131,6 +133,7 @@ namespace controller
             InitializeComponent();
             dataSource = IniReadWriter.ReadIniKeys("Command", "dataSource", _mainForm.PathShare + "/AutoVote.ini");
             string _isAutoVote = IniReadWriter.ReadIniKeys("Command", "isAutoVote", _mainForm.PathShare + "/CF.ini");
+            string email = IniReadWriter.ReadIniKeys("Command", "email", _mainForm.PathShare + "/CF.ini");
             try
             {
                 filter = double.Parse(IniReadWriter.ReadIniKeys("Command", "filter",
@@ -962,6 +965,14 @@ namespace controller
                     voteProjectsAnalysis(voteProjects);
                     if (isAutoVote)
                     {
+                        //8点30分 发送收益统计
+                        if (DateTime.Now.Hour == 8 && DateTime.Now.Minute == 1
+                            && DateTime.Now.Day != statisticDay && !StringUtil.isEmpty(email))
+                        {
+                            Email.Send(email, "收益统计", Statistic.GenerateStatistic());
+                            statisticDay = DateTime.Now.Day;
+                        }
+
                         //每2小时  * 倍率 解封黑名单
                         if (DateTime.Now.Minute == 1 && DateTime.Now.Hour % (2 * blackRate) == 0 &&
                             DateTime.Now.Hour != clearBlackListHour)

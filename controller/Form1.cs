@@ -145,7 +145,10 @@ namespace controller
                 _Form1.textBox4.Text = value;
             }
         }
-
+        public static string GetPathShare()
+        {
+            return _Form1.pathShare;
+        }
         public string VM3
         {
             get
