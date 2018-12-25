@@ -21,6 +21,7 @@ namespace controller.util
         private string type;
         private bool auto;
         private bool drop;//是否拉黑
+        private bool relDrop;//关联拉黑
         private bool top;//是否置顶
 
 
@@ -98,6 +99,7 @@ namespace controller.util
         public int Index { get => index; set => index = value; }
         public string Type { get => type; set => type = value; }
         public bool Auto { get => auto; set => auto = value; }
+        public bool RelDrop { get => relDrop; set => relDrop = value;}
 
         public static implicit operator VoteProject(DataGridViewCell v)
         {

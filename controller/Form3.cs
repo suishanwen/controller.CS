@@ -189,8 +189,9 @@ namespace controller
          * 是否拉黑    checkType    0 默认 1 全项目匹配
          * 
          */
-        private bool isDropedProject(string project, int checkType)
+        private bool isDropedProject(VoteProject voteProject, int checkType)
         {
+            var project = voteProject.ProjectName;
             voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped",
                 _mainForm.PathShare + "/AutoVote.ini");
             voteProjectNameDropedTemp = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDropedTemp",
@@ -225,6 +226,7 @@ namespace controller
 
                 if (sameProjectDropCount >= 3)
                 {
+                    voteProject.RelDrop = true;
                     return true;
                 }
             }
@@ -512,7 +514,7 @@ namespace controller
             voteProjectMonitorList.Clear();
             foreach (VoteProject voteProject in voteProjectList)
             {
-                voteProject.Drop = isDropedProject(voteProject.ProjectName, 1);
+                voteProject.Drop = isDropedProject(voteProject, 1);
                 voteProject.Top = isTopedProject(voteProject.ProjectName);
                 voteProject.setProjectType();
             }
@@ -1307,6 +1309,18 @@ namespace controller
             }
 
             IniReadWriter.WriteIniKeys("Command", "dataSource", dataSource, _mainForm.PathShare + "/AutoVote.ini");
+        }
+
+        private void dataGridView1_DataSourceChanged(object sender, EventArgs e)
+        {
+            BindingList<VoteProject> voteProjects = (BindingList<VoteProject>) this.dataGridView1.DataSource;
+            for (var i = 0; i < voteProjects.Count; i++)
+            {
+                if (voteProjects[i].RelDrop)
+                {
+                    this.dataGridView1.Rows[i].Cells[5].ReadOnly = false;
+                }
+            }
         }
     }
 }
