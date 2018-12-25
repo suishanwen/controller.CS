@@ -41,58 +41,49 @@ namespace controller
 
         internal List<VoteProject> VoteProjectMonitorList
         {
-            get
-            {
-                return voteProjectMonitorList;
-            }
+            get { return voteProjectMonitorList; }
         }
 
         public Thread AutoVote
         {
-            get
-            {
-                return autoVote;
-            }
+            get { return autoVote; }
         }
 
         public DataGridView DataGridView
         {
-            get
-            {
-                return dataGridView1;
-            }
+            get { return dataGridView1; }
         }
 
         //委托 解决线程间操作dataGrid问题
         delegate void DelegateWindowText(String value);
+
         public void SetWindowText(String value)
         {
             if (this.InvokeRequired)
             {
                 DelegateWindowText d = new DelegateWindowText(SetWindowText);
-                this.Invoke(d, new object[] { value });
+                this.Invoke(d, new object[] {value});
             }
             else
             {
                 this.Text = value;
             }
         }
+
         public string WindowText
         {
-            get
-            {
-                return Text;
-            }
+            get { return Text; }
         }
 
         //委托 解决线程间操作textBox4问题
         delegate void SetProNameDelegate(string value);
+
         public static void SetProName(string value)
         {
             if (_form3.progressBar1.InvokeRequired)
             {
                 SetProNameDelegate d = new SetProNameDelegate(SetProName);
-                _form3.Invoke(d, new object[] { value });
+                _form3.Invoke(d, new object[] {value});
             }
             else
             {
@@ -102,12 +93,13 @@ namespace controller
 
         //委托 解决线程间操作textBox4问题
         delegate void SetProgressDelegate(int value);
+
         public static void SetProgress(int value)
         {
             if (_form3.progressBar1.InvokeRequired)
             {
                 SetProgressDelegate d = new SetProgressDelegate(SetProgress);
-                _form3.Invoke(d, new object[] { value });
+                _form3.Invoke(d, new object[] {value});
             }
             else
             {
@@ -121,6 +113,7 @@ namespace controller
                     {
                         _form3.progressBar1.Visible = true;
                     }
+
                     _form3.progressBar1.Value = value;
                 }
             }
@@ -129,8 +122,8 @@ namespace controller
 
         public Form3()
         {
-
         }
+
         public Form3(Form1 form1)
         {
             _mainForm = form1;
@@ -140,10 +133,16 @@ namespace controller
             string _isAutoVote = IniReadWriter.ReadIniKeys("Command", "isAutoVote", _mainForm.PathShare + "/CF.ini");
             try
             {
-                filter = double.Parse(IniReadWriter.ReadIniKeys("Command", "filter", _mainForm.PathShare + "/AutoVote.ini"));
-                blackRate = double.Parse(IniReadWriter.ReadIniKeys("Command", "blackRate", _mainForm.PathShare + "/AutoVote.ini"));
+                filter = double.Parse(IniReadWriter.ReadIniKeys("Command", "filter",
+                    _mainForm.PathShare + "/AutoVote.ini"));
+                blackRate = double.Parse(IniReadWriter.ReadIniKeys("Command", "blackRate",
+                    _mainForm.PathShare + "/AutoVote.ini"));
             }
-            catch (Exception) { };
+            catch (Exception)
+            {
+            }
+
+            ;
             textBox1.Text = filter.ToString();
             textBox2.Text = IniReadWriter.ReadIniKeys("Command", "maxKb", _mainForm.PathShare + "/CF.ini");
             textBox3.Text = blackRate.ToString();
@@ -154,6 +153,7 @@ namespace controller
                 button2.Text = "取消自动";
                 button3.Visible = false;
             }
+
             timer1.Enabled = true;
             autoVote = new Thread(autoVoteSystem);
             autoVote.Start();
@@ -161,55 +161,81 @@ namespace controller
 
         private bool isTopedProject(string project)
         {
-            string voteProjectNameToped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameToped", _mainForm.PathShare + "/AutoVote.ini").Trim();
+            string voteProjectNameToped = IniReadWriter
+                .ReadIniKeys("Command", "voteProjectNameToped", _mainForm.PathShare + "/AutoVote.ini").Trim();
             if (StringUtil.isEmpty(voteProjectNameToped))
             {
                 return false;
             }
+
             string[] topedProjectList = voteProjectNameToped.Split('|');
             foreach (string topedProject in topedProjectList)
             {
+                if (StringUtil.isEmpty(topedProject))
+                {
+                    continue;
+                }
+
                 if (project.IndexOf(topedProject) != -1)
                 {
                     return true;
                 }
             }
+
             return false;
         }
 
+        /**
+         * 是否拉黑    checkType    0 默认 1 全项目匹配
+         * 
+         */
         private bool isDropedProject(string project, int checkType)
         {
-            voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped", _mainForm.PathShare + "/AutoVote.ini");
-            voteProjectNameDropedTemp = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDropedTemp", _mainForm.PathShare + "/AutoVote.ini");
+            voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped",
+                _mainForm.PathShare + "/AutoVote.ini");
+            voteProjectNameDropedTemp = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDropedTemp",
+                _mainForm.PathShare + "/AutoVote.ini");
             if (checkType == 1 && voteProjectNameDroped != "")
             {
                 string[] dropedProjectList = voteProjectNameDroped.Split('|');
-                foreach (string dropedProject in dropedProjectList)
+                var projectPrefix = project;
+                if (project.IndexOf("_") > 0)
                 {
+                    projectPrefix = project.Substring(0, project.IndexOf("_"));
+                }
+
+                var sameProjectDropCount = 0;
+                foreach (var dropedProject in dropedProjectList)
+                {
+                    if (StringUtil.isEmpty(dropedProject))
+                    {
+                        continue;
+                    }
+
                     if (project.IndexOf(dropedProject) != -1)
                     {
                         return true;
                     }
-                }
-            }
-            if (checkType == 1 && voteProjectNameDropedTemp != "")
-            {
-                string[] dropedProjectList = voteProjectNameDropedTemp.Split('|');
-                foreach (string dropedProject in dropedProjectList)
-                {
-                    if (project.IndexOf(dropedProject) != -1)
+
+                    if (dropedProject.IndexOf(projectPrefix) != -1)
                     {
-                        return true;
+                        sameProjectDropCount++;
                     }
                 }
+
+                if (sameProjectDropCount >= 3)
+                {
+                    return true;
+                }
             }
+
             return voteProjectNameDroped.IndexOf(project) != -1 || voteProjectNameDropedTemp.IndexOf(project) != -1;
         }
 
         private bool isGreenProject(string project, int checkType)
         {
-
-            voteProjectNameGreen = IniReadWriter.ReadIniKeys("Command", "voteProjectNameGreen", _mainForm.PathShare + "/AutoVote.ini");
+            voteProjectNameGreen =
+                IniReadWriter.ReadIniKeys("Command", "voteProjectNameGreen", _mainForm.PathShare + "/AutoVote.ini");
             string[] greenProjectList = voteProjectNameGreen.Split('|');
             foreach (string greenProject in greenProjectList)
             {
@@ -218,8 +244,8 @@ namespace controller
                     return true;
                 }
             }
-            return false;
 
+            return false;
         }
 
         private string getJsonVal(string json, string name)
@@ -230,6 +256,7 @@ namespace controller
             {
                 return json.Substring(name.Length + 2, json.IndexOf("}") - (name.Length + 2));
             }
+
             return json.Substring(name.Length + 2, index - (name.Length + 2));
         }
 
@@ -251,6 +278,7 @@ namespace controller
                     Thread.Sleep(10000);
                 }
             } while (result == "" || result == "timeout");
+
             List<VoteProject> voteProjectList = new List<VoteProject>();
             string pat = @"(\[).*?(\])";
             Match matched = Regex.Match(result.Replace("'", ""), pat, RegexOptions.IgnoreCase);
@@ -267,36 +295,43 @@ namespace controller
                 {
                     voteProject.Hot = int.Parse(hot);
                 }
+
                 string price = getJsonVal(json, "price");
                 if (!StringUtil.isEmpty(price))
                 {
                     voteProject.Price = double.Parse(price);
                 }
+
                 string finish = getJsonVal(json, "finishQuantity");
                 if (!StringUtil.isEmpty(finish))
                 {
                     voteProject.FinishQuantity = long.Parse(finish);
                 }
+
                 string require = getJsonVal(json, "totalRequire");
                 if (!StringUtil.isEmpty(require))
                 {
                     voteProject.TotalRequire = long.Parse(require);
                 }
+
                 string remains = getJsonVal(json, "remains");
                 if (!StringUtil.isEmpty(remains))
                 {
                     voteProject.Remains = long.Parse(remains);
                 }
+
                 voteProject.BackgroundAddress = getJsonVal(json, "backgroundAddress");
                 voteProject.DownloadAddress = getJsonVal(json, "downloadAddress");
                 voteProject.IdType = getJsonVal(json, "idType");
                 voteProject.BackgroundNo = getJsonVal(json, "backgroundNo");
-                voteProject.RefreshDate = Convert.ToDateTime(DateTime.Now.Year + "-" + getJsonVal(json, "refreshDate") + ":00");
+                voteProject.RefreshDate =
+                    Convert.ToDateTime(DateTime.Now.Year + "-" + getJsonVal(json, "refreshDate") + ":00");
                 if (voteProject.Price >= filter)
                 {
                     voteProjectList.Add(voteProject);
                 }
             }
+
             return voteProjectList;
         }
 
@@ -310,7 +345,8 @@ namespace controller
             {
                 try
                 {
-                    result = httpUtil.requestHttpGet("http://butingzhuan.com/tasks.php?t=" + DateTime.Now.Millisecond.ToString(), "", "");
+                    result = httpUtil.requestHttpGet(
+                        "http://butingzhuan.com/tasks.php?t=" + DateTime.Now.Millisecond.ToString(), "", "");
                     result = result.Substring(result.IndexOf("时间</td>"));
                     result = result.Substring(0, result.IndexOf("qzd_yj"));
                     result = result.Substring(result.IndexOf("<tr class='blank'>"));
@@ -324,6 +360,7 @@ namespace controller
                     Thread.Sleep(10000);
                 }
             } while (result == "");
+
             Regex regTR = new Regex(@"(?is)<tr[^>]*>(?:(?!</tr>).)*</tr>");
             Regex regTD = new Regex(@"(?is)<t[dh][^>]*>((?:(?!</td>).)*)</t[dh]>");
             MatchCollection mcTR = regTR.Matches(result);
@@ -337,6 +374,7 @@ namespace controller
                     {
                         continue;
                     }
+
                     MatchCollection mcTD = regTD.Matches(mTR.Value);
                     int index = 0;
                     VoteProject voteProject = new VoteProject();
@@ -367,11 +405,14 @@ namespace controller
                                     {
                                         voteProject.FinishQuantity = long.Parse(quantityInfo[0]);
                                     }
-                                    voteProject.TotalRequire = long.Parse(quantityInfo[1].Substring(0, quantityInfo[1].IndexOf(" ")));
+
+                                    voteProject.TotalRequire =
+                                        long.Parse(quantityInfo[1].Substring(0, quantityInfo[1].IndexOf(" ")));
                                 }
                                 catch (Exception)
                                 {
                                 }
+
                                 break;
                             case 8:
                                 voteProject.BackgroundAddress = HtmlMatch.GetAttr(innerTd, "a", "href");
@@ -395,6 +436,7 @@ namespace controller
                                         voteProject.IdType = "Q7";
                                     }
                                 }
+
                                 break;
                             case 12:
                                 voteProject.BackgroundNo = innerTd;
@@ -403,15 +445,17 @@ namespace controller
                                 voteProject.RefreshDate = Convert.ToDateTime(DateTime.Now.Year + "-" + innerTd + ":00");
                                 break;
                         }
+
                         index++;
                     }
+
                     if (voteProject.Price >= filter)
                     {
                         voteProjectList.Add(voteProject);
                     }
-
                 }
             }
+
             return voteProjectList;
         }
 
@@ -443,7 +487,7 @@ namespace controller
             if (this.dataGridView1.InvokeRequired)
             {
                 SetDataGridView d = new SetDataGridView(SetDataGrid);
-                this.Invoke(d, new object[] { voteProjectList });
+                this.Invoke(d, new object[] {voteProjectList});
             }
             else
             {
@@ -454,8 +498,10 @@ namespace controller
                     {
                         this.dataGridView1.ClearSelection();
                     }
+
                     SetSelectedDataGrid();
                 }
+
                 this.dataGridView1.Refresh();
             }
         }
@@ -466,10 +512,11 @@ namespace controller
             voteProjectMonitorList.Clear();
             foreach (VoteProject voteProject in voteProjectList)
             {
-                voteProject.Drop = isDropedProject(voteProject.ProjectName, 0);
+                voteProject.Drop = isDropedProject(voteProject.ProjectName, 1);
                 voteProject.Top = isTopedProject(voteProject.ProjectName);
                 voteProject.setProjectType();
             }
+
             voteProjectList.Sort((a, b) =>
             {
                 if (a.Top && !b.Top)
@@ -488,8 +535,8 @@ namespace controller
             if (activeVoteProject != null)
             {
                 activeVoteProject.Index = -1;
-
             }
+
             for (int i = 0; i < voteProjectList.Count; i++)
             {
                 VoteProject voteProject = voteProjectList[i];
@@ -500,10 +547,10 @@ namespace controller
                     activeVoteProject = voteProject;
                 }
             }
+
             //更新taskInfoDict
             TaskInfos.Update(voteProjectList);
             SetDataGrid(voteProjectMonitorList);
-
         }
 
 
@@ -515,20 +562,32 @@ namespace controller
             }
             else
             {
-                string projectName = IniReadWriter.ReadIniKeys("Command", "ProjectName", _mainForm.PathShare + "/AutoVote.ini");
+                string projectName =
+                    IniReadWriter.ReadIniKeys("Command", "ProjectName", _mainForm.PathShare + "/AutoVote.ini");
                 if (projectName != activeVoteProject.ProjectName)
                 {
-                    IniReadWriter.WriteIniKeys("Command", "ProjectName", activeVoteProject.ProjectName, _mainForm.PathShare + "/AutoVote.ini");
-                    IniReadWriter.WriteIniKeys("Command", "Price", activeVoteProject.Price.ToString(), _mainForm.PathShare + "/AutoVote.ini");
-                    IniReadWriter.WriteIniKeys("Command", "TotalRequire", activeVoteProject.TotalRequire.ToString(), _mainForm.PathShare + "/AutoVote.ini");
-                    IniReadWriter.WriteIniKeys("Command", "FinishQuantity", activeVoteProject.FinishQuantity.ToString(), _mainForm.PathShare + "/AutoVote.ini");
-                    IniReadWriter.WriteIniKeys("Command", "Remains", activeVoteProject.Remains.ToString(), _mainForm.PathShare + "/AutoVote.ini");
-                    IniReadWriter.WriteIniKeys("Command", "BackgroundNo", activeVoteProject.BackgroundNo, _mainForm.PathShare + "/AutoVote.ini");
-                    IniReadWriter.WriteIniKeys("Command", "BackgroundAddress", activeVoteProject.BackgroundAddress, _mainForm.PathShare + "/AutoVote.ini");
-                    IniReadWriter.WriteIniKeys("Command", "DownloadAddress", activeVoteProject.DownloadAddress, _mainForm.PathShare + "/AutoVote.ini");
-                    IniReadWriter.WriteIniKeys("Command", "IsRestrict", activeVoteProject.IsRestrict.ToString(), _mainForm.PathShare + "/AutoVote.ini");
-                    IniReadWriter.WriteIniKeys("Command", "IdType", activeVoteProject.IdType, _mainForm.PathShare + "/AutoVote.ini");
-                    IniReadWriter.WriteIniKeys("Command", "RefreshDate", activeVoteProject.RefreshDate.ToLocalTime().ToString(), _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "ProjectName", activeVoteProject.ProjectName,
+                        _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "Price", activeVoteProject.Price.ToString(),
+                        _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "TotalRequire", activeVoteProject.TotalRequire.ToString(),
+                        _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "FinishQuantity", activeVoteProject.FinishQuantity.ToString(),
+                        _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "Remains", activeVoteProject.Remains.ToString(),
+                        _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "BackgroundNo", activeVoteProject.BackgroundNo,
+                        _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "BackgroundAddress", activeVoteProject.BackgroundAddress,
+                        _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "DownloadAddress", activeVoteProject.DownloadAddress,
+                        _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "IsRestrict", activeVoteProject.IsRestrict.ToString(),
+                        _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "IdType", activeVoteProject.IdType,
+                        _mainForm.PathShare + "/AutoVote.ini");
+                    IniReadWriter.WriteIniKeys("Command", "RefreshDate",
+                        activeVoteProject.RefreshDate.ToLocalTime().ToString(), _mainForm.PathShare + "/AutoVote.ini");
                     IniReadWriter.WriteIniKeys("Command", "dropVote", "0", _mainForm.PathShare + "/AutoVote.ini");
                 }
             }
@@ -536,8 +595,8 @@ namespace controller
 
         private void setWorkerId()
         {
-            string[] user1 = { "AQ-239356", "Q7-21173" };
-            string[] user2 = { "AQ-14", "Q7-43" };
+            string[] user1 = {"AQ-239356", "Q7-21173"};
+            string[] user2 = {"AQ-14", "Q7-43"};
             string id = IniReadWriter.ReadIniKeys("Command", "worker", _mainForm.PathShare + "/CF.ini");
             if (id == user2[0] || id == user2[1])
             {
@@ -561,15 +620,18 @@ namespace controller
                     IniReadWriter.WriteIniKeys("Command", "worker", user1[0], _mainForm.PathShare + "/CF.ini");
                 }
             }
+
             IniReadWriter.WriteIniKeys("Command", "printgonghao", "1", _mainForm.PathShare + "/CF.ini");
         }
 
 
         private void startVoteProject(VoteProject voteProject, bool onlyWaitOrder)
         {
-            Console.WriteLine("projectName：" + voteProject.ProjectName + ",price：" + voteProject.Price + ",remains：" + voteProject.Remains);
+            Console.WriteLine("projectName：" + voteProject.ProjectName + ",price：" + voteProject.Price + ",remains：" +
+                              voteProject.Remains);
             string fileName = voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1);
-            string pathName = IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini") + "\\" + fileName;
+            string pathName = IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini") +
+                              "\\" + fileName;
             if (!Directory.Exists(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName))
             {
                 string url = voteProject.DownloadAddress;
@@ -594,8 +656,10 @@ namespace controller
                             Thread.Sleep(10000);
                         }
                     } while (re != "ok");
+
                     url = $"http://bitcoinrobot.cn/vote/dl/{fileName}";
                 }
+
                 Log.writeLogs("./log.txt", "开始下载:" + url);
                 downLoadCount = 0;
                 bool result = true;
@@ -615,16 +679,22 @@ namespace controller
                         }
                     }
                 } while (!result);
+
                 Form3.SetProName("");
                 Log.writeLogs("./log.txt", pathName + "  下载完成");
-                Winrar.UnCompressRar(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName, IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini"), voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1));
+                Winrar.UnCompressRar(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName,
+                    IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini"),
+                    voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1));
             }
+
             if (voteProject.Type == "九天" &&
                 !File.Exists(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName + "/启动九天.bat"))
             {
-                String[] Lines = { @"start vote.exe" };
-                File.WriteAllLines(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName + "/启动九天.bat", Lines, Encoding.GetEncoding("GBK"));
+                String[] Lines = {@"start vote.exe"};
+                File.WriteAllLines(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName + "/启动九天.bat", Lines,
+                    Encoding.GetEncoding("GBK"));
             }
+
             try
             {
                 File.Delete(pathName);
@@ -633,6 +703,7 @@ namespace controller
             {
                 Log.writeLogs("./log.txt", pathName + "-->文件占用中，无法删除!");
             }
+
             activeVoteProject = voteProject;
             if (isAutoVote)
             {
@@ -642,8 +713,10 @@ namespace controller
                 //                }
                 setWorkerId();
             }
+
             _mainForm.VM3 = "";
-            Log.writeLogs("./log.txt", "AutoVote: " + voteProject.ToString() + "    " + DateTime.Now.ToLocalTime().ToString());
+            Log.writeLogs("./log.txt",
+                "AutoVote: " + voteProject.ToString() + "    " + DateTime.Now.ToLocalTime().ToString());
             DirectoryInfo theFolder = new DirectoryInfo(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName);
             FileInfo[] fileInfo = theFolder.GetFiles();
             FileInfo executableFile = null;
@@ -655,10 +728,12 @@ namespace controller
                     break;
                 }
             }
+
             Dictionary<int, TaskInfo> vmInfo = TaskInfos.Get();
             for (int p = int.Parse(_mainForm.VM1); p <= int.Parse(_mainForm.VM2); p++)
             {
-                String taskName = IniReadWriter.ReadIniKeys("Command", "TaskName" + p, _mainForm.PathShare + "/Task.ini");
+                String taskName =
+                    IniReadWriter.ReadIniKeys("Command", "TaskName" + p, _mainForm.PathShare + "/Task.ini");
                 if (!onlyWaitOrder || taskName.Equals("待命"))
                 {
                     if (vmInfo.ContainsKey(p))
@@ -667,16 +742,21 @@ namespace controller
                         {
                             continue;
                         }
+
                         vmInfo[p] = new TaskInfo(voteProject.ProjectName, voteProject.Price);
                     }
                     else
                     {
                         vmInfo.Add(p, new TaskInfo(voteProject.ProjectName, voteProject.Price));
                     }
+
                     Form1.SetVM3(p.ToString());
-                    SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm, _mainForm.PathShareVm + "\\投票项目\\" + voteProject.ProjectName + "\\" + executableFile.Name, "投票项目", _mainForm.PathShare);
+                    SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm,
+                        _mainForm.PathShareVm + "\\投票项目\\" + voteProject.ProjectName + "\\" + executableFile.Name,
+                        "投票项目", _mainForm.PathShare);
                 }
             }
+
             if (isAutoVote)
             {
                 bool allSameProject = true;
@@ -688,11 +768,13 @@ namespace controller
                         break;
                     }
                 }
+
                 if (allSameProject)
                 {
                     writeAutoVoteProject();
                 }
             }
+
             TaskInfos.Set(vmInfo);
             SetSelectedDataGrid();
         }
@@ -720,9 +802,11 @@ namespace controller
                 {
                     arrDrop = " " + arrDrop;
                 }
+
                 if (arrDrop.IndexOf(" " + i + " |") == -1)
                 {
-                    string taskName = IniReadWriter.ReadIniKeys("Command", "TaskName" + i, _mainForm.PathShare + "/Task.ini");
+                    string taskName =
+                        IniReadWriter.ReadIniKeys("Command", "TaskName" + i, _mainForm.PathShare + "/Task.ini");
                     if (taskName.Equals("待命"))
                     {
                         result = true;
@@ -730,6 +814,7 @@ namespace controller
                     }
                 }
             }
+
             return result;
         }
 
@@ -742,26 +827,31 @@ namespace controller
                 {
                     arrDrop = " " + arrDrop;
                 }
+
                 if (arrDrop.IndexOf(" " + i + " |") == -1)
                 {
-                    string taskName = IniReadWriter.ReadIniKeys("Command", "TaskName" + i, _mainForm.PathShare + "/Task.ini");
+                    string taskName =
+                        IniReadWriter.ReadIniKeys("Command", "TaskName" + i, _mainForm.PathShare + "/Task.ini");
                     if (!taskName.Equals("待命"))
                     {
                         return false;
                     }
                 }
             }
+
             return true;
         }
 
         private void generateBlackListTemp()
         {
-            IniReadWriter.WriteIniKeys("Command", "voteProjectNameDropedTemp", "", _mainForm.PathShare + "/AutoVote.ini");
+            IniReadWriter.WriteIniKeys("Command", "voteProjectNameDropedTemp", "",
+                _mainForm.PathShare + "/AutoVote.ini");
         }
 
         private void generateBlackList()
         {
-            voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped", _mainForm.PathShare + "/AutoVote.ini");
+            voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped",
+                _mainForm.PathShare + "/AutoVote.ini");
             if (voteProjectNameDroped != "")
             {
                 string projectNameDroped = "";
@@ -776,13 +866,16 @@ namespace controller
                     {
                         blackDictionary.Add(projectName, 1);
                     }
+
                     //拉黑三次不再测试
                     if (blackDictionary[projectName] >= 3)
                     {
                         projectNameDroped += StringUtil.isEmpty(projectNameDroped) ? projectName : "|" + projectName;
                     }
                 }
-                IniReadWriter.WriteIniKeys("Command", "voteProjectNameDroped", projectNameDroped, _mainForm.PathShare + "/AutoVote.ini");
+
+                IniReadWriter.WriteIniKeys("Command", "voteProjectNameDroped", projectNameDroped,
+                    _mainForm.PathShare + "/AutoVote.ini");
             }
         }
 
@@ -797,7 +890,8 @@ namespace controller
                     if (!project.Drop && project.Price > activeVoteProject.Price && project.Auto && project.VoteRemains)
                     {
                         //排序更前 或 同项目价更高切换
-                        if (i < activeVoteProject.Index || (activeVoteProject.ProjectName.Split('_')[0] == project.ProjectName.Split('_')[0]))
+                        if (i < activeVoteProject.Index ||
+                            (activeVoteProject.ProjectName.Split('_')[0] == project.ProjectName.Split('_')[0]))
                         {
                             startVoteProject(project, false);
                         }
@@ -826,14 +920,18 @@ namespace controller
             TaskInfos.Init(_mainForm.PathShare + "/AutoVote.ini");
             if (isAutoVote)
             {
-                string projectName = IniReadWriter.ReadIniKeys("Command", "ProjectName", _mainForm.PathShare + "/AutoVote.ini");
+                string projectName =
+                    IniReadWriter.ReadIniKeys("Command", "ProjectName", _mainForm.PathShare + "/AutoVote.ini");
                 if (!StringUtil.isEmpty(projectName))
                 {
                     try
                     {
-                        double price = double.Parse(IniReadWriter.ReadIniKeys("Command", "Price", _mainForm.PathShare + "/AutoVote.ini"));
-                        long remains = long.Parse(IniReadWriter.ReadIniKeys("Command", "Remains", _mainForm.PathShare + "/AutoVote.ini"));
-                        string backgroundNo = IniReadWriter.ReadIniKeys("Command", "BackgroundNo", _mainForm.PathShare + "/AutoVote.ini");
+                        double price = double.Parse(IniReadWriter.ReadIniKeys("Command", "Price",
+                            _mainForm.PathShare + "/AutoVote.ini"));
+                        long remains = long.Parse(IniReadWriter.ReadIniKeys("Command", "Remains",
+                            _mainForm.PathShare + "/AutoVote.ini"));
+                        string backgroundNo = IniReadWriter.ReadIniKeys("Command", "BackgroundNo",
+                            _mainForm.PathShare + "/AutoVote.ini");
                         activeVoteProject = new VoteProject(projectName, price, remains, backgroundNo);
                     }
                     catch (Exception e)
@@ -841,8 +939,8 @@ namespace controller
                         Log.writeLogs("./log.txt", "加载ActiveVoteProject异常:" + e.ToString());
                     }
                 }
-
             }
+
             int count = 0;
             do
             {
@@ -858,27 +956,32 @@ namespace controller
                     {
                         voteProjects = getVoteProjectsBT();
                     }
+
                     voteProjectsAnalysis(voteProjects);
                     if (isAutoVote)
                     {
                         //每2小时  * 倍率 解封黑名单
-                        if (DateTime.Now.Minute == 1 && DateTime.Now.Hour % (2 * blackRate) == 0 && DateTime.Now.Hour != clearBlackListHour)
+                        if (DateTime.Now.Minute == 1 && DateTime.Now.Hour % (2 * blackRate) == 0 &&
+                            DateTime.Now.Hour != clearBlackListHour)
                         {
                             clearBlackListHour = DateTime.Now.Hour;
                             Log.writeLogs("./log.txt", "Clear blackDictionary!");
                             blackDictionary.Clear();
                         }
+
                         //5分钟临时黑名单解锁
                         if (count == 5 * 3)
                         {
                             generateBlackListTemp();
                         }
+
                         //20分钟 * 倍率 黑名单解锁
                         if (count > 20 * 3 * blackRate)
                         {
                             count = 0;
                             generateBlackList();
                         }
+
                         if (existWaitOrder())
                         {
                             testVoteProjectMonitorList();
@@ -888,6 +991,7 @@ namespace controller
                             testHighReward();
                         }
                     }
+
                     refreshWindowText();
                     Thread.Sleep(20000);
                 }
@@ -896,8 +1000,7 @@ namespace controller
                     Console.WriteLine(e.ToString());
                     Log.writeLogs("./log.txt", e.ToString());
                 }
-            }
-            while (true);
+            } while (true);
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -911,12 +1014,12 @@ namespace controller
                 try
                 {
                     val = int.Parse(IniReadWriter.ReadIniKeys("Command", "Val", _mainForm.PathShare + "/CF.ini"));
-
                 }
                 catch (Exception)
                 {
                     IniReadWriter.WriteIniKeys("Command", "Val", "0", _mainForm.PathShare + "/CF.ini");
                 }
+
                 try
                 {
                     over = int.Parse(IniReadWriter.ReadIniKeys("Command", "OVER", _mainForm.PathShare + "/CF.ini"));
@@ -925,6 +1028,7 @@ namespace controller
                 {
                     IniReadWriter.WriteIniKeys("Command", "OVER", "0", _mainForm.PathShare + "/CF.ini");
                 }
+
                 try
                 {
                     kick = int.Parse(IniReadWriter.ReadIniKeys("Command", "KICK", _mainForm.PathShare + "/CF.ini"));
@@ -933,15 +1037,15 @@ namespace controller
                 {
                     IniReadWriter.WriteIniKeys("Command", "KICK", "0", _mainForm.PathShare + "/CF.ini");
                 }
+
                 arrDrop = IniReadWriter.ReadIniKeys("Command", "ArrDrop", _mainForm.PathShare + "/CF.ini");
-
-
             }
             else if (count == 3)
             {
                 if (val > 0)
                 {
-                    _mainForm.NotifyIcon1.ShowBalloonTip(0, val + "号虚拟机网络异常", DateTime.Now.ToLocalTime().ToString(), ToolTipIcon.Info);
+                    _mainForm.NotifyIcon1.ShowBalloonTip(0, val + "号虚拟机网络异常", DateTime.Now.ToLocalTime().ToString(),
+                        ToolTipIcon.Info);
                     IniReadWriter.WriteIniKeys("Command", "Val", "0", _mainForm.PathShare + "/CF.ini");
                 }
                 else if (val < 0)
@@ -958,19 +1062,22 @@ namespace controller
                             dropList.Add(int.Parse(currentStr));
                         }
                     }
+
                     if (!dropList.Contains(val))
                     {
                         dropList.Add(val);
                         dropList.Sort();
                     }
+
                     foreach (int num in dropList)
                     {
                         drop += " " + num + " |";
                     }
+
                     IniReadWriter.WriteIniKeys("Command", "Val", "0", _mainForm.PathShare + "/CF.ini");
                     IniReadWriter.WriteIniKeys("Command", "ArrDrop", drop, _mainForm.PathShare + "/CF.ini");
-                    _mainForm.NotifyIcon1.ShowBalloonTip(0, val + "号虚拟机掉线了", DateTime.Now.ToLocalTime().ToString(), ToolTipIcon.Error);
-
+                    _mainForm.NotifyIcon1.ShowBalloonTip(0, val + "号虚拟机掉线了", DateTime.Now.ToLocalTime().ToString(),
+                        ToolTipIcon.Error);
                 }
             }
             else if (count == 4)
@@ -978,44 +1085,53 @@ namespace controller
                 if (over > 0)
                 {
                     IniReadWriter.WriteIniKeys("Command", "OVER", "0", _mainForm.PathShare + "/CF.ini");
-                    _mainForm.NotifyIcon1.ShowBalloonTip(0, "项目已结束", DateTime.Now.ToLocalTime().ToString(), ToolTipIcon.Info);
+                    _mainForm.NotifyIcon1.ShowBalloonTip(0, "项目已结束", DateTime.Now.ToLocalTime().ToString(),
+                        ToolTipIcon.Info);
                     if (overAuto)
                     {
                         button3.Text = "到票自动";
                         overAuto = false;
                         setAutoVote();
                     }
+
                     if (_mainForm.CheckBox3.Checked && !StringUtil.isEmpty(_mainForm.OverSwitchPath))
                     {
                         if (_mainForm.OverSwitchPath.Equals("HANGUP"))
                         {
-                            SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm, "", IniReadWriter.ReadIniKeys("Command", "Hangup", _mainForm.PathShare + "/CF.ini"), _mainForm.PathShare);
+                            SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm, "",
+                                IniReadWriter.ReadIniKeys("Command", "Hangup", _mainForm.PathShare + "/CF.ini"),
+                                _mainForm.PathShare);
                         }
                         else
                         {
-                            SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm, _mainForm.OverSwitchPath, "投票项目", _mainForm.PathShare);
+                            SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm, _mainForm.OverSwitchPath,
+                                "投票项目", _mainForm.PathShare);
                         }
+
                         _mainForm.CheckBox3.Checked = false;
                     }
                 }
+
                 if (kick > 0)
                 {
                     IniReadWriter.WriteIniKeys("Command", "KICK", "0", _mainForm.PathShare + "/CF.ini");
-                    _mainForm.NotifyIcon1.ShowBalloonTip(0, "项目限人", DateTime.Now.ToLocalTime().ToString(), ToolTipIcon.Info);
+                    _mainForm.NotifyIcon1.ShowBalloonTip(0, "项目限人", DateTime.Now.ToLocalTime().ToString(),
+                        ToolTipIcon.Info);
                 }
-
             }
             else if (count == 5)
             {
                 activeVm = "";
                 for (int i = int.Parse(_mainForm.VM1); i <= int.Parse(_mainForm.VM2); i++)
                 {
-                    string state = IniReadWriter.ReadIniKeys("Command", "TaskChange" + i, _mainForm.PathShare + "/Task.ini");
+                    string state =
+                        IniReadWriter.ReadIniKeys("Command", "TaskChange" + i, _mainForm.PathShare + "/Task.ini");
                     if (state == "1")
                     {
                         activeVm += " " + i + " |";
                     }
                 }
+
                 if (arrDrop != "")
                 {
                     label3.Text = arrDrop;
@@ -1024,6 +1140,7 @@ namespace controller
                 {
                     label3.Text = "无";
                 }
+
                 if (activeVm != "")
                 {
                     label4.Text = activeVm;
@@ -1032,6 +1149,7 @@ namespace controller
                 {
                     label4.Text = TaskInfos.Active();
                 }
+
                 count = 0;
                 int index = this.Text.IndexOf(" ");
                 string refreshD = index != -1 ? this.Text.Substring(this.Text.IndexOf(" ")) : "";
@@ -1066,14 +1184,16 @@ namespace controller
             if (!StringUtil.isEmpty(textBox1.Text))
             {
                 filter = double.Parse(textBox1.Text);
-                IniReadWriter.WriteIniKeys("Command", "filter", filter.ToString(), _mainForm.PathShare + "/AutoVote.ini");
+                IniReadWriter.WriteIniKeys("Command", "filter", filter.ToString(),
+                    _mainForm.PathShare + "/AutoVote.ini");
             }
         }
 
         private void setAutoVote()
         {
             isAutoVote = !isAutoVote;
-            IniReadWriter.WriteIniKeys("Command", "isAutoVote", isAutoVote ? "1" : "0", _mainForm.PathShare + "/CF.ini");
+            IniReadWriter.WriteIniKeys("Command", "isAutoVote", isAutoVote ? "1" : "0",
+                _mainForm.PathShare + "/CF.ini");
             button2.Text = isAutoVote ? "取消自动" : "开启自动";
             button3.Visible = !isAutoVote;
         }
@@ -1090,7 +1210,6 @@ namespace controller
         }
 
 
-
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             if (!StringUtil.isEmpty(textBox2.Text))
@@ -1104,7 +1223,8 @@ namespace controller
             if (!StringUtil.isEmpty(textBox3.Text))
             {
                 blackRate = double.Parse(textBox3.Text);
-                IniReadWriter.WriteIniKeys("Command", "blackRate", textBox3.Text, _mainForm.PathShare + "/AutoVote.ini");
+                IniReadWriter.WriteIniKeys("Command", "blackRate", textBox3.Text,
+                    _mainForm.PathShare + "/AutoVote.ini");
             }
         }
 
@@ -1113,13 +1233,15 @@ namespace controller
             if (e.RowIndex >= 0 && dataGridView1.Columns[e.ColumnIndex] is DataGridViewCheckBoxColumn)
             {
                 string projectName = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
-                bool val = (bool)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+                bool val = (bool) dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
                 if (e.ColumnIndex == 5)
                 {
-                    string voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped", _mainForm.PathShare + "/AutoVote.ini");
+                    string voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped",
+                        _mainForm.PathShare + "/AutoVote.ini");
                     if (!val)
                     {
-                        voteProjectNameDroped += StringUtil.isEmpty(voteProjectNameDroped) ? projectName : "|" + projectName;
+                        voteProjectNameDroped +=
+                            StringUtil.isEmpty(voteProjectNameDroped) ? projectName : "|" + projectName;
                         dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = true;
                     }
                     else
@@ -1128,27 +1250,34 @@ namespace controller
                             .Replace(projectName, "");
                         if (voteProjectNameDropedTemp.IndexOf(projectName) != -1)
                         {
-                            string voteProjectNameDropedTemp = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDropedTemp", _mainForm.PathShare + "/AutoVote.ini");
+                            string voteProjectNameDropedTemp = IniReadWriter.ReadIniKeys("Command",
+                                "voteProjectNameDropedTemp", _mainForm.PathShare + "/AutoVote.ini");
                             voteProjectNameDropedTemp = voteProjectNameDropedTemp.Replace("|" + projectName, "")
                                 .Replace(projectName, "");
-                            IniReadWriter.WriteIniKeys("Command", "voteProjectNameDropedTemp", voteProjectNameDropedTemp, _mainForm.PathShare + "/AutoVote.ini");
-
+                            IniReadWriter.WriteIniKeys("Command", "voteProjectNameDropedTemp",
+                                voteProjectNameDropedTemp, _mainForm.PathShare + "/AutoVote.ini");
                         }
+
                         dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = false;
                     }
-                    IniReadWriter.WriteIniKeys("Command", "voteProjectNameDroped", voteProjectNameDroped, _mainForm.PathShare + "/AutoVote.ini");
 
+                    IniReadWriter.WriteIniKeys("Command", "voteProjectNameDroped", voteProjectNameDroped,
+                        _mainForm.PathShare + "/AutoVote.ini");
                 }
                 else if (e.ColumnIndex == 6)
                 {
                     string allProjectName = projectName.Split('_')[0];
-                    string voteProjectNameToped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameToped", _mainForm.PathShare + "/AutoVote.ini");
+                    string voteProjectNameToped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameToped",
+                        _mainForm.PathShare + "/AutoVote.ini");
                     if (!val)
                     {
                         if (voteProjectNameToped.IndexOf(allProjectName) == -1)
                         {
-                            voteProjectNameToped += StringUtil.isEmpty(voteProjectNameToped) ? allProjectName : "|" + allProjectName;
+                            voteProjectNameToped += StringUtil.isEmpty(voteProjectNameToped)
+                                ? allProjectName
+                                : "|" + allProjectName;
                         }
+
                         dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = true;
                     }
                     else
@@ -1157,15 +1286,16 @@ namespace controller
                             .Replace(allProjectName, "");
                         dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = false;
                     }
-                    IniReadWriter.WriteIniKeys("Command", "voteProjectNameToped", voteProjectNameToped, _mainForm.PathShare + "/AutoVote.ini");
 
+                    IniReadWriter.WriteIniKeys("Command", "voteProjectNameToped", voteProjectNameToped,
+                        _mainForm.PathShare + "/AutoVote.ini");
                 }
             }
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            if(dataSource.Equals("NEW"))
+            if (dataSource.Equals("NEW"))
             {
                 dataSource = "";
                 this.button4.Text = "网";
@@ -1175,8 +1305,8 @@ namespace controller
                 dataSource = "NEW";
                 this.button4.Text = "服";
             }
-            IniReadWriter.WriteIniKeys("Command", "dataSource", dataSource, _mainForm.PathShare + "/AutoVote.ini");
 
+            IniReadWriter.WriteIniKeys("Command", "dataSource", dataSource, _mainForm.PathShare + "/AutoVote.ini");
         }
     }
 }
