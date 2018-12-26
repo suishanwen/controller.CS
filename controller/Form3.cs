@@ -133,7 +133,7 @@ namespace controller
             InitializeComponent();
             dataSource = IniReadWriter.ReadIniKeys("Command", "dataSource", _mainForm.PathShare + "/AutoVote.ini");
             string _isAutoVote = IniReadWriter.ReadIniKeys("Command", "isAutoVote", _mainForm.PathShare + "/CF.ini");
-            string email = IniReadWriter.ReadIniKeys("Command", "email", _mainForm.PathShare + "/CF.ini");
+            email = IniReadWriter.ReadIniKeys("Command", "email", _mainForm.PathShare + "/CF.ini");
             try
             {
                 filter = double.Parse(IniReadWriter.ReadIniKeys("Command", "filter",
@@ -968,6 +968,7 @@ namespace controller
                         //8点 发送收益统计
                         if (DateTime.Now.Hour == 11 && DateTime.Now.Day != statisticDay && !StringUtil.isEmpty(email))
                         {
+                            Log.writeLogs("./log.txt", $"发送收益统计至{email}!");
                             Email.Send(email, "收益统计", Statistic.GenerateStatistic());
                             statisticDay = DateTime.Now.Day;
                         }
