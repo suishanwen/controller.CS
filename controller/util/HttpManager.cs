@@ -24,7 +24,7 @@ namespace controller.util
         /// <param name="url">请求路径url</param>
         /// <param name="param">请求参数键值对</param>
         /// <returns>响应字符串</returns>
-        public String requestHttpGet(String url_prex, String url, String param)
+        public String requestHttpGet(String url_prex, String url, String param,String charset)
         {
             String responseContent = "";
             HttpWebResponse httpWebResponse = null;
@@ -50,7 +50,7 @@ namespace controller.util
                     int len = streamReader.Read(buf, 0, buf.Length);
                     if (len <= 0)
                         break;
-                    responseContent += System.Text.Encoding.GetEncoding("utf-8").GetString(buf, 0, len);//指定编码格式
+                    responseContent += System.Text.Encoding.GetEncoding(charset).GetString(buf, 0, len);//指定编码格式
                     //responseContent += System.Text.Encoding.GetEncoding("gbk").GetString(buf, 0, len);
 
                 }

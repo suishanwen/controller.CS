@@ -273,7 +273,7 @@ namespace controller
             {
                 try
                 {
-                    result = httpUtil.requestHttpGet("http://bitcoinrobot.cn:8000/", "voteInfo", "");
+                    result = httpUtil.requestHttpGet("http://bitcoinrobot.cn:8000", "/voteInfo", "","utf-8");
                 }
                 catch (Exception)
                 {
@@ -351,7 +351,7 @@ namespace controller
                 try
                 {
                     result = httpUtil.requestHttpGet(
-                        "http://butingzhuan.com/tasks.php?t=" + DateTime.Now.Millisecond.ToString(), "", "");
+                        "http://butingzhuan.com", "/tasks.php", "t=" + DateTime.Now.Millisecond.ToString(),"gbk");
                     result = result.Substring(result.IndexOf("时间</td>"));
                     result = result.Substring(0, result.IndexOf("qzd_yj"));
                     result = result.Substring(result.IndexOf("<tr class='blank'>"));
@@ -644,14 +644,14 @@ namespace controller
                 Form3.SetProName(voteProject.ProjectName);
                 if (dataSource.Equals("NEW"))
                 {
-                    string checkUrl = $"http://bitcoinrobot.cn:8000/download?url={url}";
+                    string checkUrl = $"http://bitcoinrobot.cn:8000";
                     HttpManager httpUtil = HttpManager.getInstance();
                     string re = "";
                     do
                     {
                         try
                         {
-                            re = httpUtil.requestHttpGet(checkUrl, "", "");
+                            re = httpUtil.requestHttpGet(checkUrl, "/download", $"url={url}", "utf-8");
                         }
                         catch (Exception)
                         {
