@@ -966,7 +966,7 @@ namespace controller
                     if (isAutoVote)
                     {
                         //8点 发送收益统计
-                        if (DateTime.Now.Hour == 8 && DateTime.Now.Day != statisticDay && !StringUtil.isEmpty(email))
+                        if (DateTime.Now.Hour == 11 && DateTime.Now.Day != statisticDay && !StringUtil.isEmpty(email))
                         {
                             Email.Send(email, "收益统计", Statistic.GenerateStatistic());
                             statisticDay = DateTime.Now.Day;
