@@ -360,8 +360,8 @@ namespace controller
                 catch (Exception)
                 {
                     result = "";
-                    Console.WriteLine("Request Fail!Retry in 10s...");
-                    Log.writeLogs("./log.txt", "Request Fail!Retry in 10s...");
+                    Console.WriteLine($"Request Fail!Retry in 10s...");
+                    Log.writeLogs("./log.txt", $"Request Fail!Retry in 10s...");
                     Thread.Sleep(10000);
                 }
             } while (result == "");
@@ -941,7 +941,7 @@ namespace controller
                     }
                     catch (Exception e)
                     {
-                        Log.writeLogs("./log.txt", "加载ActiveVoteProject异常:" + e.ToString());
+                        Log.writeLogs("./log.txt", "加载ActiveVoteProject异常:" + e.StackTrace);
                     }
                 }
             }
@@ -983,7 +983,7 @@ namespace controller
                         }
 
                         //5分钟临时黑名单解锁
-                        if (count == 5 * 4)
+                        if (count == 2 * 4)
                         {
                             generateBlackListTemp();
                         }
@@ -1010,8 +1010,8 @@ namespace controller
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.ToString());
-                    Log.writeLogs("./log.txt", e.ToString());
+                    Console.WriteLine(e.StackTrace);
+                    Log.writeLogs("./log.txt", e.StackTrace);
                 }
             } while (true);
         }
