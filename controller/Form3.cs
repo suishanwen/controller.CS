@@ -634,6 +634,28 @@ namespace controller
         {
             Console.WriteLine("projectName：" + voteProject.ProjectName + ",price：" + voteProject.Price + ",remains：" +
                               voteProject.Remains);
+            Dictionary<int, TaskInfo> vmInfo = TaskInfos.Get();
+            //先待命
+            for (int p = int.Parse(_mainForm.VM1); p <= int.Parse(_mainForm.VM2); p++)
+            {
+                String taskName =
+                    IniReadWriter.ReadIniKeys("Command", "TaskName" + p, _mainForm.PathShare + "/Task.ini");
+                if (!onlyWaitOrder || taskName.Equals("待命"))
+                {
+                    if (vmInfo.ContainsKey(p))
+                    {
+                        if (isAutoVote && voteProject.Price <= vmInfo[p].Price)
+                        {
+                            continue;
+                        }
+
+                    }
+                    Form1.SetVM3(p.ToString());
+                    SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm,
+                        "",
+                        "待命", _mainForm.PathShare);
+                }
+            }
             string fileName = voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1);
             string pathName = IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini") +
                               "\\" + fileName;
@@ -733,8 +755,6 @@ namespace controller
                     break;
                 }
             }
-
-            Dictionary<int, TaskInfo> vmInfo = TaskInfos.Get();
             for (int p = int.Parse(_mainForm.VM1); p <= int.Parse(_mainForm.VM2); p++)
             {
                 String taskName =
