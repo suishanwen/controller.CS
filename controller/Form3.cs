@@ -38,6 +38,7 @@ namespace controller
         private int clearBlackListHour;
         private int statisticDay;
         private string dataSource;
+        private string isAdsl;
         private string email;
 
 
@@ -134,6 +135,7 @@ namespace controller
             dataSource = IniReadWriter.ReadIniKeys("Command", "dataSource", _mainForm.PathShare + "/AutoVote.ini");
             string _isAutoVote = IniReadWriter.ReadIniKeys("Command", "isAutoVote", _mainForm.PathShare + "/CF.ini");
             email = IniReadWriter.ReadIniKeys("Command", "email", _mainForm.PathShare + "/CF.ini");
+            isAdsl = IniReadWriter.ReadIniKeys("Command", "isAdsl", _mainForm.PathShare + "/CF.ini");
             try
             {
                 filter = double.Parse(IniReadWriter.ReadIniKeys("Command", "filter",
@@ -150,6 +152,7 @@ namespace controller
             textBox2.Text = IniReadWriter.ReadIniKeys("Command", "maxKb", _mainForm.PathShare + "/CF.ini");
             textBox3.Text = blackRate.ToString();
             button4.Text = dataSource.Equals("NEW") ? "服" : "网";
+            button5.Text = isAdsl.Equals("1") ? "主" : "虚";
             if (!StringUtil.isEmpty(_isAutoVote) && _isAutoVote.Equals("1"))
             {
                 isAutoVote = true;
@@ -1359,5 +1362,19 @@ namespace controller
             }
         }
 
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (isAdsl.Equals("1"))
+            {
+                isAdsl = "0";
+                this.button5.Text = "虚";
+            }
+            else
+            {
+                isAdsl = "1";
+                this.button5.Text = "主";
+            }
+            IniReadWriter.WriteIniKeys("Command", "isAdsl", isAdsl, _mainForm.PathShare + "/CF.ini");
+        }
     }
 }

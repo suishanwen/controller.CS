@@ -35,6 +35,10 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.Hot = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Type = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Drop = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Top = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.button1 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -47,14 +51,11 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label8 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
-            this.Hot = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Type = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Drop = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Top = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.voteProjectBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.button5 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.voteProjectBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -128,6 +129,43 @@
             this.dataGridView1.DataSourceChanged += new System.EventHandler(this.dataGridView1_DataSourceChanged);
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.DoubleClick += new System.EventHandler(this.dataGridView1_DoubleClick);
+            // 
+            // Hot
+            // 
+            this.Hot.DataPropertyName = "Hot";
+            this.Hot.FillWeight = 35F;
+            this.Hot.HeaderText = "热度";
+            this.Hot.Name = "Hot";
+            this.Hot.ReadOnly = true;
+            this.Hot.Width = 35;
+            // 
+            // Type
+            // 
+            this.Type.DataPropertyName = "Type";
+            this.Type.FillWeight = 35F;
+            this.Type.HeaderText = "类型";
+            this.Type.Name = "Type";
+            this.Type.ReadOnly = true;
+            this.Type.Width = 35;
+            // 
+            // Drop
+            // 
+            this.Drop.DataPropertyName = "Drop";
+            this.Drop.FillWeight = 35F;
+            this.Drop.HeaderText = "黑";
+            this.Drop.Name = "Drop";
+            this.Drop.ReadOnly = true;
+            this.Drop.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Drop.Width = 35;
+            // 
+            // Top
+            // 
+            this.Top.DataPropertyName = "Top";
+            this.Top.FillWeight = 35F;
+            this.Top.HeaderText = "顶";
+            this.Top.Name = "Top";
+            this.Top.ReadOnly = true;
+            this.Top.Width = 35;
             // 
             // button1
             // 
@@ -229,50 +267,13 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(3, 50);
+            this.button4.Location = new System.Drawing.Point(1, 51);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(33, 23);
+            this.button4.Size = new System.Drawing.Size(19, 22);
             this.button4.TabIndex = 17;
             this.button4.Text = "网";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
-            // 
-            // Hot
-            // 
-            this.Hot.DataPropertyName = "Hot";
-            this.Hot.FillWeight = 35F;
-            this.Hot.HeaderText = "热度";
-            this.Hot.Name = "Hot";
-            this.Hot.ReadOnly = true;
-            this.Hot.Width = 35;
-            // 
-            // Type
-            // 
-            this.Type.DataPropertyName = "Type";
-            this.Type.FillWeight = 35F;
-            this.Type.HeaderText = "类型";
-            this.Type.Name = "Type";
-            this.Type.ReadOnly = true;
-            this.Type.Width = 35;
-            // 
-            // Drop
-            // 
-            this.Drop.DataPropertyName = "Drop";
-            this.Drop.FillWeight = 35F;
-            this.Drop.HeaderText = "黑";
-            this.Drop.Name = "Drop";
-            this.Drop.ReadOnly = true;
-            this.Drop.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Drop.Width = 35;
-            // 
-            // Top
-            // 
-            this.Top.DataPropertyName = "Top";
-            this.Top.FillWeight = 35F;
-            this.Top.HeaderText = "顶";
-            this.Top.Name = "Top";
-            this.Top.ReadOnly = true;
-            this.Top.Width = 35;
             // 
             // dataGridViewTextBoxColumn1
             // 
@@ -305,6 +306,16 @@
             // 
             this.voteProjectBindingSource.DataSource = typeof(controller.util.VoteProject);
             // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(20, 51);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(19, 22);
+            this.button5.TabIndex = 18;
+            this.button5.Text = "虚";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
             // Form3
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -313,6 +324,7 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(404, 347);
             this.ControlBox = false;
+            this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.progressBar1);
@@ -384,5 +396,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Type;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Drop;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Top;
+        private System.Windows.Forms.Button button5;
     }
 }
