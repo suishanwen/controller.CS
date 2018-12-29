@@ -276,14 +276,14 @@ namespace controller
             {
                 try
                 {
-                    result = httpUtil.requestHttpGet("http://bitcoinrobot.cn:8000", "/voteInfo", "","utf-8");
+                    result = httpUtil.requestHttpGet("http://bitcoinrobot.cn:8000", "/voteInfo", $"isAdsl={isAdsl}","utf-8");
                 }
                 catch (Exception)
                 {
                     result = "";
-                    Console.WriteLine("Request Fail!Retry in 10s...");
-                    Log.writeLogs("./log.txt", "Request Fail!Retry in 10s...");
-                    Thread.Sleep(10000);
+                    Console.WriteLine("Request Fail!Retry in 5s...");
+                    Log.writeLogs("./log.txt", "Request Fail!Retry in 5s...");
+                    Thread.Sleep(5000);
                 }
             } while (result == "" || result == "timeout");
 
@@ -346,7 +346,6 @@ namespace controller
 
         private List<VoteProject> getVoteProjectsBT()
         {
-            String isAdsl = IniReadWriter.ReadIniKeys("Command", "isAdsl", _mainForm.PathShare + "/CF.ini");
             HttpManager httpUtil = HttpManager.getInstance();
             string result = "";
             do
@@ -363,9 +362,9 @@ namespace controller
                 catch (Exception)
                 {
                     result = "";
-                    Console.WriteLine($"Request Fail!Retry in 10s...");
-                    Log.writeLogs("./log.txt", $"Request Fail!Retry in 10s...");
-                    Thread.Sleep(10000);
+                    Console.WriteLine($"Request Fail!Retry in 5s...");
+                    Log.writeLogs("./log.txt", $"Request Fail!Retry in 5s...");
+                    Thread.Sleep(5000);
                 }
             } while (result == "");
 
@@ -426,7 +425,7 @@ namespace controller
                                 voteProject.BackgroundAddress = HtmlMatch.GetAttr(innerTd, "a", "href");
                                 break;
                             case 9:
-                                voteProject.DownloadAddress = HtmlMatch.GetAttr(innerTd, "a", "href");
+                                voteProject.DownloadAddress = HtmlMatch.GetAttr(innerTd.Replace(" ",""), "a", "href");
                                 break;
                             case 10:
                                 try
