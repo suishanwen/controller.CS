@@ -732,13 +732,13 @@ namespace controller
             }
 
             activeVoteProject = voteProject;
+            setWorkerId();
             if (isAutoVote)
             {
                 //                if (!onlyWaitOrder)
                 //                {
                 writeAutoVoteProject();
                 //                }
-                setWorkerId();
             }
 
             _mainForm.VM3 = "";
