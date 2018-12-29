@@ -994,7 +994,7 @@ namespace controller
                         }
 
                         //每2小时  * 倍率 解封黑名单
-                        if (DateTime.Now.Minute == 1 && DateTime.Now.Hour % (2 * blackRate) == 0 &&
+                        if (DateTime.Now.Hour % (2 * blackRate) == 0 &&
                             DateTime.Now.Hour != clearBlackListHour)
                         {
                             clearBlackListHour = DateTime.Now.Hour;
