@@ -268,6 +268,12 @@ namespace controller
             return json.Substring(name.Length + 2, index - (name.Length + 2));
         }
 
+        private string getIdentify()
+        {
+            string id = IniReadWriter.ReadIniKeys("Command", "worker", _mainForm.PathShare + "/CF.ini");
+            return $"{id}-{Form1.GetVMS()}";
+        }
+
         private List<VoteProject> getVoteProjects()
         {
             HttpManager httpUtil = HttpManager.getInstance();
@@ -276,7 +282,7 @@ namespace controller
             {
                 try
                 {
-                    result = httpUtil.requestHttpGet("http://bitcoinrobot.cn:8000", "/voteInfo", $"isAdsl={isAdsl}","utf-8");
+                    result = httpUtil.requestHttpGet("http://bitcoinrobot.cn:8000", "/voteInfo", $"isAdsl={isAdsl}&id={getIdentify()}","utf-8");
                 }
                 catch (Exception)
                 {

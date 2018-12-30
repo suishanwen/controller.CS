@@ -24,7 +24,7 @@ namespace controller
         private string overSwitchPath;//到票切换路径
 
         //取CPU编号   
-        public String GetCpuID()
+        public static String GetCpuID()
         {
             try
             {
@@ -41,11 +41,11 @@ namespace controller
             }
             catch
             {
-                return textBox5.Text + "-unknown";
+                return _Form1.textBox5.Text + "-unknown";
             }
         }
 
-        public String GetHardDiskID()
+        public static String GetHardDiskID()
         {
             try
             {
@@ -60,9 +60,19 @@ namespace controller
             }
             catch
             {
-                return textBox5.Text + "-unknown";
+                return _Form1.textBox5.Text + "-unknown";
             }
         }
+
+        public static String GetVMS()
+        {
+            if(_Form1.VM1 == _Form1.VM2)
+            {
+                return _Form1.VM1;
+            }
+            return $"{_Form1.VM1}-{_Form1.VM2}";
+        }
+
 
         public string PathShare
         {
