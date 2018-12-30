@@ -631,6 +631,7 @@ namespace controller
             IniReadWriter.WriteIniKeys("Command", "printgonghao", "1", _mainForm.PathShare + "/CF.ini");
         }
 
+        
 
         private void startVoteProject(VoteProject voteProject, bool onlyWaitOrder)
         {
@@ -664,6 +665,7 @@ namespace controller
             if (!Directory.Exists(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName))
             {
                 string url = voteProject.DownloadAddress;
+                HttpDownLoad.CheckVersion(url,pathName);
                 string now = DateTime.Now.ToLocalTime().ToString();
                 Form3.SetProName(voteProject.ProjectName);
                 if (dataSource.Equals("NEW"))
@@ -1004,7 +1006,7 @@ namespace controller
                             blackDictionary.Clear();
                         }
 
-                        //5分钟临时黑名单解锁
+                        //2分钟临时黑名单解锁
                         if (count == 2 * 4)
                         {
                             generateBlackListTemp();
