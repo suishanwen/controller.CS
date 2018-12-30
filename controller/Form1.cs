@@ -425,6 +425,23 @@ namespace controller
                     Console.WriteLine(d.FullName + "-->文件占用中，无法删除!");
                 }
             }
+            string downLoads = IniReadWriter.ReadIniKeys("Command", "Downloads", PathShare + "/CF.ini");
+            if (!StringUtil.isEmpty(downLoads))
+            {
+                DirectoryInfo di = new DirectoryInfo(downLoads);
+                FileInfo[] files = di.GetFiles();
+                foreach (FileInfo f in files)
+                {
+                    try
+                    {
+                        File.Delete(f.FullName);
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine(f.FullName + "-->文件占用中，无法删除!");
+                    }
+                }
+            }
         }
         //投票
         private void button9_Click(object sender, EventArgs e)
