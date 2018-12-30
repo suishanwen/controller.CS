@@ -662,10 +662,10 @@ namespace controller
             string fileName = voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1);
             string pathName = IniReadWriter.ReadIniKeys("Command", "Downloads", _mainForm.PathShare + "/CF.ini") +
                               "\\" + fileName;
-            if (!Directory.Exists(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName))
+            string url = voteProject.DownloadAddress;
+            bool newVersion = HttpDownLoad.CheckVersion(url, pathName);
+            if (newVersion || !Directory.Exists(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName))
             {
-                string url = voteProject.DownloadAddress;
-                HttpDownLoad.CheckVersion(url,pathName);
                 string now = DateTime.Now.ToLocalTime().ToString();
                 Form3.SetProName(voteProject.ProjectName);
                 if (dataSource.Equals("NEW"))
@@ -687,10 +687,8 @@ namespace controller
                             Thread.Sleep(10000);
                         }
                     } while (re != "ok");
-
                     url = $"http://bitcoinrobot.cn/vote/dl/{fileName}";
                 }
-
                 Log.writeLogs("./log.txt", "开始下载:" + url);
                 downLoadCount = 0;
                 bool result = true;
@@ -724,15 +722,6 @@ namespace controller
                 String[] Lines = {@"start vote.exe"};
                 File.WriteAllLines(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName + "/启动九天.bat", Lines,
                     Encoding.GetEncoding("GBK"));
-            }
-
-            try
-            {
-                File.Delete(pathName);
-            }
-            catch (IOException)
-            {
-                Log.writeLogs("./log.txt", pathName + "-->文件占用中，无法删除!");
             }
 
             activeVoteProject = voteProject;

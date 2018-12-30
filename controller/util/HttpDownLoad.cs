@@ -145,13 +145,31 @@ namespace controller.util
         // 校验文件版本
         public static bool CheckVersion(string url, string pathName)
         {
-            Console.WriteLine(GetHttpModifyTime(url));
-
+            string modifyTime = GetHttpModifyTime(url);
+            DateTime modify_url;
+            DateTime.TryParse(modifyTime,out modify_url);
             if (File.Exists(pathName))
             {
-//                Console.WriteLine(GetHttpModifyTime(url));
+                FileInfo fi = new FileInfo(pathName);
+                DateTime modify_local = fi.LastWriteTime;
+                if(DateTime.Compare(modify_url, modify_local) > 0)
+                {
+                    try
+                    {
+                        File.Delete(pathName);
+                    }
+                    catch (IOException)
+                    {
+                        Log.writeLogs("./log.txt", pathName + "-->文件占用中，无法删除!");
+                    }
+                    Log.writeLogs("./log.txt", $"{url}有更新，重新下载");
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
-
             return true;
         }
     }
