@@ -34,6 +34,10 @@ namespace controller.util
                         bool pass = false;
                         do
                         {
+                            if (taskName.Equals("待命"))
+                            {
+                                TaskInfos.Clear(i);
+                            }
                             IniReadWriter.WriteIniKeys("Command", "CacheMemory" + i, "", pathShare + "/TaskPlus.ini");
                             IniReadWriter.WriteIniKeys("Command", "CustomPath" + i, customPath, pathShare + "/TaskPlus.ini");
                             IniReadWriter.WriteIniKeys("Command", "TaskName" + i, taskName, pathShare + "/Task.ini");
