@@ -282,7 +282,7 @@ namespace controller
             {
                 try
                 {
-                    result = httpUtil.requestHttpGet("http://bitcoinrobot.cn:8000", "/voteInfo", $"isAdsl={isAdsl}&id={getIdentify()}","utf-8");
+                    result = httpUtil.requestHttpGet("http://bitcoinrobot.cn:8000", "/voteInfo/", $"isAdsl={isAdsl}&id={getIdentify()}","utf-8");
                 }
                 catch (Exception)
                 {
@@ -683,7 +683,7 @@ namespace controller
                     {
                         try
                         {
-                            re = httpUtil.requestHttpGet(checkUrl, "/download", $"url={url}", "utf-8");
+                            re = httpUtil.requestHttpGet(checkUrl, "/download/", $"url={url}", "utf-8");
                         }
                         catch (Exception)
                         {
