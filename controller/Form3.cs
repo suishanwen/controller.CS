@@ -636,8 +636,17 @@ namespace controller
 
             IniReadWriter.WriteIniKeys("Command", "printgonghao", "1", _mainForm.PathShare + "/CF.ini");
         }
-
         
+        private void addVoteProjectDroped(string projectName)
+        {
+            string voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped", _mainForm.PathShare + "/AutoVote.ini");
+            Log.writeLogs("./log.txt", $"{projectName}拉黑{blackRate * 30}分钟");
+            voteProjectNameDroped +=
+                StringUtil.isEmpty(voteProjectNameDroped) ? projectName : "|" + projectName;
+            IniReadWriter.WriteIniKeys("Command", "voteProjectNameDroped", voteProjectNameDroped, _mainForm.PathShare + "/AutoVote.ini");
+
+        }
+
 
         private void startVoteProject(VoteProject voteProject, bool onlyWaitOrder)
         {
@@ -679,18 +688,28 @@ namespace controller
                     string checkUrl = $"http://bitcoinrobot.cn:8000";
                     HttpManager httpUtil = HttpManager.getInstance();
                     string re = "";
+                    int err = 0;
                     do
                     {
                         try
                         {
                             re = httpUtil.requestHttpGet(checkUrl, "/download/", $"url={url}", "utf-8");
+                            if (re.Equals("err")){
+                                err++;
+                            }
+                            if (err > 5)
+                            {
+                                Log.writeLogs("./log.txt", "下载失败5次，拉黑...");
+                                addVoteProjectDroped(voteProject.ProjectName);
+                                return;
+                            }
                         }
                         catch (Exception)
                         {
                             re = "";
-                            Console.WriteLine("Request Download Fail!Retry in 10s...");
-                            Log.writeLogs("./log.txt", "Request Fail!Retry in 10s...");
-                            Thread.Sleep(10000);
+                            Console.WriteLine("Request Download Fail!Retry in 5...");
+                            Log.writeLogs("./log.txt", "Request Fail!Retry in 5...");
+                            Thread.Sleep(5000);
                         }
                     } while (re != "ok");
                     url = $"http://bitcoinrobot.cn/vote/dl/{fileName}";
