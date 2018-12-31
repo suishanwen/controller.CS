@@ -1042,9 +1042,9 @@ namespace controller
                             testHighReward();
                         }
                     }
-
+                    Random rd = new Random();
                     refreshWindowText();
-                    Thread.Sleep(15000);
+                    Thread.Sleep((8+ rd.Next(1, 10)) * 1000);
                 }
                 catch (Exception e)
                 {
