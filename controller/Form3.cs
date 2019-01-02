@@ -1299,7 +1299,7 @@ namespace controller
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0 && dataGridView1.Columns[e.ColumnIndex] is DataGridViewCheckBoxColumn)
+            if (dataGridView1.Rows.Count > e.RowIndex &&e.RowIndex >= 0 && dataGridView1.Columns[e.ColumnIndex] is DataGridViewCheckBoxColumn)
             {
                 string projectName = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
                 bool val = (bool) dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
