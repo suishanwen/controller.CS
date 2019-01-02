@@ -52,11 +52,14 @@
             this.label3 = new System.Windows.Forms.Label();
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-            this.button10 = new System.Windows.Forms.Button();
             this.button11 = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.button12 = new System.Windows.Forms.Button();
+            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.button10 = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
@@ -240,7 +243,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(337, 113);
+            this.label3.Location = new System.Drawing.Point(398, 113);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(29, 12);
             this.label3.TabIndex = 22;
@@ -248,9 +251,9 @@
             // 
             // textBox6
             // 
-            this.textBox6.Location = new System.Drawing.Point(383, 110);
+            this.textBox6.Location = new System.Drawing.Point(433, 110);
             this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(70, 21);
+            this.textBox6.Size = new System.Drawing.Size(47, 21);
             this.textBox6.TabIndex = 23;
             this.textBox6.TextChanged += new System.EventHandler(this.textBox6_TextChanged);
             // 
@@ -261,16 +264,6 @@
             this.notifyIcon1.Text = "控制与监控端";
             this.notifyIcon1.Visible = true;
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
-            // 
-            // button10
-            // 
-            this.button10.Location = new System.Drawing.Point(283, 90);
-            this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(48, 46);
-            this.button10.TabIndex = 24;
-            this.button10.Text = "挂机";
-            this.button10.UseVisualStyleBackColor = true;
-            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // button11
             // 
@@ -293,7 +286,7 @@
             // checkBox3
             // 
             this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(349, 90);
+            this.checkBox3.Location = new System.Drawing.Point(404, 90);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(72, 16);
             this.checkBox3.TabIndex = 27;
@@ -311,16 +304,44 @@
             this.button12.UseVisualStyleBackColor = true;
             this.button12.Click += new System.EventHandler(this.button12_Click);
             // 
+            // textBox7
+            // 
+            this.textBox7.Location = new System.Drawing.Point(6, 13);
+            this.textBox7.Name = "textBox7";
+            this.textBox7.Size = new System.Drawing.Size(47, 21);
+            this.textBox7.TabIndex = 30;
+            // 
+            // button10
+            // 
+            this.button10.Location = new System.Drawing.Point(58, 12);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(41, 23);
+            this.button10.TabIndex = 31;
+            this.button10.Text = "发送";
+            this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.button10);
+            this.groupBox1.Controls.Add(this.textBox7);
+            this.groupBox1.Location = new System.Drawing.Point(282, 88);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(100, 44);
+            this.groupBox1.TabIndex = 32;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "COM";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(536, 148);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.button12);
             this.Controls.Add(this.checkBox3);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.button11);
-            this.Controls.Add(this.button10);
             this.Controls.Add(this.textBox6);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.button9);
@@ -352,6 +373,8 @@
             this.Text = "控制与监控端";
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -381,11 +404,13 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
-        private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Button button11;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.CheckBox checkBox3;
         private System.Windows.Forms.Button button12;
+        private System.Windows.Forms.TextBox textBox7;
+        private System.Windows.Forms.Button button10;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }
 

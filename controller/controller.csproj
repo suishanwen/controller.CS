@@ -103,6 +103,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="util\ComUtil.cs" />
     <Compile Include="util\Email.cs" />
     <Compile Include="util\HtmlMatch.cs" />
     <Compile Include="util\HttpDownLoad.cs" />

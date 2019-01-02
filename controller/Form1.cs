@@ -22,6 +22,7 @@ namespace controller
         private string pathShareVm; //虚拟机内的共享路径，用于分割字符串将主机路径转换为虚拟机路径
         private string user;//用户ID
         private string overSwitchPath;//到票切换路径
+        private string com;//串口
 
         //取CPU编号   
         public static String GetCpuID()
@@ -71,6 +72,11 @@ namespace controller
                 return _Form1.VM1;
             }
             return $"{_Form1.VM1}-{_Form1.VM2}";
+        }
+
+        public static string GetCom()
+        {
+            return $"COM{_Form1.com}";
         }
 
 
@@ -241,6 +247,12 @@ namespace controller
             textBox3.Text = IniReadWriter.ReadIniKeys("Form", "vm2", "./controller.ini");
             textBox5.Text = IniReadWriter.ReadIniKeys("Command", "worker", PathShare + "/CF.ini");
             textBox6.Text = IniReadWriter.ReadIniKeys("Command", "cishu", PathShare + "/CF.ini");
+            com = IniReadWriter.ReadIniKeys("Command", "COM", PathShare + "/Com.ini");
+            if (StringUtil.isEmpty(com))
+            {
+                com = "6";
+            }
+            groupBox1.Text =$"COM{com}";
             user = IniReadWriter.ReadIniKeys("Command", "USER", PathShare + "/CF.ini");
             Downloads = IniReadWriter.ReadIniKeys("Command", "downloads", PathShare + "/CF.ini");
             VotePath = IniReadWriter.ReadIniKeys("Command", "votePath", PathShare + "/CF.ini");
@@ -469,21 +481,7 @@ namespace controller
             }
         }
 
-        private void button10_Click(object sender, EventArgs e)
-        {
-            if (CheckBox3.Checked)
-            {
-                OverSwitchPath = "HANGUP";
-                CheckBox3.Text = "到票切换" + IniReadWriter.ReadIniKeys("Command", "Hangup", PathShare + "/CF.ini");
-            }else
-            {
-                DialogResult dr = MessageBox.Show("确定要‘挂机’吗?", "挂机", MessageBoxButtons.OKCancel);
-                if (dr == DialogResult.OK)
-                {
-                    SwitchUtil.swichVm(textBox2.Text, textBox3.Text, this, "", IniReadWriter.ReadIniKeys("Command", "Hangup", PathShare + "/CF.ini"), PathShare);
-                }
-            }
-        }
+ 
 
         //通过路径启动进程
         private  void StartProcess(string pathName)
@@ -558,6 +556,19 @@ namespace controller
                 SwitchUtil.swichVm(textBox2.Text, textBox3.Text, this, "", "CLEAN", PathShare);
             }
 
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            if (StringUtil.isEmpty(textBox7.Text))
+            {
+                MessageBox.Show("发送数据不能为空！");
+                return;
+            }
+            if (!ComUtil.Send(GetCom(),textBox7.Text))
+            {
+                MessageBox.Show("发送失败！");
+            }
         }
     }
 }

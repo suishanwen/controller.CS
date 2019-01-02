@@ -656,7 +656,7 @@ namespace controller
             //先待命
             for (int p = int.Parse(_mainForm.VM1); p <= int.Parse(_mainForm.VM2); p++)
             {
-                String taskName =
+                string taskName =
                     IniReadWriter.ReadIniKeys("Command", "TaskName" + p, _mainForm.PathShare + "/Task.ini");
                 if (!onlyWaitOrder || taskName.Equals("待命"))
                 {
@@ -1126,6 +1126,18 @@ namespace controller
                     }
 
                     IniReadWriter.WriteIniKeys("Command", "Val", "0", _mainForm.PathShare + "/CF.ini");
+                    string hexData = IniReadWriter.ReadIniKeys("Command", $"{val}",  _mainForm.PathShare + "/Com.ini");
+                    if (!StringUtil.isEmpty(hexData))
+                    {
+                        if (ComUtil.Send(Form1.GetCom(), hexData))
+                        {
+                            Log.writeLogs("./log.txt", $"{val}号{hexData}发送成功！");
+                        }
+                        else
+                        {
+                            Log.writeLogs("./log.txt", $"{val}号{hexData}发送失败！");
+                        }
+                    }
                     IniReadWriter.WriteIniKeys("Command", "ArrDrop", drop, _mainForm.PathShare + "/CF.ini");
                     _mainForm.NotifyIcon1.ShowBalloonTip(0, val + "号虚拟机掉线了", DateTime.Now.ToLocalTime().ToString(),
                         ToolTipIcon.Error);
