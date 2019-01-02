@@ -1007,10 +1007,16 @@ namespace controller
                         if (DateTime.Now.Hour == 11 && DateTime.Now.Day != statisticDay && !StringUtil.isEmpty(email))
                         {
                             Log.writeLogs("./log.txt", $"发送收益统计至{email}!");
-                            Email.Send(email, "收益统计", Statistic.GenerateStatistic());
-                            statisticDay = DateTime.Now.Day;
+                            if (Email.Send(email, "收益统计", Statistic.GenerateStatistic()))
+                            {
+                                statisticDay = DateTime.Now.Day;
+                                Statistic.Reset();
+                            }
+                            else
+                            {
+                                Log.writeLogs("./log.txt", $"发送失败！");
+                            }
                         }
-
                         //每2小时  * 倍率 解封黑名单
                         if (DateTime.Now.Hour % (2 * blackRate) == 0 &&
                             DateTime.Now.Hour != clearBlackListHour)

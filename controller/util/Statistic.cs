@@ -44,11 +44,20 @@ namespace controller.util
                 content += "\n</table>";
                 content += "\n</div><br/>";
                 reward += subReward;
-                IniReadWriter.WriteIniKeys(section, null, null, path);
             });
             content += $"\n<h2>合计:{reward}</h2>";
             content += "\n</div>\n</body>\n</html>";
             return content;
+        }
+
+        public static void Reset()
+        {
+            var path = $"{Form1.GetPathShare()}/Statistic.ini";
+            List<string> sectionList = IniSections.ReadSections(path);
+            sectionList.ForEach(section =>
+            {
+                IniReadWriter.WriteIniKeys(section, null, null, path);
+            });
         }
     }
 }

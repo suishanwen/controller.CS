@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Mail;
 using System.Text;
 
@@ -6,7 +7,7 @@ namespace controller.util
 {
     class Email
     {
-        public static void Send(string receiver, string title, string content)
+        public static bool Send(string receiver, string title, string content)
         {
             //实例化一个发送邮件类。
             MailMessage mailMessage = new MailMessage();
@@ -30,7 +31,13 @@ namespace controller.util
             //验证发件人身份(发件人的邮箱，邮箱里的生成授权码);
             client.Credentials = new NetworkCredential("controlservice@sina.com", "a123456");
             //发送
-            client.Send(mailMessage);
+            try
+            {
+                client.Send(mailMessage);
+                return true;
+            }catch(Exception e){
+                return false;
+            }
         }
     }
 }
