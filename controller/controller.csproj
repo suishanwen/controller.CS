@@ -115,6 +115,7 @@
     <Compile Include="util\Statistic.cs" />
     <Compile Include="util\StringUtil.cs" />
     <Compile Include="util\SwitchUtil.cs" />
+    <Compile Include="util\SysEnvironment.cs" />
     <Compile Include="util\TaskInfo.cs" />
     <Compile Include="util\VoteProject.cs" />
     <Compile Include="util\Winrar.cs" />

@@ -218,6 +218,7 @@ namespace controller
             _Form1 = this;
             _Form3 = new Form3(this);
             _Form3.Show();
+            SysEnvironment.SetAutoLogon();
         }
 
 
