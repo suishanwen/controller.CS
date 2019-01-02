@@ -1299,71 +1299,77 @@ namespace controller
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (dataGridView1.Rows.Count > e.RowIndex &&e.RowIndex >= 0 && dataGridView1.Columns[e.ColumnIndex] is DataGridViewCheckBoxColumn)
+            try
             {
-                string projectName = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
-                bool val = (bool) dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
-                if (e.ColumnIndex == 5)
+                if (dataGridView1.Rows.Count > e.RowIndex && e.RowIndex >= 0 && dataGridView1.Columns[e.ColumnIndex] is DataGridViewCheckBoxColumn)
                 {
-                    //关联拉黑 禁用button
-                    if (voteProjectMonitorList[e.RowIndex].RelDrop)
+                    string projectName = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
+                    bool val = (bool)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+                    if (e.ColumnIndex == 5)
                     {
-                        return;
-                    }
-                    string voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped",
-                        _mainForm.PathShare + "/AutoVote.ini");
-                    if (!val)
-                    {
-                        voteProjectNameDroped +=
-                            StringUtil.isEmpty(voteProjectNameDroped) ? projectName : "|" + projectName;
-                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = true;
-                    }
-                    else
-                    {
-                        voteProjectNameDroped = voteProjectNameDroped.Replace("|" + projectName, "")
-                            .Replace(projectName, "");
-                        if (voteProjectNameDropedTemp.IndexOf(projectName) != -1)
+                        //关联拉黑 禁用button
+                        if (voteProjectMonitorList[e.RowIndex].RelDrop)
                         {
-                            string voteProjectNameDropedTemp = IniReadWriter.ReadIniKeys("Command",
-                                "voteProjectNameDropedTemp", _mainForm.PathShare + "/AutoVote.ini");
-                            voteProjectNameDropedTemp = voteProjectNameDropedTemp.Replace("|" + projectName, "")
+                            return;
+                        }
+                        string voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped",
+                            _mainForm.PathShare + "/AutoVote.ini");
+                        if (!val)
+                        {
+                            voteProjectNameDroped +=
+                                StringUtil.isEmpty(voteProjectNameDroped) ? projectName : "|" + projectName;
+                            dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = true;
+                        }
+                        else
+                        {
+                            voteProjectNameDroped = voteProjectNameDroped.Replace("|" + projectName, "")
                                 .Replace(projectName, "");
-                            IniReadWriter.WriteIniKeys("Command", "voteProjectNameDropedTemp",
-                                voteProjectNameDropedTemp, _mainForm.PathShare + "/AutoVote.ini");
+                            if (voteProjectNameDropedTemp.IndexOf(projectName) != -1)
+                            {
+                                string voteProjectNameDropedTemp = IniReadWriter.ReadIniKeys("Command",
+                                    "voteProjectNameDropedTemp", _mainForm.PathShare + "/AutoVote.ini");
+                                voteProjectNameDropedTemp = voteProjectNameDropedTemp.Replace("|" + projectName, "")
+                                    .Replace(projectName, "");
+                                IniReadWriter.WriteIniKeys("Command", "voteProjectNameDropedTemp",
+                                    voteProjectNameDropedTemp, _mainForm.PathShare + "/AutoVote.ini");
+                            }
+
+                            dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = false;
                         }
 
-                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = false;
+                        IniReadWriter.WriteIniKeys("Command", "voteProjectNameDroped", voteProjectNameDroped,
+                            _mainForm.PathShare + "/AutoVote.ini");
                     }
-
-                    IniReadWriter.WriteIniKeys("Command", "voteProjectNameDroped", voteProjectNameDroped,
-                        _mainForm.PathShare + "/AutoVote.ini");
-                }
-                else if (e.ColumnIndex == 6)
-                {
-                    string allProjectName = projectName.Split('_')[0];
-                    string voteProjectNameToped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameToped",
-                        _mainForm.PathShare + "/AutoVote.ini");
-                    if (!val)
+                    else if (e.ColumnIndex == 6)
                     {
-                        if (voteProjectNameToped.IndexOf(allProjectName) == -1)
+                        string allProjectName = projectName.Split('_')[0];
+                        string voteProjectNameToped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameToped",
+                            _mainForm.PathShare + "/AutoVote.ini");
+                        if (!val)
                         {
-                            voteProjectNameToped += StringUtil.isEmpty(voteProjectNameToped)
-                                ? allProjectName
-                                : "|" + allProjectName;
+                            if (voteProjectNameToped.IndexOf(allProjectName) == -1)
+                            {
+                                voteProjectNameToped += StringUtil.isEmpty(voteProjectNameToped)
+                                    ? allProjectName
+                                    : "|" + allProjectName;
+                            }
+
+                            dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = true;
+                        }
+                        else
+                        {
+                            voteProjectNameToped = voteProjectNameToped.Replace("|" + allProjectName, "")
+                                .Replace(allProjectName, "");
+                            dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = false;
                         }
 
-                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = true;
+                        IniReadWriter.WriteIniKeys("Command", "voteProjectNameToped", voteProjectNameToped,
+                            _mainForm.PathShare + "/AutoVote.ini");
                     }
-                    else
-                    {
-                        voteProjectNameToped = voteProjectNameToped.Replace("|" + allProjectName, "")
-                            .Replace(allProjectName, "");
-                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = false;
-                    }
-
-                    IniReadWriter.WriteIniKeys("Command", "voteProjectNameToped", voteProjectNameToped,
-                        _mainForm.PathShare + "/AutoVote.ini");
                 }
+            }catch(Exception)
+            {
+                MessageBox.Show("数据刷新中，请重新操作！");
             }
         }
 
