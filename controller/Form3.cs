@@ -282,7 +282,12 @@ namespace controller
             {
                 try
                 {
-                    result = httpUtil.requestHttpGet("http://bitcoinrobot.cn:8000", "/voteInfo/", $"isAdsl={isAdsl}&id={getIdentify()}&arrDrop=${arrDrop}","utf-8");
+                    string drop = "";
+                    if (!StringUtil.isEmpty(arrDrop))
+                    {
+                        drop = $"&arrDrop={arrDrop}";
+                    }
+                    result = httpUtil.requestHttpGet("http://bitcoinrobot.cn:8000", "/voteInfo/", $"isAdsl={isAdsl}&id={getIdentify()}{drop}","utf-8");
                 }
                 catch (Exception)
                 {
