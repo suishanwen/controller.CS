@@ -282,7 +282,7 @@ namespace controller
             {
                 try
                 {
-                    result = httpUtil.requestHttpGet("http://bitcoinrobot.cn:8000", "/voteInfo/", $"isAdsl={isAdsl}&id={getIdentify()}","utf-8");
+                    result = httpUtil.requestHttpGet("http://bitcoinrobot.cn:8000", "/voteInfo/", $"isAdsl={isAdsl}&id={getIdentify()}&arrDrop=${arrDrop}","utf-8");
                 }
                 catch (Exception)
                 {
@@ -838,7 +838,7 @@ namespace controller
         private bool existWaitOrder()
         {
             bool result = false;
-            string arrDrop = IniReadWriter.ReadIniKeys("Command", "ArrDrop", _mainForm.PathShare + "/CF.ini");
+            arrDrop = IniReadWriter.ReadIniKeys("Command", "ArrDrop", _mainForm.PathShare + "/CF.ini");
             for (int i = int.Parse(_mainForm.VM1); i <= int.Parse(_mainForm.VM2); i++)
             {
                 if (!StringUtil.isEmpty(arrDrop))
@@ -863,7 +863,7 @@ namespace controller
 
         private bool allWaitOrder()
         {
-            string arrDrop = IniReadWriter.ReadIniKeys("Command", "ArrDrop", _mainForm.PathShare + "/CF.ini");
+            arrDrop = IniReadWriter.ReadIniKeys("Command", "ArrDrop", _mainForm.PathShare + "/CF.ini");
             for (int i = int.Parse(_mainForm.VM1); i <= int.Parse(_mainForm.VM2); i++)
             {
                 if (!StringUtil.isEmpty(arrDrop))
