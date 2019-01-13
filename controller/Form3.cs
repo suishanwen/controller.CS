@@ -274,6 +274,23 @@ namespace controller
             return $"{id}-{Form1.GetVMS()}";
         }
 
+        private string getInfo()
+        {
+            string info = "";
+            if (!StringUtil.isEmpty(arrDrop))
+            {
+                info = $"&arrDrop=掉线:{arrDrop}";
+            }
+            else
+            {
+                if (!label4.Text.Equals("无"))
+                {
+                    info = $"&arrDrop=活跃:{label4.Text}";
+                }
+            }
+            return info;
+        }
+
         private List<VoteProject> getVoteProjects()
         {
             HttpManager httpUtil = HttpManager.getInstance();
@@ -282,12 +299,8 @@ namespace controller
             {
                 try
                 {
-                    string drop = "";
-                    if (!StringUtil.isEmpty(arrDrop))
-                    {
-                        drop = $"&arrDrop={arrDrop}";
-                    }
-                    result = httpUtil.requestHttpGet("http://bitcoinrobot.cn:8000", "/voteInfo/", $"isAdsl={isAdsl}&id={getIdentify()}{drop}","utf-8");
+                   
+                    result = httpUtil.requestHttpGet("http://bitcoinrobot.cn:8000", "/voteInfo/", $"isAdsl={isAdsl}&id={getIdentify()}{getInfo()}","utf-8");
                 }
                 catch (Exception)
                 {
