@@ -285,7 +285,7 @@ namespace controller
             {
                 if (!label4.Text.Equals("无"))
                 {
-                    info = $"&arrDrop=活跃:{label4.Text}";
+                    info = $"&arrDrop={label4.Text}";
                 }
             }
             return info;
