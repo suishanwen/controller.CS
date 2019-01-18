@@ -1248,8 +1248,8 @@ namespace controller
         private void button1_Click(object sender, EventArgs e)
         {
             isTop = !isTop;
-            TopMost = isTop;
-            button1.Text = TopMost ? "取消置顶" : "置顶";
+            this.TopMost = isTop;
+            button1.Text = this.TopMost ? "取消置顶" : "置顶";
         }
 
         private void selectVoteProject()
@@ -1432,6 +1432,11 @@ namespace controller
                 this.button5.Text = "主";
             }
             IniReadWriter.WriteIniKeys("Command", "isAdsl", isAdsl, _mainForm.PathShare + "/CF.ini");
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            Form4.InstanceForm();
         }
     }
 }
