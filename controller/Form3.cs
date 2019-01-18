@@ -191,12 +191,43 @@ namespace controller
             return false;
         }
 
+        private bool isStratageDroped(VoteProject voteProject)
+        {
+            string blackStratage = IniReadWriter.ReadIniKeys("Command", "blackStratage",
+                _mainForm.PathShare + "/AutoVote.ini");
+            if (!StringUtil.isEmpty(blackStratage))
+            {
+                string[] arr = blackStratage.Split('|');
+                foreach (string infos in arr)
+                {
+                    string[] info = infos.Split('-');
+                    string name = info[0];
+                    double price = 0;
+                    try
+                    {
+                        price = double.Parse(info[1]);
+                    }
+                    catch (Exception) { };
+                    if(voteProject.ProjectName.ToLower().IndexOf(name.ToLower())!=-1 &&
+                        voteProject.Price < price)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         /**
          * 是否拉黑    checkType    0 默认 1 全项目匹配
          * 
          */
         private bool isDropedProject(VoteProject voteProject, int checkType)
         {
+            if (isStratageDroped(voteProject))
+            {
+                return true;
+            }
             var project = voteProject.ProjectName;
             voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped",
                 _mainForm.PathShare + "/AutoVote.ini");
