@@ -660,7 +660,7 @@ namespace controller
             string[] user1 = {"AQ-239356", "Q7-21173"};
             string[] user2 = {"AQ-14", "Q7-43"};
             string id = IniReadWriter.ReadIniKeys("Command", "worker", _mainForm.PathShare + "/CF.ini");
-            if (id == user2[0] || id == user2[1])
+            if (id.IndexOf(user2[0]) != -1 || id.IndexOf(user2[1]) != -1)
             {
                 if (activeVoteProject.IdType.Equals("Q7"))
                 {
