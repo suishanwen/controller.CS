@@ -660,29 +660,34 @@ namespace controller
             string[] user1 = {"AQ-239356", "Q7-21173"};
             string[] user2 = {"AQ-14", "Q7-43"};
             string id = IniReadWriter.ReadIniKeys("Command", "worker", _mainForm.PathShare + "/CF.ini");
-            if (id.IndexOf(user2[0]) != -1 || id.IndexOf(user2[1]) != -1)
+            bool r14 = id.ToUpper().IndexOf(user2[0]) != -1 || id.ToUpper().IndexOf(user2[1]) != -1;
+            string fix = "";
+            string worker = "";
+            if (r14)
             {
+                fix = id.ToUpper().Replace(user2[0], "").Replace(user2[1],"");
                 if (activeVoteProject.IdType.Equals("Q7"))
                 {
-                    IniReadWriter.WriteIniKeys("Command", "worker", user2[1], _mainForm.PathShare + "/CF.ini");
+                    worker = user2[1];
                 }
                 else
                 {
-                    IniReadWriter.WriteIniKeys("Command", "worker", user2[0], _mainForm.PathShare + "/CF.ini");
+                    worker = user2[0];
                 }
             }
             else
             {
+                fix = id.ToUpper().Replace(user1[0], "").Replace(user1[1], "");
                 if (activeVoteProject.IdType.Equals("Q7"))
                 {
-                    IniReadWriter.WriteIniKeys("Command", "worker", user1[1], _mainForm.PathShare + "/CF.ini");
+                    worker = user1[1];
                 }
                 else
                 {
-                    IniReadWriter.WriteIniKeys("Command", "worker", user1[0], _mainForm.PathShare + "/CF.ini");
+                    worker = user1[0];
                 }
             }
-
+            IniReadWriter.WriteIniKeys("Command", "worker", worker + fix, _mainForm.PathShare + "/CF.ini");
             IniReadWriter.WriteIniKeys("Command", "printgonghao", "1", _mainForm.PathShare + "/CF.ini");
         }
         
