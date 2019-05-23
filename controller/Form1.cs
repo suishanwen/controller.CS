@@ -23,7 +23,8 @@ namespace controller
         private string user;//用户ID
         private string overSwitchPath;//到票切换路径
         private string com;//串口
-        private string identity = Md5.GetMD5(GetCpuID() + GetHardDiskID());//机器码
+        private SocketClient socketClient = new SocketClient(Md5.GetMD5(GetCpuID() + GetHardDiskID()));
+
 
         //取CPU编号   
         public static String GetCpuID()
@@ -250,7 +251,7 @@ namespace controller
             _Form3 = new Form3(this);
             _Form3.Show();
             SysEnvironment.SetAutoLogon();
-            new SocketClient(identity).Start();
+            socketClient.Start();
         }
 
 
@@ -263,6 +264,7 @@ namespace controller
                 {
                     _Form3.AutoVote.Abort();
                 }
+                socketClient.Dispose();
                 this.FormClosing -= new FormClosingEventHandler(this.Form1_FormClosing);//为保证Application.Exit();时不再弹出提示，所以将FormClosing事件取消
                 Application.Exit();//退出整个应用程序
             }

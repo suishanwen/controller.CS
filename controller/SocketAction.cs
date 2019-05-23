@@ -17,13 +17,16 @@ namespace controller
         public static string TASK_SYS_UPDATE = "Update";
         public static string TASK_SYS_CLEAN = "CLEAN";
 
+        public static string TASK_VOTE_PROJECT = "投票项目";
+
         public static string FORM1_VM1 = "VM1";
         public static string FORM1_VM2 = "VM2";
         public static string FORM1_VM3 = "VM3";
 
-        public static string AUTO_VOTE1 = "AUTO_VOTE";
-        public static string AUTO_VOTE2 = "OVER_AUTO";
-        public static string AUTO_VOTE_SELECT_INDEX = "AUTO_VOTE_SELECT_INDEX";
+        public static string AUTO_VOTE_SET1 = "AUTO_VOTE";
+        public static string AUTO_VOTE_SET2 = "OVER_AUTO";
+        public static string AUTO_VOTE_INDEX_SELECT = "AUTO_VOTE_INDEX_SELECT";
+        public static string AUTO_VOTE_INDEX_NAME_START = "AUTO_VOTE_INDEX_NAME_START";
 
 
         private static string PathShare = Form1._Form1.PathShare;
@@ -78,13 +81,28 @@ namespace controller
             Form3.DlAction(type, val);
         }
 
-        public static void AUTO_VOTE_INDEX_SET(int index)
+        public static void AUTO_VOTE_SELECT_INDEX(int index)
         {
             Form3.SetSelectedDataGrid(index);
         }
 
-        public static void AUTO_VOTE_INDEX_START()
+        public static void AUTO_VOTE_START_NAME_INDEX(string name="")
         {
+            if (!StringUtil.isEmpty(name))
+            {
+                int index = Form3.VoteProjectMonitorList.FindIndex(VoteProject =>
+                {
+                    return VoteProject.ProjectName.Equals(name);
+                });
+                if (index != -1)
+                {
+                    AUTO_VOTE_SELECT_INDEX(index);
+                }
+                else
+                {
+                    return;
+                }
+            }
             new Thread(Form3.StartSelectedVoteProject).Start();
         }
     }

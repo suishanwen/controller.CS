@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace controller.util
 {
-    class VoteProject
+    public class VoteProject
     {
         private string projectName;
         private double price;

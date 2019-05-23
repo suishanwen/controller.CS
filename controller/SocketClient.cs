@@ -80,12 +80,25 @@ namespace controller
                         string val = arr.Length == 2 ? arr[1] : "";
                         SocketAction.VM(type, val);
                     }
-                }else if (msg.Contains("AUTO_VOTE"))
+                }else if (msg.Contains("AUTO_VOTE_SET"))
                 {
-                    int type = int.Parse(msg.Substring(9, 1));
+                    int type = int.Parse(msg.Substring(13, 1));
                     string[] arr = msg.Split(':');
                     string val = arr.Length == 2 ? arr[1] : "";
                     SocketAction.AUTO_VOTE_SET(type, val);
+                }
+                else if (msg.Contains("AUTO_VOTE_INDEX"))
+                {
+                    string[] arr = msg.Split(':');
+                    string method = arr[0];
+                    string val = arr.Length == 2 ? arr[1] : "";
+                    if (method.Equals(SocketAction.AUTO_VOTE_INDEX_SELECT))
+                    {
+                        SocketAction.AUTO_VOTE_SELECT_INDEX(int.Parse(val));
+                    }else if (method.Equals(SocketAction.AUTO_VOTE_INDEX_NAME_START))
+                    {
+                        SocketAction.AUTO_VOTE_START_NAME_INDEX(val);
+                    }
                 }
             }
         }

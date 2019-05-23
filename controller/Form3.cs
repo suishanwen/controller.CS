@@ -42,10 +42,7 @@ namespace controller
         private string email;
 
 
-        internal List<VoteProject> VoteProjectMonitorList
-        {
-            get { return voteProjectMonitorList; }
-        }
+        public static List<VoteProject> VoteProjectMonitorList => _form3.voteProjectMonitorList;
 
         public Thread AutoVote
         {
@@ -587,7 +584,7 @@ namespace controller
                     }
                     if (activeVoteProject.Index != -1)
                     {
-                        SocketAction.AUTO_VOTE_INDEX_SET(activeVoteProject.Index);
+                        SocketAction.AUTO_VOTE_SELECT_INDEX(activeVoteProject.Index);
                     }
                 }
                 this.dataGridView1.Refresh();
@@ -748,8 +745,7 @@ namespace controller
                         }
 
                     }
-                    Form1.VM3 = p.ToString();
-                    SocketAction.SYS(SocketAction.TASK_SYS_WAIT_ORDER,true);
+                    SwitchUtil.SetVmState(p, "", SocketAction.TASK_SYS_WAIT_ORDER, _mainForm.PathShare);
                 }
             }
             string fileName = voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1);
@@ -837,8 +833,6 @@ namespace controller
                 writeAutoVoteProject();
                 //                }
             }
-
-            Form1.VM3 = "";
             Log.writeLogs("./log.txt",
                 "AutoVote: " + voteProject.ToString() + "    " + DateTime.Now.ToLocalTime().ToString());
             DirectoryInfo theFolder = new DirectoryInfo(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName);
@@ -871,10 +865,8 @@ namespace controller
                     {
                         vmInfo.Add(p, new TaskInfo(voteProject.ProjectName, voteProject.Price));
                     }
-
-                    Form1.SetVM3(p.ToString());
-                    SwitchUtil.swichVm(_mainForm.PathShareVm + "\\投票项目\\" + voteProject.ProjectName + "\\" + executableFile.Name,
-                        "投票项目", _mainForm.PathShare);
+                    string customPath = _mainForm.PathShareVm + "\\投票项目\\" + voteProject.ProjectName + "\\" + executableFile.Name;
+                    SwitchUtil.SetVmState(p, customPath, SocketAction.TASK_VOTE_PROJECT, _mainForm.PathShare);
                 }
             }
 
@@ -897,7 +889,7 @@ namespace controller
             }
 
             TaskInfos.Set(vmInfo);
-            SocketAction.AUTO_VOTE_INDEX_SET(activeVoteProject.Index);
+            SocketAction.AUTO_VOTE_SELECT_INDEX(activeVoteProject.Index);
         }
 
         private void testVoteProjectMonitorList()
@@ -1314,13 +1306,13 @@ namespace controller
             if (_form3.dataGridView1.SelectedRows.Count > 0)
             {
                 int index = _form3.dataGridView1.SelectedRows[0].Index;
-                _form3.startVoteProject(_form3.VoteProjectMonitorList[index], false);
+                _form3.startVoteProject(Form3.VoteProjectMonitorList[index], false);
             }
         }
 
         private void dataGridView1_DoubleClick(object sender, EventArgs e)
         {
-            SocketAction.AUTO_VOTE_INDEX_START();
+            SocketAction.AUTO_VOTE_START_NAME_INDEX();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
