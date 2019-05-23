@@ -127,7 +127,7 @@ namespace controller
                     break;
                 case 2:
                     string arrDrop = IniReadWriter.ReadIniKeys("Command", "ArrDrop", Form1.GetPathShare() + "/CF.ini");
-                    state.Add("code", $"arrDrop:{arrDrop}|arrActive:{Form3.ActiveVm}|taskInfos:{ TaskInfos.Active()}");
+                    state.Add("code", $"arrDrop={arrDrop}&arrActive={Form3.ActiveVm}&taskInfos={ TaskInfos.Active()}");
                     prefix = "/api/mq/send/sync";
                     break;
             }
