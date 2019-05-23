@@ -23,7 +23,8 @@ namespace controller
         private string user;//用户ID
         private string overSwitchPath;//到票切换路径
         private string com;//串口
-        private SocketClient socketClient = new SocketClient(Md5.GetMD5(GetCpuID() + GetHardDiskID()));
+        public static string identity = Md5.GetMD5(GetCpuID() + GetHardDiskID());
+        private SocketClient socketClient = new SocketClient(identity);
 
 
         //取CPU编号   
@@ -134,7 +135,18 @@ namespace controller
             }
         }
 
-
+        public static string GetPathShare()
+        {
+            return _Form1.PathShare;
+        }
+        public static string GetWorkerId()
+        {
+            return _Form1.textBox5.Text;
+        }
+        public static string GetTail()
+        {
+            return _Form1.checkBox2.Checked ? "1" : "0";
+        }
         public static string VM1
         {
             get
@@ -209,10 +221,6 @@ namespace controller
             {
                 _Form1.textBox4.Text = value;
             }
-        }
-        public static string GetPathShare()
-        {
-            return _Form1.pathShare;
         }
        
         public NotifyIcon NotifyIcon1

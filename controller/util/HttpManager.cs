@@ -97,24 +97,25 @@ namespace controller.util
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
                 //设置请求方式和头信息
                 httpWebRequest.Method = "POST";
-                httpWebRequest.ContentType = "application/x-www-form-urlencoded";
+                httpWebRequest.ContentType = "application/json";
                 //遍历参数集合
                 if (!(paras == null || paras.Count == 0))
                 {
-                    StringBuilder buffer = new StringBuilder();
+                    StringBuilder buffer = new StringBuilder("{");
                     int i = 0;
                     foreach (string key in paras.Keys)
                     {
-                        if (i > 0)
+                        if (i == 0)
                         {
-                            buffer.AppendFormat("&{0}={1}", key, paras[key]);
+                            buffer.AppendFormat("\"{0}\":\"{1}\"", key, paras[key]);
                         }
                         else
                         {
-                            buffer.AppendFormat("{0}={1}", key, paras[key]);
+                            buffer.AppendFormat(",\"{0}\":\"{1}\"", key, paras[key]);
                         }
                         i++;
                     }
+                    buffer.Append("}");
                     byte[] btBodys = Encoding.UTF8.GetBytes(buffer.ToString());
                     httpWebRequest.ContentLength = btBodys.Length;
                     //将请求内容封装在请求体中

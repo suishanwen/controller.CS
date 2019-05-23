@@ -44,6 +44,16 @@ namespace controller
 
         public static List<VoteProject> VoteProjectMonitorList => _form3.voteProjectMonitorList;
 
+        public static bool IsAutoVote
+        {
+            get { return _form3.isAutoVote; }
+            set { _form3.isAutoVote = value; }
+        }
+        public static string ActiveVm
+        {
+            get { return _form3.activeVm; }
+            set { _form3.activeVm = value; }
+        }
         public Thread AutoVote
         {
             get { return autoVote; }
@@ -69,11 +79,11 @@ namespace controller
                 switch (type)
                 {
                     case 1:
-                        _form3.isAutoVote = !_form3.isAutoVote;
-                        IniReadWriter.WriteIniKeys("Command", "isAutoVote", _form3.isAutoVote ? "1" : "0",
+                        Form3.IsAutoVote = !Form3.IsAutoVote;
+                        IniReadWriter.WriteIniKeys("Command", "isAutoVote", Form3.IsAutoVote ? "1" : "0",
                             _mainForm.PathShare + "/CF.ini");
-                        _form3.button2.Text = _form3.isAutoVote ? "取消自动" : "开启自动";
-                        _form3.button3.Visible = !_form3.isAutoVote;
+                        _form3.button2.Text = Form3.IsAutoVote ? "取消自动" : "开启自动";
+                        _form3.button3.Visible = !Form3.IsAutoVote;
                         break;
                     case 2:
                         _form3.overAuto = !_form3.overAuto;
@@ -1257,14 +1267,14 @@ namespace controller
             }
             else if (count == 5)
             {
-                activeVm = "";
+                ActiveVm = "";
                 for (int i = int.Parse(Form1.VM1); i <= int.Parse(Form1.VM2); i++)
                 {
                     string state =
                         IniReadWriter.ReadIniKeys("Command", "TaskChange" + i, _mainForm.PathShare + "/Task.ini");
                     if (state == "1")
                     {
-                        activeVm += " " + i + " |";
+                        ActiveVm += " " + i + " |";
                     }
                 }
 
@@ -1277,9 +1287,9 @@ namespace controller
                     label3.Text = "无";
                 }
 
-                if (activeVm != "")
+                if (ActiveVm != "")
                 {
-                    label4.Text = activeVm;
+                    label4.Text = ActiveVm;
                 }
                 else
                 {

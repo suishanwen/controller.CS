@@ -100,6 +100,11 @@ namespace controller
                         SocketAction.AUTO_VOTE_START_NAME_INDEX(val);
                     }
                 }
+                else if (msg.Contains("REPORT"))
+                {
+                    int type = msg.Equals(SocketAction.REPORT_STATE) ? 1 : 2;
+                    SocketAction.REPORT(type);
+                }
             }
         }
         /// <summary>
