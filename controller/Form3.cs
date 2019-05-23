@@ -57,6 +57,36 @@ namespace controller
             get { return dataGridView1; }
         }
 
+        //委托 解决线程间操作问题
+        delegate void DelegateAction(int type, string val = "");
+
+        public static void DlAction(int type, string val = "")
+        {
+            if (_form3.InvokeRequired)
+            {
+                DelegateAction d = new DelegateAction(DlAction);
+                _form3.Invoke(d, new object[] { type, val });
+            }
+            else
+            {
+                switch (type)
+                {
+                    case 1:
+                        _form3.isAutoVote = !_form3.isAutoVote;
+                        IniReadWriter.WriteIniKeys("Command", "isAutoVote", _form3.isAutoVote ? "1" : "0",
+                            _mainForm.PathShare + "/CF.ini");
+                        _form3.button2.Text = _form3.isAutoVote ? "取消自动" : "开启自动";
+                        _form3.button3.Visible = !_form3.isAutoVote;
+                        break;
+                    case 2:
+                        _form3.overAuto = !_form3.overAuto;
+                        _form3.button3.Text = _form3.overAuto ? "撤销" : "到票自动";
+                        break;
+                }
+
+            }
+        }
+
         //委托 解决线程间操作dataGrid问题
         delegate void DelegateWindowText(String value);
 
@@ -65,7 +95,7 @@ namespace controller
             if (this.InvokeRequired)
             {
                 DelegateWindowText d = new DelegateWindowText(SetWindowText);
-                this.Invoke(d, new object[] {value});
+                this.Invoke(d, new object[] { value });
             }
             else
             {
@@ -86,7 +116,7 @@ namespace controller
             if (_form3.progressBar1.InvokeRequired)
             {
                 SetProNameDelegate d = new SetProNameDelegate(SetProName);
-                _form3.Invoke(d, new object[] {value});
+                _form3.Invoke(d, new object[] { value });
             }
             else
             {
@@ -102,7 +132,7 @@ namespace controller
             if (_form3.progressBar1.InvokeRequired)
             {
                 SetProgressDelegate d = new SetProgressDelegate(SetProgress);
-                _form3.Invoke(d, new object[] {value});
+                _form3.Invoke(d, new object[] { value });
             }
             else
             {
@@ -146,8 +176,6 @@ namespace controller
             catch (Exception)
             {
             }
-
-            ;
             textBox1.Text = filter.ToString();
             textBox2.Text = IniReadWriter.ReadIniKeys("Command", "maxKb", _mainForm.PathShare + "/CF.ini");
             textBox3.Text = blackRate.ToString();
@@ -208,7 +236,7 @@ namespace controller
                         price = double.Parse(info[1]);
                     }
                     catch (Exception) { };
-                    if(voteProject.ProjectName.ToLower().IndexOf(name.ToLower())!=-1 &&
+                    if (voteProject.ProjectName.ToLower().IndexOf(name.ToLower()) != -1 &&
                         voteProject.Price < price)
                     {
                         return true;
@@ -330,8 +358,8 @@ namespace controller
             {
                 try
                 {
-                   
-                    result = httpUtil.requestHttpGet("http://bitcoinrobot.cn:8000", "/voteInfo/", $"isAdsl={isAdsl}&id={getIdentify()}{getInfo()}","utf-8");
+
+                    result = httpUtil.requestHttpGet("http://bitcoinrobot.cn:8000", "/voteInfo/", $"isAdsl={isAdsl}&id={getIdentify()}{getInfo()}", "utf-8");
                 }
                 catch (Exception)
                 {
@@ -408,7 +436,7 @@ namespace controller
                 try
                 {
                     result = httpUtil.requestHttpGet(
-                        "http://butingzhuan.com", "/tasks.php", "t=" + DateTime.Now.Millisecond.ToString(),"gbk");
+                        "http://butingzhuan.com", "/tasks.php", "t=" + DateTime.Now.Millisecond.ToString(), "gbk");
                     result = result.Substring(result.IndexOf("时间</td>"));
                     result = result.Substring(0, result.IndexOf("qzd_yj"));
                     result = result.Substring(result.IndexOf("<tr class='blank'>"));
@@ -480,7 +508,7 @@ namespace controller
                                 voteProject.BackgroundAddress = HtmlMatch.GetAttr(innerTd, "a", "href");
                                 break;
                             case 9:
-                                voteProject.DownloadAddress = HtmlMatch.GetAttr(innerTd.Replace(" ",""), "a", "href");
+                                voteProject.DownloadAddress = HtmlMatch.GetAttr(innerTd.Replace(" ", ""), "a", "href");
                                 break;
                             case 10:
                                 try
@@ -523,21 +551,18 @@ namespace controller
 
 
         //委托 解决线程间操作dataGrid问题
-        delegate void SetSelectedDataGridView();
+        delegate void SetSelectedDataGridView(int index);
 
-        private void SetSelectedDataGrid()
+        public static void SetSelectedDataGrid(int index)
         {
-            if (this.dataGridView1.InvokeRequired)
+            if (_form3.dataGridView1.InvokeRequired)
             {
                 SetSelectedDataGridView d = new SetSelectedDataGridView(SetSelectedDataGrid);
-                this.Invoke(d, new object[] { });
+                _form3.Invoke(d, new object[] { index });
             }
             else
             {
-                if (activeVoteProject != null && activeVoteProject.Index != -1)
-                {
-                    this.dataGridView1.CurrentCell = this.dataGridView1[0, activeVoteProject.Index];
-                }
+                _form3.dataGridView1.CurrentCell = _form3.dataGridView1[0, index];
             }
         }
 
@@ -549,7 +574,7 @@ namespace controller
             if (this.dataGridView1.InvokeRequired)
             {
                 SetDataGridView d = new SetDataGridView(SetDataGrid);
-                this.Invoke(d, new object[] {voteProjectList});
+                this.Invoke(d, new object[] { voteProjectList });
             }
             else
             {
@@ -560,10 +585,11 @@ namespace controller
                     {
                         this.dataGridView1.ClearSelection();
                     }
-
-                    SetSelectedDataGrid();
+                    if (activeVoteProject.Index != -1)
+                    {
+                        SocketAction.AUTO_VOTE_INDEX_SET(activeVoteProject.Index);
+                    }
                 }
-
                 this.dataGridView1.Refresh();
             }
         }
@@ -657,15 +683,15 @@ namespace controller
 
         private void setWorkerId()
         {
-            string[] user1 = {"AQ-239356", "Q7-21173"};
-            string[] user2 = {"AQ-14", "Q7-43"};
+            string[] user1 = { "AQ-239356", "Q7-21173" };
+            string[] user2 = { "AQ-14", "Q7-43" };
             string id = IniReadWriter.ReadIniKeys("Command", "worker", _mainForm.PathShare + "/CF.ini");
             bool r14 = id.ToUpper().IndexOf(user2[0]) != -1 || id.ToUpper().IndexOf(user2[1]) != -1;
             string fix = "";
             string worker = "";
             if (r14)
             {
-                fix = id.ToUpper().Replace(user2[0], "").Replace(user2[1],"");
+                fix = id.ToUpper().Replace(user2[0], "").Replace(user2[1], "");
                 if (activeVoteProject.IdType.Equals("Q7"))
                 {
                     worker = user2[1];
@@ -690,7 +716,7 @@ namespace controller
             IniReadWriter.WriteIniKeys("Command", "worker", worker + fix, _mainForm.PathShare + "/CF.ini");
             IniReadWriter.WriteIniKeys("Command", "printgonghao", "1", _mainForm.PathShare + "/CF.ini");
         }
-        
+
         private void addVoteProjectDroped(string projectName)
         {
             string voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped", _mainForm.PathShare + "/AutoVote.ini");
@@ -723,7 +749,7 @@ namespace controller
 
                     }
                     Form1.VM3 = p.ToString();
-                    SocketAction.SYS(SocketAction.TASK_SYS_WAIT_ORDER);
+                    SocketAction.SYS(SocketAction.TASK_SYS_WAIT_ORDER,true);
                 }
             }
             string fileName = voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1);
@@ -746,7 +772,8 @@ namespace controller
                         try
                         {
                             re = httpUtil.requestHttpGet(checkUrl, "/download/", $"url={url}", "utf-8");
-                            if (re.Equals("err")){
+                            if (re.Equals("err"))
+                            {
                                 err++;
                             }
                             if (err > 5)
@@ -796,7 +823,7 @@ namespace controller
             if (voteProject.Type == "九天" &&
                 !File.Exists(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName + "/启动九天.bat"))
             {
-                String[] Lines = {@"start vote.exe"};
+                String[] Lines = { @"start vote.exe" };
                 File.WriteAllLines(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName + "/启动九天.bat", Lines,
                     Encoding.GetEncoding("GBK"));
             }
@@ -870,7 +897,7 @@ namespace controller
             }
 
             TaskInfos.Set(vmInfo);
-            SetSelectedDataGrid();
+            SocketAction.AUTO_VOTE_INDEX_SET(activeVoteProject.Index);
         }
 
         private void testVoteProjectMonitorList()
@@ -1101,7 +1128,7 @@ namespace controller
                     }
                     Random rd = new Random();
                     refreshWindowText();
-                    Thread.Sleep((8+ rd.Next(1, 10)) * 1000);
+                    Thread.Sleep((8 + rd.Next(1, 10)) * 1000);
                 }
                 catch (Exception e)
                 {
@@ -1183,7 +1210,7 @@ namespace controller
                     }
 
                     IniReadWriter.WriteIniKeys("Command", "Val", "0", _mainForm.PathShare + "/CF.ini");
-                    string hexData = IniReadWriter.ReadIniKeys("Command", $"{val}",  _mainForm.PathShare + "/Com.ini");
+                    string hexData = IniReadWriter.ReadIniKeys("Command", $"{val}", _mainForm.PathShare + "/Com.ini");
                     if (!StringUtil.isEmpty(hexData))
                     {
                         if (ComUtil.Send(Form1.GetCom(), hexData))
@@ -1211,19 +1238,19 @@ namespace controller
                     {
                         button3.Text = "到票自动";
                         overAuto = false;
-                        setAutoVote();
+                        SocketAction.AUTO_VOTE_SET(1);
                     }
 
                     if (_mainForm.CheckBox3.Checked && !StringUtil.isEmpty(_mainForm.OverSwitchPath))
                     {
                         if (_mainForm.OverSwitchPath.Equals("HANGUP"))
                         {
-                            SwitchUtil.swichVm( "",IniReadWriter.ReadIniKeys("Command", "Hangup", _mainForm.PathShare + "/CF.ini"),
+                            SwitchUtil.swichVm("", IniReadWriter.ReadIniKeys("Command", "Hangup", _mainForm.PathShare + "/CF.ini"),
                                 _mainForm.PathShare);
                         }
                         else
                         {
-                            SwitchUtil.swichVm( _mainForm.OverSwitchPath,"投票项目", _mainForm.PathShare);
+                            SwitchUtil.swichVm(_mainForm.OverSwitchPath, "投票项目", _mainForm.PathShare);
                         }
                         _mainForm.CheckBox3.Checked = false;
                     }
@@ -1282,18 +1309,18 @@ namespace controller
             button1.Text = this.TopMost ? "取消置顶" : "置顶";
         }
 
-        private void selectVoteProject()
+        public static void StartSelectedVoteProject()
         {
-            if (dataGridView1.SelectedRows.Count > 0)
+            if (_form3.dataGridView1.SelectedRows.Count > 0)
             {
-                int index = dataGridView1.SelectedRows[0].Index;
-                startVoteProject(VoteProjectMonitorList[index], false);
+                int index = _form3.dataGridView1.SelectedRows[0].Index;
+                _form3.startVoteProject(_form3.VoteProjectMonitorList[index], false);
             }
         }
 
         private void dataGridView1_DoubleClick(object sender, EventArgs e)
         {
-            new Thread(selectVoteProject).Start();
+            SocketAction.AUTO_VOTE_INDEX_START();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -1306,24 +1333,14 @@ namespace controller
             }
         }
 
-        private void setAutoVote()
-        {
-            isAutoVote = !isAutoVote;
-            IniReadWriter.WriteIniKeys("Command", "isAutoVote", isAutoVote ? "1" : "0",
-                _mainForm.PathShare + "/CF.ini");
-            button2.Text = isAutoVote ? "取消自动" : "开启自动";
-            button3.Visible = !isAutoVote;
-        }
-
         private void button2_Click(object sender, EventArgs e)
         {
-            setAutoVote();
+            SocketAction.AUTO_VOTE_SET(1);
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            overAuto = !overAuto;
-            button3.Text = overAuto ? "撤销" : "到票自动";
+            SocketAction.AUTO_VOTE_SET(2);
         }
 
 
@@ -1415,7 +1432,8 @@ namespace controller
                             _mainForm.PathShare + "/AutoVote.ini");
                     }
                 }
-            }catch(Exception)
+            }
+            catch (Exception)
             {
                 MessageBox.Show("数据刷新中，请重新操作！");
             }
@@ -1439,7 +1457,7 @@ namespace controller
 
         private void dataGridView1_DataSourceChanged(object sender, EventArgs e)
         {
-            BindingList<VoteProject> voteProjects = (BindingList<VoteProject>) this.dataGridView1.DataSource;
+            BindingList<VoteProject> voteProjects = (BindingList<VoteProject>)this.dataGridView1.DataSource;
             for (var i = 0; i < voteProjects.Count; i++)
             {
                 if (voteProjects[i].RelDrop)

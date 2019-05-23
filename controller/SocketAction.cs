@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace controller
@@ -20,6 +21,11 @@ namespace controller
         public static string FORM1_VM2 = "VM2";
         public static string FORM1_VM3 = "VM3";
 
+        public static string AUTO_VOTE1 = "AUTO_VOTE";
+        public static string AUTO_VOTE2 = "OVER_AUTO";
+        public static string AUTO_VOTE_SELECT_INDEX = "AUTO_VOTE_SELECT_INDEX";
+
+
         private static string PathShare = Form1._Form1.PathShare;
 
 
@@ -33,14 +39,14 @@ namespace controller
             return false;
         }
 
-        public static void SYS(string taskName,bool socket = false)
+        public static void SYS(string taskName, bool socket = false)
         {
             if (socket)
             {
                 BindingFlags flag = BindingFlags.Static | BindingFlags.Public;
                 FieldInfo f_key = typeof(SocketAction).GetField(taskName, flag);
                 object o = f_key.GetValue(new SocketAction());
-                taskName =  o.ToString();
+                taskName = o.ToString();
             }
             bool result = TASK_SYS(taskName, socket);
             if (result && taskName == TASK_SYS_WAIT_ORDER)
@@ -51,7 +57,7 @@ namespace controller
             }
         }
 
-        public static void VM(int type,string val)
+        public static void VM(int type, string val)
         {
             switch (type)
             {
@@ -65,6 +71,21 @@ namespace controller
                     Form1.VM3 = val;
                     break;
             }
+        }
+
+        public static void AUTO_VOTE_SET(int type, string val="")
+        {
+            Form3.DlAction(type, val);
+        }
+
+        public static void AUTO_VOTE_INDEX_SET(int index)
+        {
+            Form3.SetSelectedDataGrid(index);
+        }
+
+        public static void AUTO_VOTE_INDEX_START()
+        {
+            new Thread(Form3.StartSelectedVoteProject).Start();
         }
     }
 }
