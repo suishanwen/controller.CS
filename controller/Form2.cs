@@ -79,7 +79,7 @@ namespace controller
                 else
                 {
                     SwitchUtil.clearAutoVote(_mainForm.PathShare);
-                    SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm, pathName, "投票项目", _mainForm.PathShare);
+                    SwitchUtil.swichVm(pathName, "投票项目", _mainForm.PathShare);
                 }
                 _mainForm.Show();
                 _Instance.Hide();

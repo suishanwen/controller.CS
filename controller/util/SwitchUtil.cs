@@ -23,9 +23,12 @@ namespace controller.util
             IniReadWriter.WriteIniKeys("Command", "dropVote", "0", pathShare + "/AutoVote.ini");
         }
 
-        public static void swichVm(string vm1, string vm2, Form1 _mainForm, string customPath, string taskName, string pathShare)
+        public static void swichVm(string customPath, string taskName, string pathShare)
         {
-            if (StringUtil.isEmpty(_mainForm.VM3))
+            string vm1 = Form1.VM1;
+            string vm2 = Form1.VM2;
+            string vm3 = Form1.VM3;
+            if (StringUtil.isEmpty(vm3))
             {
                 if (!StringUtil.isEmpty(vm1) && !StringUtil.isEmpty(vm2))
                 {
@@ -66,10 +69,10 @@ namespace controller.util
             }
             else
             {
-                IniReadWriter.WriteIniKeys("Command", "CacheMemory" + _mainForm.VM3, "", pathShare + "/TaskPlus.ini");
-                IniReadWriter.WriteIniKeys("Command", "CustomPath" + _mainForm.VM3, customPath, pathShare + "/TaskPlus.ini");
-                IniReadWriter.WriteIniKeys("Command", "TaskName" + _mainForm.VM3, taskName, pathShare + "/Task.ini");
-                IniReadWriter.WriteIniKeys("Command", "TaskChange" + _mainForm.VM3, "1", pathShare + "/Task.ini");
+                IniReadWriter.WriteIniKeys("Command", "CacheMemory" + vm3, "", pathShare + "/TaskPlus.ini");
+                IniReadWriter.WriteIniKeys("Command", "CustomPath" + vm3, customPath, pathShare + "/TaskPlus.ini");
+                IniReadWriter.WriteIniKeys("Command", "TaskName" + vm3, taskName, pathShare + "/Task.ini");
+                IniReadWriter.WriteIniKeys("Command", "TaskChange" + vm3, "1", pathShare + "/Task.ini");
                 Form1.SetVM3("");
             }
         }

@@ -708,7 +708,7 @@ namespace controller
                               voteProject.Remains);
             Dictionary<int, TaskInfo> vmInfo = TaskInfos.Get();
             //先待命
-            for (int p = int.Parse(_mainForm.VM1); p <= int.Parse(_mainForm.VM2); p++)
+            for (int p = int.Parse(Form1.VM1); p <= int.Parse(Form1.VM2); p++)
             {
                 string taskName =
                     IniReadWriter.ReadIniKeys("Command", "TaskName" + p, _mainForm.PathShare + "/Task.ini");
@@ -722,10 +722,8 @@ namespace controller
                         }
 
                     }
-                    Form1.SetVM3(p.ToString());
-                    SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm,
-                        "",
-                        "待命", _mainForm.PathShare);
+                    Form1.VM3 = p.ToString();
+                    SocketAction.SYS(SocketAction.TASK_SYS_WAIT_ORDER);
                 }
             }
             string fileName = voteProject.DownloadAddress.Substring(voteProject.DownloadAddress.LastIndexOf("/") + 1);
@@ -813,7 +811,7 @@ namespace controller
                 //                }
             }
 
-            _mainForm.VM3 = "";
+            Form1.VM3 = "";
             Log.writeLogs("./log.txt",
                 "AutoVote: " + voteProject.ToString() + "    " + DateTime.Now.ToLocalTime().ToString());
             DirectoryInfo theFolder = new DirectoryInfo(_mainForm.PathShare + "/投票项目/" + voteProject.ProjectName);
@@ -827,7 +825,7 @@ namespace controller
                     break;
                 }
             }
-            for (int p = int.Parse(_mainForm.VM1); p <= int.Parse(_mainForm.VM2); p++)
+            for (int p = int.Parse(Form1.VM1); p <= int.Parse(Form1.VM2); p++)
             {
                 String taskName =
                     IniReadWriter.ReadIniKeys("Command", "TaskName" + p, _mainForm.PathShare + "/Task.ini");
@@ -848,8 +846,7 @@ namespace controller
                     }
 
                     Form1.SetVM3(p.ToString());
-                    SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm,
-                        _mainForm.PathShareVm + "\\投票项目\\" + voteProject.ProjectName + "\\" + executableFile.Name,
+                    SwitchUtil.swichVm(_mainForm.PathShareVm + "\\投票项目\\" + voteProject.ProjectName + "\\" + executableFile.Name,
                         "投票项目", _mainForm.PathShare);
                 }
             }
@@ -893,7 +890,7 @@ namespace controller
         {
             bool result = false;
             arrDrop = IniReadWriter.ReadIniKeys("Command", "ArrDrop", _mainForm.PathShare + "/CF.ini");
-            for (int i = int.Parse(_mainForm.VM1); i <= int.Parse(_mainForm.VM2); i++)
+            for (int i = int.Parse(Form1.VM1); i <= int.Parse(Form1.VM2); i++)
             {
                 if (!StringUtil.isEmpty(arrDrop))
                 {
@@ -918,7 +915,7 @@ namespace controller
         private bool allWaitOrder()
         {
             arrDrop = IniReadWriter.ReadIniKeys("Command", "ArrDrop", _mainForm.PathShare + "/CF.ini");
-            for (int i = int.Parse(_mainForm.VM1); i <= int.Parse(_mainForm.VM2); i++)
+            for (int i = int.Parse(Form1.VM1); i <= int.Parse(Form1.VM2); i++)
             {
                 if (!StringUtil.isEmpty(arrDrop))
                 {
@@ -1221,16 +1218,13 @@ namespace controller
                     {
                         if (_mainForm.OverSwitchPath.Equals("HANGUP"))
                         {
-                            SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm, "",
-                                IniReadWriter.ReadIniKeys("Command", "Hangup", _mainForm.PathShare + "/CF.ini"),
+                            SwitchUtil.swichVm( "",IniReadWriter.ReadIniKeys("Command", "Hangup", _mainForm.PathShare + "/CF.ini"),
                                 _mainForm.PathShare);
                         }
                         else
                         {
-                            SwitchUtil.swichVm(_mainForm.VM1, _mainForm.VM2, _mainForm, _mainForm.OverSwitchPath,
-                                "投票项目", _mainForm.PathShare);
+                            SwitchUtil.swichVm( _mainForm.OverSwitchPath,"投票项目", _mainForm.PathShare);
                         }
-
                         _mainForm.CheckBox3.Checked = false;
                     }
                 }
@@ -1245,7 +1239,7 @@ namespace controller
             else if (count == 5)
             {
                 activeVm = "";
-                for (int i = int.Parse(_mainForm.VM1); i <= int.Parse(_mainForm.VM2); i++)
+                for (int i = int.Parse(Form1.VM1); i <= int.Parse(Form1.VM2); i++)
                 {
                     string state =
                         IniReadWriter.ReadIniKeys("Command", "TaskChange" + i, _mainForm.PathShare + "/Task.ini");

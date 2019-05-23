@@ -1,0 +1,70 @@
+﻿using controller.util;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Text;
+using System.Windows.Forms;
+
+namespace controller
+{
+    class SocketAction
+    {
+        public static string TASK_SYS_WAIT_ORDER = "待命";
+        public static string TASK_SYS_SHUTDOWN = "关机";
+        public static string TASK_SYS_RESTART = "重启";
+        public static string TASK_SYS_NET_TEST = "网络测试";
+        public static string TASK_SYS_UPDATE = "Update";
+        public static string TASK_SYS_CLEAN = "CLEAN";
+
+        public static string FORM1_VM1 = "VM1";
+        public static string FORM1_VM2 = "VM2";
+        public static string FORM1_VM3 = "VM3";
+
+        private static string PathShare = Form1._Form1.PathShare;
+
+
+        public static bool TASK_SYS(string taskName, bool socket = false)
+        {
+            if (socket || MessageBox.Show($"确定要‘{taskName}’吗?", taskName, MessageBoxButtons.OKCancel) == DialogResult.OK)
+            {
+                SwitchUtil.swichVm("", taskName, PathShare);
+                return true;
+            }
+            return false;
+        }
+
+        public static void SYS(string taskName,bool socket = false)
+        {
+            if (socket)
+            {
+                BindingFlags flag = BindingFlags.Static | BindingFlags.Public;
+                FieldInfo f_key = typeof(SocketAction).GetField(taskName, flag);
+                object o = f_key.GetValue(new SocketAction());
+                taskName =  o.ToString();
+            }
+            bool result = TASK_SYS(taskName, socket);
+            if (result && taskName == TASK_SYS_WAIT_ORDER)
+            {
+                IniReadWriter.WriteIniKeys("Command", "Copy", "0", PathShare + "/CF.ini");
+                IniReadWriter.WriteIniKeys("Command", "Delete", "0", PathShare + "/CF.ini");
+                IniReadWriter.WriteIniKeys("Command", "Cookie", "0", PathShare + "/CF.ini");
+            }
+        }
+
+        public static void VM(int type,string val)
+        {
+            switch (type)
+            {
+                case 1:
+                    Form1.VM1 = val;
+                    break;
+                case 2:
+                    Form1.VM2 = val;
+                    break;
+                case 3:
+                    Form1.VM3 = val;
+                    break;
+            }
+        }
+    }
+}

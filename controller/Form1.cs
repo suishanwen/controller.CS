@@ -14,7 +14,7 @@ namespace controller
 
     public partial class Form1 : Form
     {
-        private static Form1 _Form1;
+        public static Form1 _Form1;
         private static Form3 _Form3;
         private string pathShare; //主机共享路径
         private string downloads; //下载路径，用于RAR一键解压
@@ -23,6 +23,7 @@ namespace controller
         private string user;//用户ID
         private string overSwitchPath;//到票切换路径
         private string com;//串口
+        private string identity = Md5.GetMD5(GetCpuID() + GetHardDiskID());//机器码
 
         //取CPU编号   
         public static String GetCpuID()
@@ -67,11 +68,11 @@ namespace controller
 
         public static String GetVMS()
         {
-            if(_Form1.VM1 == _Form1.VM2)
+            if(Form1.VM1 == Form1.VM2)
             {
-                return _Form1.VM1;
+                return Form1.VM1;
             }
-            return $"{_Form1.VM1}-{_Form1.VM2}";
+            return $"{Form1.VM1}-{Form1.VM2}";
         }
 
         public static string GetCom()
@@ -133,18 +134,65 @@ namespace controller
         }
 
 
-        public string VM1
+        public static string VM1
         {
             get
             {
-                return textBox2.Text;
+                return _Form1.textBox2.Text;
+            }
+            set
+            {
+                SetVM1(value);
             }
         }
-        public string VM2
+        public static string VM2
         {
             get
             {
-                return textBox3.Text;
+                return _Form1.textBox3.Text;
+            }
+            set
+            {
+                SetVM2(value);
+            }
+        }
+        public static string VM3
+        {
+            get
+            {
+                return _Form1.textBox4.Text;
+            }
+            set
+            {
+                SetVM3(value);
+            }
+        }
+        //委托 解决线程间操作textBox2问题
+        delegate void SetTextBox2(String value);
+        public static void SetVM1(String value)
+        {
+            if (_Form1.textBox2.InvokeRequired)
+            {
+                SetTextBox2 d = new SetTextBox2(SetVM1);
+                _Form1.Invoke(d, new object[] { value });
+            }
+            else
+            {
+                _Form1.textBox2.Text = value;
+            }
+        }
+        //委托 解决线程间操作textBox3问题
+        delegate void SetTextBox3(String value);
+        public static void SetVM2(String value)
+        {
+            if (_Form1.textBox3.InvokeRequired)
+            {
+                SetTextBox3 d = new SetTextBox3(SetVM2);
+                _Form1.Invoke(d, new object[] { value });
+            }
+            else
+            {
+                _Form1.textBox3.Text = value;
             }
         }
         //委托 解决线程间操作textBox4问题
@@ -165,24 +213,7 @@ namespace controller
         {
             return _Form1.pathShare;
         }
-        public string VM3
-        {
-            get
-            {
-                return textBox4.Text;
-            }
-            set
-            {
-                SetVM3(value);
-            }
-        }
-        public TextBox VM3TextBox
-        {
-            get
-            {
-                return textBox4;
-            }
-        }
+       
         public NotifyIcon NotifyIcon1
         {
             get
@@ -219,6 +250,7 @@ namespace controller
             _Form3 = new Form3(this);
             _Form3.Show();
             SysEnvironment.SetAutoLogon();
+            new SocketClient(identity).Start();
         }
 
 
@@ -340,52 +372,34 @@ namespace controller
         //待命点击
         private void button2_Click(object sender, EventArgs e)
         {
-            DialogResult dr = MessageBox.Show("确定要‘待命’吗?", "待命", MessageBoxButtons.OKCancel);
-            if (dr == DialogResult.OK)
-            {
-
-                IniReadWriter.WriteIniKeys("Command", "Copy", "0", PathShare + "/CF.ini");
-                IniReadWriter.WriteIniKeys("Command", "Delete", "0", PathShare + "/CF.ini");
-                IniReadWriter.WriteIniKeys("Command", "Cookie", "0", PathShare + "/CF.ini");
-                SwitchUtil.swichVm(textBox2.Text, textBox3.Text, this, "", "待命", PathShare);
-            }
+            SocketAction.SYS(SocketAction.TASK_SYS_WAIT_ORDER);
         }
         //关机点击
         private void button3_Click(object sender, EventArgs e)
         {
-            DialogResult dr = MessageBox.Show("确定要‘关机’吗?", "关机", MessageBoxButtons.OKCancel);
-            if (dr == DialogResult.OK)
-            {
-                SwitchUtil.swichVm(textBox2.Text, textBox3.Text, this, "", "关机", PathShare);
-            }
+            SocketAction.SYS(SocketAction.TASK_SYS_SHUTDOWN);
         }
         //重启点击
         private void button4_Click(object sender, EventArgs e)
         {
-            DialogResult dr = MessageBox.Show("确定要‘重启’吗?", "重启", MessageBoxButtons.OKCancel);
-            if (dr == DialogResult.OK)
-            {
-                SwitchUtil.swichVm(textBox2.Text, textBox3.Text, this, "", "重启", PathShare);
-            }
+            SocketAction.SYS(SocketAction.TASK_SYS_RESTART);
         }
         //升级点击
         private void button5_Click(object sender, EventArgs e)
         {
-            DialogResult dr = MessageBox.Show("确定要‘升级’吗?", "升级", MessageBoxButtons.OKCancel);
-            if (dr == DialogResult.OK)
-            {
-                SwitchUtil.swichVm(textBox2.Text, textBox3.Text, this, "", "Update", PathShare);
-            }
+            SocketAction.SYS(SocketAction.TASK_SYS_UPDATE);
         }
         //网络测试点击
         private void button6_Click(object sender, EventArgs e)
         {
-            DialogResult dr = MessageBox.Show("确定要‘网络测试’吗?", "网络测试", MessageBoxButtons.OKCancel);
-            if (dr == DialogResult.OK)
-            {
-                SwitchUtil.swichVm(textBox2.Text, textBox3.Text, this, "", "网络测试", PathShare);
-            }
+            SocketAction.SYS(SocketAction.TASK_SYS_NET_TEST);
         }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            SocketAction.SYS(SocketAction.TASK_SYS_CLEAN);
+        }
+
         //改变超时
         private void textBox6_TextChanged(object sender, EventArgs e)
         {
@@ -548,16 +562,6 @@ namespace controller
             }
         }
 
-        private void button12_Click(object sender, EventArgs e)
-        {
-            DialogResult dr = MessageBox.Show("确定要清理虚拟机投票文件吗?", "清理", MessageBoxButtons.OKCancel);
-            if (dr == DialogResult.OK)
-            {
-                Log.writeLogs("./log.txt", "清理虚拟机投票文件");
-                SwitchUtil.swichVm(textBox2.Text, textBox3.Text, this, "", "CLEAN", PathShare);
-            }
-
-        }
 
         private void button10_Click(object sender, EventArgs e)
         {
