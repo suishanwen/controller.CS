@@ -89,7 +89,7 @@ namespace controller
             }
         }
 
-        public static void WORKER_SET(int type, string val)
+        public static void WORKER_SET(int type, string val = "")
         {
             switch (type)
             {
@@ -97,10 +97,10 @@ namespace controller
                     Form1.WorkerId = val;
                     break;
                 case 2:
-                    Form1.InputWorkerId = val=="1";
+                    Form1.InputWorkerId = !Form1.InputWorkerId;
                     break;
                 case 3:
-                    Form1.Tail = val == "1";
+                    Form1.Tail =  !Form1.Tail;
                     break;
             }
         }
