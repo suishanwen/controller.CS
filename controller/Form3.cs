@@ -331,10 +331,10 @@ namespace controller
             int index = json.IndexOf(",");
             if (index == -1)
             {
-                return json.Substring(name.Length + 2, json.IndexOf("}") - (name.Length + 2));
+                return json.Substring(name.Length + 1, json.IndexOf("}") - (name.Length + 1));
             }
 
-            return json.Substring(name.Length + 2, index - (name.Length + 2));
+            return json.Substring(name.Length + 1, index - (name.Length + 1));
         }
 
         private string getIdentify()
