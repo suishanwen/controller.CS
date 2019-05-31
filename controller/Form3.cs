@@ -573,6 +573,7 @@ namespace controller
             else
             {
                 _form3.dataGridView1.CurrentCell = _form3.dataGridView1[0, index];
+                _form3.dataGridView1.Rows[index].Selected = true;
             }
         }
 
