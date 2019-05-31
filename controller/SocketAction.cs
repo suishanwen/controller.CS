@@ -19,6 +19,9 @@ namespace controller
 
         public static string TASK_VOTE_PROJECT = "投票项目";
 
+        public static string TASK_EXEC_REPLUG = "TASK_EXEC_REPLUG";
+
+
         public static string FORM1_VM1 = "VM1";
         public static string FORM1_VM2 = "VM2";
         public static string FORM1_VM3 = "VM3";
@@ -78,6 +81,25 @@ namespace controller
                     break;
             }
         }
+        public static void EXEC_REPLUG(string val = "")
+        {
+            string hexData = IniReadWriter.ReadIniKeys("Command", $"{val}", Form1.GetPathShare() + "/Com.ini");
+            if (!StringUtil.isEmpty(hexData))
+            {
+                if (ComUtil.Send(Form1.GetCom(), hexData))
+                {
+                    Log.writeLogs("./log.txt", $"{val}号{hexData}发送成功！");
+                }
+                else
+                {
+                    Log.writeLogs("./log.txt", $"{val}号{hexData}发送失败！");
+                }
+            }
+            else
+            {
+                Log.writeLogs("./log.txt", $"{val}号,hexData NOT FOUND！");
+            }
+        }
 
         public static void AUTO_VOTE_SET(int type, string val="")
         {
@@ -120,7 +142,7 @@ namespace controller
                 case 1:
                     state.Add("startNum", Form1.VM1);
                     state.Add("endNum", Form1.VM2);
-                    state.Add("workerId", Form1.GetWorkerId());
+                    state.Add("workerId", Form1.WorkerId);
                     state.Add("tail", Form1.GetTail());
                     state.Add("autoVote", Form3.IsAutoVote ? "1" : "0");
                     prefix = "/api/vote/report";

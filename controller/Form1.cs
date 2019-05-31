@@ -139,9 +139,15 @@ namespace controller
         {
             return _Form1.PathShare;
         }
-        public static string GetWorkerId()
+        public static string WorkerId
         {
-            return _Form1.textBox5.Text;
+            get{
+                return _Form1.textBox5.Text;
+            }
+            set
+            {
+                SetWorkerId(value);
+            }
         }
         public static string GetTail()
         {
@@ -178,6 +184,21 @@ namespace controller
             set
             {
                 SetVM3(value);
+            }
+        }
+
+        //委托 解决线程间操作textBox2问题
+        delegate void SetWorker(String value);
+        public static void SetWorkerId(String value)
+        {
+            if (_Form1.textBox5.InvokeRequired)
+            {
+                SetWorker d = new SetWorker(SetWorkerId);
+                _Form1.Invoke(d, new object[] { value });
+            }
+            else
+            {
+                _Form1.textBox5.Text = value;
             }
         }
         //委托 解决线程间操作textBox2问题

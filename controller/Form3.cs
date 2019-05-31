@@ -379,7 +379,7 @@ namespace controller
 
             List<VoteProject> voteProjectList = new List<VoteProject>();
             string pat = @"(\[).*?(\])";
-            Match matched = Regex.Match(result.Replace("'", ""), pat, RegexOptions.IgnoreCase);
+            Match matched = Regex.Match(result.Replace("\"", ""), pat, RegexOptions.IgnoreCase);
             pat = @"(\{).*?(\})";
             MatchCollection matches = Regex.Matches(matched.Value.Replace("[", "")
                 .Replace("]", ""), pat, RegexOptions.IgnoreCase);
@@ -720,6 +720,7 @@ namespace controller
                     worker = user1[0];
                 }
             }
+            Form1.WorkerId = worker + fix;
             IniReadWriter.WriteIniKeys("Command", "worker", worker + fix, _mainForm.PathShare + "/CF.ini");
             IniReadWriter.WriteIniKeys("Command", "printgonghao", "1", _mainForm.PathShare + "/CF.ini");
         }
@@ -1212,18 +1213,7 @@ namespace controller
                     }
 
                     IniReadWriter.WriteIniKeys("Command", "Val", "0", _mainForm.PathShare + "/CF.ini");
-                    string hexData = IniReadWriter.ReadIniKeys("Command", $"{val}", _mainForm.PathShare + "/Com.ini");
-                    if (!StringUtil.isEmpty(hexData))
-                    {
-                        if (ComUtil.Send(Form1.GetCom(), hexData))
-                        {
-                            Log.writeLogs("./log.txt", $"{val}号{hexData}发送成功！");
-                        }
-                        else
-                        {
-                            Log.writeLogs("./log.txt", $"{val}号{hexData}发送失败！");
-                        }
-                    }
+                    SocketAction.EXEC_REPLUG(val.ToString());
                     IniReadWriter.WriteIniKeys("Command", "ArrDrop", drop, _mainForm.PathShare + "/CF.ini");
                     _mainForm.NotifyIcon1.ShowBalloonTip(0, val + "号虚拟机掉线了", DateTime.Now.ToLocalTime().ToString(),
                         ToolTipIcon.Error);
