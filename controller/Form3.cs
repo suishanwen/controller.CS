@@ -49,6 +49,10 @@ namespace controller
             get { return _form3.isAutoVote; }
             set { _form3.isAutoVote = value; }
         }
+        public static bool IsOverAuto
+        {
+            get { return _form3.overAuto; }
+        }
         public static string ActiveVm
         {
             get { return _form3.activeVm; }
@@ -58,7 +62,6 @@ namespace controller
         {
             get { return autoVote; }
         }
-
         public DataGridView DataGridView
         {
             get { return dataGridView1; }
@@ -721,6 +724,7 @@ namespace controller
                 }
             }
             Form1.WorkerId = worker + fix;
+            Form1.InputWorkerId = true;
             IniReadWriter.WriteIniKeys("Command", "worker", worker + fix, _mainForm.PathShare + "/CF.ini");
             IniReadWriter.WriteIniKeys("Command", "printgonghao", "1", _mainForm.PathShare + "/CF.ini");
         }

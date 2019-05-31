@@ -139,6 +139,39 @@ namespace controller
         {
             return _Form1.PathShare;
         }
+        public static string Timeout
+        {
+            get
+            {
+                return _Form1.textBox6.Text;
+            }
+            set
+            {
+                SetTimeout(value);
+            }
+        }
+        public static bool InputWorkerId
+        {
+            get
+            {
+                return _Form1.checkBox1.Checked;
+            }
+            set
+            {
+                SetInputWorkerId(value);
+            }
+        }
+        public static bool Tail
+        {
+            get
+            {
+                return _Form1.checkBox2.Checked;
+            }
+            set
+            {
+                SetTail(value);
+            }
+        }
         public static string WorkerId
         {
             get{
@@ -148,10 +181,6 @@ namespace controller
             {
                 SetWorkerId(value);
             }
-        }
-        public static string GetTail()
-        {
-            return _Form1.checkBox2.Checked ? "1" : "0";
         }
         public static string VM1
         {
@@ -187,18 +216,33 @@ namespace controller
             }
         }
 
-        //委托 解决线程间操作textBox2问题
-        delegate void SetWorker(String value);
-        public static void SetWorkerId(String value)
+
+        //委托 解决线程间操作checkBox1问题
+        delegate void SetInputWorker(bool value);
+        public static void SetInputWorkerId(bool value)
         {
-            if (_Form1.textBox5.InvokeRequired)
+            if (_Form1.checkBox1.InvokeRequired)
             {
-                SetWorker d = new SetWorker(SetWorkerId);
+                SetInputWorker d = new SetInputWorker(SetInputWorkerId);
                 _Form1.Invoke(d, new object[] { value });
             }
             else
             {
-                _Form1.textBox5.Text = value;
+                _Form1.checkBox1.Checked = value;
+            }
+        }
+        //委托 解决线程间操作checkBox2问题
+        delegate void SetTailDelegate(bool value);
+        public static void SetTail(bool value)
+        {
+            if (_Form1.checkBox2.InvokeRequired)
+            {
+                SetTailDelegate d = new SetTailDelegate(SetTail);
+                _Form1.Invoke(d, new object[] { value });
+            }
+            else
+            {
+                _Form1.checkBox2.Checked = value;
             }
         }
         //委托 解决线程间操作textBox2问题
@@ -243,7 +287,34 @@ namespace controller
                 _Form1.textBox4.Text = value;
             }
         }
-       
+        //委托 解决线程间操作textBox5问题
+        delegate void SetWorker(String value);
+        public static void SetWorkerId(String value)
+        {
+            if (_Form1.textBox5.InvokeRequired)
+            {
+                SetWorker d = new SetWorker(SetWorkerId);
+                _Form1.Invoke(d, new object[] { value });
+            }
+            else
+            {
+                _Form1.textBox5.Text = value;
+            }
+        }
+        //委托 解决线程间操作textBox6问题
+        delegate void SetTimeoutDelegate(String value);
+        public static void SetTimeout(String value)
+        {
+            if (_Form1.textBox6.InvokeRequired)
+            {
+                SetTimeoutDelegate d = new SetTimeoutDelegate(SetTimeout);
+                _Form1.Invoke(d, new object[] { value });
+            }
+            else
+            {
+                _Form1.textBox6.Text = value;
+            }
+        }
         public NotifyIcon NotifyIcon1
         {
             get

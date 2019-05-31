@@ -79,6 +79,35 @@ namespace controller
                         string[] arr = msg.Split(':');
                         string val = arr.Length == 2 ? arr[1] : "";
                         SocketAction.VM(type, val);
+                    }else if (msg.Contains("FORM1_WORKER"))
+                    {
+                        string[] arr = msg.Split(':');
+                        string val = arr.Length == 2 ? arr[1] : "";
+                        int type = 0;
+                        if(SocketAction.FORM1_WORKER_SET.Equals(val[0]))
+                        {
+                            type = 1;
+                        }else if (SocketAction.FORM1_WORKER_INPUT.Equals(val[0]))
+                        {
+                            type = 2;
+                        }
+                        else if (SocketAction.FORM1_WORKER_TAIL.Equals(val[0]))
+                        {
+                            type = 1;
+                        }
+                        if (type > 0)
+                        {
+                            SocketAction.WORKER_SET(type, val);
+                        }
+                    }
+                    else if (msg.Contains("FORM1_TIMEOUT"))
+                    {
+                        string[] arr = msg.Split(':');
+                        string val = arr.Length == 2 ? arr[1] : "";
+                        if (!StringUtil.isEmpty(val))
+                        {
+                            SocketAction.TIMEOUT_SET(val);
+                        }
                     }
                 }
                 else if (msg.Contains("AUTO_VOTE_SET"))

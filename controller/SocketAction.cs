@@ -19,15 +19,22 @@ namespace controller
 
         public static string TASK_VOTE_PROJECT = "投票项目";
 
+        public static string FORM1_VM1 = "FORM1_VM1";
+        public static string FORM1_VM2 = "FORM1_VM2";
+        public static string FORM1_VM3 = "FORM1_VM3";
+
+        public static string FORM1_WORKER_SET = "FORM1_WORKER_SET";
+        public static string FORM1_WORKER_INPUT = "FORM1_WORKER_INPUT";
+        public static string FORM1_WORKER_TAIL = "FORM1_WORKER_TAIL";
+
+        public static string FORM1_TIMEOUT = "FORM1_TIMEOUT";
+
         public static string TASK_EXEC_REPLUG = "TASK_EXEC_REPLUG";
 
 
-        public static string FORM1_VM1 = "VM1";
-        public static string FORM1_VM2 = "VM2";
-        public static string FORM1_VM3 = "VM3";
-
         public static string AUTO_VOTE_SET1 = "AUTO_VOTE";
         public static string AUTO_VOTE_SET2 = "OVER_AUTO";
+
         public static string AUTO_VOTE_INDEX_SELECT = "AUTO_VOTE_INDEX_SELECT";
         public static string AUTO_VOTE_INDEX_NAME_START = "AUTO_VOTE_INDEX_NAME_START";
 
@@ -81,6 +88,28 @@ namespace controller
                     break;
             }
         }
+
+        public static void WORKER_SET(int type, string val)
+        {
+            switch (type)
+            {
+                case 1:
+                    Form1.WorkerId = val;
+                    break;
+                case 2:
+                    Form1.InputWorkerId = val=="1";
+                    break;
+                case 3:
+                    Form1.Tail = val == "1";
+                    break;
+            }
+        }
+
+        public static void TIMEOUT_SET(string val)
+        {
+            Form1.Timeout = val;
+        }
+
         public static void EXEC_REPLUG(string val = "")
         {
             string hexData = IniReadWriter.ReadIniKeys("Command", $"{val}", Form1.GetPathShare() + "/Com.ini");
@@ -101,7 +130,7 @@ namespace controller
             }
         }
 
-        public static void AUTO_VOTE_SET(int type, string val="")
+        public static void AUTO_VOTE_SET(int type, string val = "")
         {
             Form3.DlAction(type, val);
         }
@@ -111,7 +140,7 @@ namespace controller
             Form3.SetSelectedDataGrid(index);
         }
 
-        public static void AUTO_VOTE_START_NAME_INDEX(string name="")
+        public static void AUTO_VOTE_START_NAME_INDEX(string name = "")
         {
             if (!StringUtil.isEmpty(name))
             {
@@ -143,8 +172,11 @@ namespace controller
                     state.Add("startNum", Form1.VM1);
                     state.Add("endNum", Form1.VM2);
                     state.Add("workerId", Form1.WorkerId);
-                    state.Add("tail", Form1.GetTail());
+                    state.Add("workerInput", Form1.InputWorkerId ? "1" : "0");
+                    state.Add("tail", Form1.Tail ? "1" : "0");
+                    state.Add("timeout", Form1.Timeout);
                     state.Add("autoVote", Form3.IsAutoVote ? "1" : "0");
+                    state.Add("overAuto", Form3.IsOverAuto ? "1" : "0");
                     prefix = "/api/vote/report";
                     break;
                 case 2:
@@ -158,7 +190,7 @@ namespace controller
                 string result = httpUtil.requestHttpPost("https://bitcoinrobot.cn", prefix, state);
                 Log.writeLogs("./socket.txt", "report state:" + result);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Log.writeLogs("./socket.txt", "report state ERROR:" + e.Message);
             }
