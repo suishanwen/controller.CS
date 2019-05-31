@@ -84,16 +84,16 @@ namespace controller
                         string[] arr = msg.Split(':');
                         string val = arr.Length == 2 ? arr[1] : "";
                         int type = 0;
-                        if(SocketAction.FORM1_WORKER_SET.Equals(val[0]))
+                        if(SocketAction.FORM1_WORKER_SET.Equals(arr[0]))
                         {
                             type = 1;
-                        }else if (SocketAction.FORM1_WORKER_INPUT.Equals(val[0]))
+                        }else if (SocketAction.FORM1_WORKER_INPUT.Equals(arr[0]))
                         {
                             type = 2;
                         }
-                        else if (SocketAction.FORM1_WORKER_TAIL.Equals(val[0]))
+                        else if (SocketAction.FORM1_WORKER_TAIL.Equals(arr[0]))
                         {
-                            type = 1;
+                            type = 3;
                         }
                         if (type > 0)
                         {
