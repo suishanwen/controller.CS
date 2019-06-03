@@ -74,15 +74,15 @@ namespace controller
                 }
                 else if (msg.Contains("TASK_PC"))
                 {
-                    if (msg.Equals("RAR"))
+                    if (msg.Equals(SocketAction.TASK_PC_RAR))
                     {
                         SocketAction.PC_RAR();
                     }
-                    else if (msg.Equals("EPT"))
+                    else if (msg.Equals(SocketAction.TASK_PC_EPT))
                     {
                         SocketAction.PC_EPT();
                     }
-                    else if (msg.Equals("UPGRADE"))
+                    else if (msg.Equals(SocketAction.TASK_PC_UPGRADE))
                     {
                         SocketAction.PC_UPGRADE();
                     }
