@@ -70,8 +70,24 @@ namespace controller
             {
                 if (msg.Contains("TASK_SYS"))
                 {
-                    SocketAction.SYS(msg,true);
-                }else if (msg.Contains("FORM1"))
+                    SocketAction.SYS(msg, true);
+                }
+                else if (msg.Contains("TASK_PC"))
+                {
+                    if (msg.Equals("RAR"))
+                    {
+                        SocketAction.PC_RAR();
+                    }
+                    else if (msg.Equals("EPT"))
+                    {
+                        SocketAction.PC_EPT();
+                    }
+                    else if (msg.Equals("UPGRADE"))
+                    {
+                        SocketAction.PC_UPGRADE();
+                    }
+                }
+                else if (msg.Contains("FORM1"))
                 {
                     if (msg.Contains("FORM1_VM"))
                     {
@@ -79,15 +95,17 @@ namespace controller
                         string[] arr = msg.Split(':');
                         string val = arr.Length == 2 ? arr[1] : "";
                         SocketAction.VM(type, val);
-                    }else if (msg.Contains("FORM1_WORKER"))
+                    }
+                    else if (msg.Contains("FORM1_WORKER"))
                     {
                         string[] arr = msg.Split(':');
                         string val = arr.Length == 2 ? arr[1] : "";
                         int type = 0;
-                        if(SocketAction.FORM1_WORKER_SET.Equals(arr[0]))
+                        if (SocketAction.FORM1_WORKER_SET.Equals(arr[0]))
                         {
                             type = 1;
-                        }else if (SocketAction.FORM1_WORKER_INPUT.Equals(arr[0]))
+                        }
+                        else if (SocketAction.FORM1_WORKER_INPUT.Equals(arr[0]))
                         {
                             type = 2;
                         }
@@ -131,7 +149,8 @@ namespace controller
                     if (method.Equals(SocketAction.AUTO_VOTE_INDEX_SELECT))
                     {
                         SocketAction.AUTO_VOTE_SELECT_INDEX(int.Parse(val));
-                    }else if (method.Equals(SocketAction.AUTO_VOTE_INDEX_NAME_START))
+                    }
+                    else if (method.Equals(SocketAction.AUTO_VOTE_INDEX_NAME_START))
                     {
                         SocketAction.AUTO_VOTE_START_NAME_INDEX(val);
                     }

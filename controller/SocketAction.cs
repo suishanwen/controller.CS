@@ -1,6 +1,8 @@
 ﻿using controller.util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -16,6 +18,11 @@ namespace controller
         public static string TASK_SYS_NET_TEST = "网络测试";
         public static string TASK_SYS_UPDATE = "Update";
         public static string TASK_SYS_CLEAN = "CLEAN";
+
+        public static string TASK_PC_RAR = "TASK_PC_RAR";
+        public static string TASK_PC_EPT = "TASK_PC_EPT";
+        public static string TASK_PC_UPGRADE = "TASK_PC_UPGRADE";
+
 
         public static string TASK_VOTE_PROJECT = "投票项目";
 
@@ -165,13 +172,13 @@ namespace controller
         public static void REPORT(int type)
         {
             Dictionary<string, string> state = new Dictionary<string, string>();
-            Dictionary<string, string> param = new Dictionary<string, string>();
             string prefix = "";
             state.Add("identity", Form1.identity);
             HttpManager httpUtil = HttpManager.getInstance();
             switch (type)
             {
                 case 1:
+                    Dictionary<string, string> param = new Dictionary<string, string>();
                     param.Add("startNum", Form1.VM1);
                     param.Add("endNum", Form1.VM2);
                     param.Add("workerId", Form1.WorkerId);
@@ -212,5 +219,119 @@ namespace controller
 
         }
 
+
+        //通过路径启动进程
+        private static  void StartProcess(string pathName)
+        {
+            ProcessStartInfo info = new ProcessStartInfo();
+            info.FileName = pathName;
+            info.Arguments = "";
+            info.WorkingDirectory = pathName.Substring(0, pathName.LastIndexOf("\\"));
+            info.WindowStyle = ProcessWindowStyle.Normal;
+            Process pro = Process.Start(info);
+            Thread.Sleep(500);
+        }
+
+
+        public static void PC_UPGRADE()
+        {
+            Log.writeLogs("./log.txt", "开始下载:更新");
+            string pathName = "./controller-new.exe";
+            string url = "http://bitcoinrobot.cn/file/controller.exe";
+            bool isDownloading = true;
+            HttpManager httpManager = HttpManager.getInstance();
+            do
+            {
+                try
+                {
+                    httpManager.HttpDownloadFile(url, pathName);
+                    isDownloading = false;
+                }
+                catch (Exception)
+                {
+                    Log.writeLogs("./log.txt", "更新下载异常，重新下载");
+                    File.Delete(pathName);
+                    Thread.Sleep(1000);
+                }
+            } while (isDownloading);
+            if (!File.Exists("./update.bat"))
+            {
+                string line1 = "Taskkill /F /IM controller.exe";
+                string line2 = "ping -n 3 127.0.0.1>nul";
+                string line3 = "del /s /Q " + Environment.CurrentDirectory + "\\controller.exe";
+                string line4 = "ping -n 3 127.0.0.1>nul";
+                string line5 = "ren " + Environment.CurrentDirectory + "\\controller-new.exe controller.exe";
+                string line6 = "ping -n 3 127.0.0.1>nul";
+                string line7 = "start " + Environment.CurrentDirectory + "\\controller.exe";
+                string[] lines = { "@echo off", line1, line2, line3, line4, line5, line6, line7 };
+                File.WriteAllLines(@"./update.bat", lines, Encoding.GetEncoding("GBK"));
+            }
+
+            StartProcess(Environment.CurrentDirectory + "\\update.bat");
+            Application.Exit();//退出整个应用程序
+        }
+
+        public static void PC_RAR()
+        {
+            DirectoryInfo theFolder = new DirectoryInfo(Form1.Downloads);
+            FileInfo[] fileInfo = theFolder.GetFiles();
+            foreach (FileInfo NextFile in fileInfo)//遍历文件
+            {
+                Console.WriteLine(NextFile.Name);
+                int index = NextFile.Name.IndexOf(".rar") != -1 ? NextFile.Name.IndexOf(".rar") : NextFile.Name.IndexOf(".zip");
+                if (index == -1)
+                {
+                    index = NextFile.Name.IndexOf(".RAR") != -1 ? NextFile.Name.IndexOf(".RAR") : NextFile.Name.IndexOf(".ZIP");
+                }
+                if (index != -1)
+                {
+                    Winrar.UnCompressRar(PathShare + "/投票项目/" + NextFile.Name.Substring(0, index), NextFile.DirectoryName, NextFile.Name);
+                    try
+                    {
+                        File.Delete(NextFile.FullName);
+
+                    }
+                    catch (System.IO.IOException)
+                    {
+                        Console.WriteLine(NextFile.FullName + "-->文件占用中，无法删除!");
+                    }
+                }
+            }
+
+        }
+
+        public static void PC_EPT()
+        {
+            DirectoryInfo theFolder = new DirectoryInfo(PathShare + "/投票项目");
+            DirectoryInfo[] allDir = theFolder.GetDirectories();
+            foreach (DirectoryInfo d in allDir)
+            {
+                try
+                {
+                    Directory.Delete(d.FullName, true);
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine(d.FullName + "-->文件占用中，无法删除!");
+                }
+            }
+            string downLoads = IniReadWriter.ReadIniKeys("Command", "Downloads", PathShare + "/CF.ini");
+            if (!StringUtil.isEmpty(downLoads))
+            {
+                DirectoryInfo di = new DirectoryInfo(downLoads);
+                FileInfo[] files = di.GetFiles();
+                foreach (FileInfo f in files)
+                {
+                    try
+                    {
+                        File.Delete(f.FullName);
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine(f.FullName + "-->文件占用中，无法删除!");
+                    }
+                }
+            }
+        }
     }
 }

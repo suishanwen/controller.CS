@@ -96,16 +96,16 @@ namespace controller
             }
         }
 
-        public string Downloads
+        public static string Downloads
         {
             get
             {
-                return downloads;
+                return _Form1.downloads;
             }
 
             set
             {
-                downloads = value;
+                _Form1.downloads = value;
             }
         }
 
@@ -389,7 +389,7 @@ namespace controller
             }
             groupBox1.Text =$"COM{com}";
             user = IniReadWriter.ReadIniKeys("Command", "USER", PathShare + "/CF.ini");
-            Downloads = IniReadWriter.ReadIniKeys("Command", "downloads", PathShare + "/CF.ini");
+            Form1.Downloads = IniReadWriter.ReadIniKeys("Command", "downloads", PathShare + "/CF.ini");
             VotePath = IniReadWriter.ReadIniKeys("Command", "votePath", PathShare + "/CF.ini");
             PathShareVm = IniReadWriter.ReadIniKeys("Command", "gongxiang", PathShare + "/CF.ini");
             string idSelect = IniReadWriter.ReadIniKeys("Command", "IDSelect", PathShare + "/CF.ini");
@@ -510,78 +510,27 @@ namespace controller
         //解压文件
         private void button7_Click(object sender, EventArgs e)
         {
-            if (StringUtil.isEmpty(Downloads))
+            if (StringUtil.isEmpty(Form1.Downloads))
             {
                 MessageBox.Show("请选择您的下载路径（一键解压必须安装WINRAR，并且已经设置环境变量【将Winrar安装目录复制到系统属性-高级系统设置-环境变量-系统变量-path】）", "一键解压");
                 FolderBrowserDialog fd = new FolderBrowserDialog();
                 if (fd.ShowDialog() == DialogResult.OK)
                 {
-                    Downloads = fd.SelectedPath;
+                    Form1.Downloads = fd.SelectedPath;
                     IniReadWriter.WriteIniKeys("Command", "Downloads", fd.SelectedPath, PathShare + "/CF.ini");
                 }
             }
             else
             {
-                DirectoryInfo theFolder = new DirectoryInfo(Downloads);
-                FileInfo[] fileInfo = theFolder.GetFiles();
-                foreach (FileInfo NextFile in fileInfo)//遍历文件
-                {
-                    Console.WriteLine(NextFile.Name);
-                    int index = NextFile.Name.IndexOf(".rar") != -1 ? NextFile.Name.IndexOf(".rar") : NextFile.Name.IndexOf(".zip");
-                    if (index == -1)
-                    {
-                        index = NextFile.Name.IndexOf(".RAR") != -1 ? NextFile.Name.IndexOf(".RAR") : NextFile.Name.IndexOf(".ZIP");
-                    }
-                    if (index != -1)
-                    {
-                        Winrar.UnCompressRar(PathShare + "/投票项目/" + NextFile.Name.Substring(0, index), NextFile.DirectoryName, NextFile.Name);
-                        try
-                        {
-                            File.Delete(NextFile.FullName);
-
-                        }
-                        catch (System.IO.IOException)
-                        {
-                            Console.WriteLine(NextFile.FullName + "-->文件占用中，无法删除!");
-                        }
-                    }
-                }
+                SocketAction.PC_RAR();
             }
         }
         //清空文件
         private void button8_Click(object sender, EventArgs e)
         {
-            DirectoryInfo theFolder = new DirectoryInfo(PathShare + "/投票项目");
-            DirectoryInfo[] allDir = theFolder.GetDirectories();
-            foreach (DirectoryInfo d in allDir)
-            {
-                try
-                {
-                    Directory.Delete(d.FullName, true);
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine(d.FullName + "-->文件占用中，无法删除!");
-                }
-            }
-            string downLoads = IniReadWriter.ReadIniKeys("Command", "Downloads", PathShare + "/CF.ini");
-            if (!StringUtil.isEmpty(downLoads))
-            {
-                DirectoryInfo di = new DirectoryInfo(downLoads);
-                FileInfo[] files = di.GetFiles();
-                foreach (FileInfo f in files)
-                {
-                    try
-                    {
-                        File.Delete(f.FullName);
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine(f.FullName + "-->文件占用中，无法删除!");
-                    }
-                }
-            }
+            SocketAction.PC_EPT();
         }
+
         //投票
         private void button9_Click(object sender, EventArgs e)
         {
@@ -598,19 +547,7 @@ namespace controller
             }
         }
 
- 
 
-        //通过路径启动进程
-        private  void StartProcess(string pathName)
-        {
-            ProcessStartInfo info = new ProcessStartInfo();
-            info.FileName = pathName;
-            info.Arguments = "";
-            info.WorkingDirectory = pathName.Substring(0, pathName.LastIndexOf("\\"));
-            info.WindowStyle = ProcessWindowStyle.Normal;
-            Process pro = Process.Start(info);
-            Thread.Sleep(500);
-        }
 
         private void button11_Click(object sender, EventArgs e)
         {
@@ -619,40 +556,7 @@ namespace controller
             {
                 return;
             }
-            Log.writeLogs("./log.txt", "开始下载:更新");
-            string pathName = "./controller-new.exe";
-            string url = "http://bitcoinrobot.cn/file/controller.exe";
-            bool isDownloading = true;
-            HttpManager httpManager = HttpManager.getInstance();
-            do
-            {
-                try
-                {
-                    httpManager.HttpDownloadFile(url, pathName);
-                    isDownloading = false;
-                }
-                catch (Exception)
-                {
-                    Log.writeLogs("./log.txt", "更新下载异常，重新下载");
-                    File.Delete(pathName);
-                    Thread.Sleep(1000);
-                }
-            } while (isDownloading);
-            if (!File.Exists("./update.bat"))
-            {
-                string line1 = "Taskkill /F /IM controller.exe";
-                string line2 = "ping -n 3 127.0.0.1>nul";
-                string line3 = "del /s /Q " + Environment.CurrentDirectory + "\\controller.exe";
-                string line4 = "ping -n 3 127.0.0.1>nul";
-                string line5 = "ren " + Environment.CurrentDirectory + "\\controller-new.exe controller.exe";
-                string line6 = "ping -n 3 127.0.0.1>nul";
-                string line7 = "start " + Environment.CurrentDirectory + "\\controller.exe";
-                string[] lines = { "@echo off", line1, line2, line3, line4, line5, line6, line7 };
-                File.WriteAllLines(@"./update.bat", lines, Encoding.GetEncoding("GBK"));
-            }
-
-            StartProcess(Environment.CurrentDirectory + "\\update.bat");
-            Application.Exit();//退出整个应用程序
+            SocketAction.PC_UPGRADE();
         }
 
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
