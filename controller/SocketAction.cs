@@ -40,6 +40,8 @@ namespace controller
 
         public static string REPORT_STATE = "REPORT_STATE";
         public static string REPORT_STATE_LESS = "REPORT_STATE_LESS";
+        public static string REPORT_STATE_DB = "REPORT_STATE_DB";
+
 
 
         private static string PathShare = Form1._Form1.PathShare;
@@ -163,12 +165,30 @@ namespace controller
         public static void REPORT(int type)
         {
             Dictionary<string, string> state = new Dictionary<string, string>();
+            Dictionary<string, string> param = new Dictionary<string, string>();
             string prefix = "";
             state.Add("identity", Form1.identity);
             HttpManager httpUtil = HttpManager.getInstance();
             switch (type)
             {
                 case 1:
+                    param.Add("startNum", Form1.VM1);
+                    param.Add("endNum", Form1.VM2);
+                    param.Add("workerId", Form1.WorkerId);
+                    param.Add("workerInput", Form1.InputWorkerId ? "1" : "0");
+                    param.Add("tail", Form1.Tail ? "1" : "0");
+                    param.Add("timeout", Form1.Timeout);
+                    param.Add("autoVote", Form3.IsAutoVote ? "1" : "0");
+                    param.Add("overAuto", Form3.IsOverAuto ? "1" : "0");
+                    state.Add("code", JsonUtil.Dict2Json(param));
+                    prefix = "/api/mq/send/sync2";
+                    break;
+                case 2:
+                    string arrDrop = IniReadWriter.ReadIniKeys("Command", "ArrDrop", Form1.GetPathShare() + "/CF.ini");
+                    state.Add("code", $"arrDrop={arrDrop}&arrActive={Form3.ActiveVm}&taskInfos={ TaskInfos.Active()}");
+                    prefix = "/api/mq/send/sync";
+                    break;
+                case 3:
                     state.Add("startNum", Form1.VM1);
                     state.Add("endNum", Form1.VM2);
                     state.Add("workerId", Form1.WorkerId);
@@ -178,11 +198,6 @@ namespace controller
                     state.Add("autoVote", Form3.IsAutoVote ? "1" : "0");
                     state.Add("overAuto", Form3.IsOverAuto ? "1" : "0");
                     prefix = "/api/vote/report";
-                    break;
-                case 2:
-                    string arrDrop = IniReadWriter.ReadIniKeys("Command", "ArrDrop", Form1.GetPathShare() + "/CF.ini");
-                    state.Add("code", $"arrDrop={arrDrop}&arrActive={Form3.ActiveVm}&taskInfos={ TaskInfos.Active()}");
-                    prefix = "/api/mq/send/sync";
                     break;
             }
             try

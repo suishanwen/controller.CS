@@ -125,6 +125,7 @@
     <Compile Include="util\HttpManager.cs" />
     <Compile Include="util\IniReadWriter.cs" />
     <Compile Include="util\IniSections.cs" />
+    <Compile Include="util\JsonUtil.cs" />
     <Compile Include="util\Log.cs" />
     <Compile Include="util\Md5.cs" />
     <Compile Include="util\MouseKeyboard.cs" />

@@ -101,22 +101,7 @@ namespace controller.util
                 //遍历参数集合
                 if (!(paras == null || paras.Count == 0))
                 {
-                    StringBuilder buffer = new StringBuilder("{");
-                    int i = 0;
-                    foreach (string key in paras.Keys)
-                    {
-                        if (i == 0)
-                        {
-                            buffer.AppendFormat("\"{0}\":\"{1}\"", key, paras[key]);
-                        }
-                        else
-                        {
-                            buffer.AppendFormat(",\"{0}\":\"{1}\"", key, paras[key]);
-                        }
-                        i++;
-                    }
-                    buffer.Append("}");
-                    byte[] btBodys = Encoding.UTF8.GetBytes(buffer.ToString());
+                    byte[] btBodys = Encoding.UTF8.GetBytes(JsonUtil.Dict2Json(paras));
                     httpWebRequest.ContentLength = btBodys.Length;
                     //将请求内容封装在请求体中
                     httpWebRequest.GetRequestStream().Write(btBodys, 0, btBodys.Length);

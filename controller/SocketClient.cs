@@ -138,7 +138,7 @@ namespace controller
                 }
                 else if (msg.Contains("REPORT"))
                 {
-                    int type = msg.Equals(SocketAction.REPORT_STATE) ? 1 : 2;
+                    int type = msg.Equals(SocketAction.REPORT_STATE) ? 1 : msg.Equals(SocketAction.REPORT_STATE_LESS) ? 2 : 3;
                     SocketAction.REPORT(type);
                 }
             }
