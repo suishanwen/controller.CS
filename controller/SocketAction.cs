@@ -178,16 +178,11 @@ namespace controller
             switch (type)
             {
                 case 1:
-                    Dictionary<string, string> param = new Dictionary<string, string>();
-                    param.Add("startNum", Form1.VM1);
-                    param.Add("endNum", Form1.VM2);
-                    param.Add("workerId", Form1.WorkerId);
-                    param.Add("workerInput", Form1.InputWorkerId ? "1" : "0");
-                    param.Add("tail", Form1.Tail ? "1" : "0");
-                    param.Add("timeout", Form1.Timeout);
-                    param.Add("autoVote", Form3.IsAutoVote ? "1" : "0");
-                    param.Add("overAuto", Form3.IsOverAuto ? "1" : "0");
-                    state.Add("code", JsonUtil.Dict2Json(param));
+                    string workerInput = Form1.InputWorkerId ? "1" : "0";
+                    string tail = Form1.Tail ? "1" : "0";
+                    string autoVote = Form3.IsAutoVote ? "1" : "0";
+                    string overAuto = Form3.IsOverAuto ? "1" : "0";
+                    state.Add("code", $"startNum={Form1.VM1}&endNum={Form1.VM2}&workerId={Form1.WorkerId}&workerInput={workerInput}&tail={tail}&timeout={Form1.Timeout}&autoVote={autoVote}&overAuto={overAuto}");
                     prefix = "/api/mq/send/sync";
                     break;
                 case 2:
