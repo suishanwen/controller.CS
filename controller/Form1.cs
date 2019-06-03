@@ -346,8 +346,8 @@ namespace controller
         public Form1()
         {
             InitializeComponent();
-            initConfig();
             _Form1 = this;
+            initConfig();
             _Form3 = new Form3(this);
             _Form3.Show();
             SysEnvironment.SetAutoLogon();
