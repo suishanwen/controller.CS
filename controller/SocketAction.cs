@@ -188,7 +188,7 @@ namespace controller
                     param.Add("autoVote", Form3.IsAutoVote ? "1" : "0");
                     param.Add("overAuto", Form3.IsOverAuto ? "1" : "0");
                     state.Add("code", JsonUtil.Dict2Json(param));
-                    prefix = "/api/mq/send/sync2";
+                    prefix = "/api/mq/send/sync";
                     break;
                 case 2:
                     string arrDrop = IniReadWriter.ReadIniKeys("Command", "ArrDrop", Form1.GetPathShare() + "/CF.ini");
