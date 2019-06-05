@@ -155,6 +155,18 @@ namespace controller
                         SocketAction.AUTO_VOTE_START_NAME_INDEX(val);
                     }
                 }
+                else if (msg.Contains("DROP_PROJECT"))
+                {
+                    string val =  msg.Split(':')[1];
+                    string[] valInfo = val.Split('|');
+                    SocketAction.Drop_Project(valInfo[0], bool.Parse(valInfo[1]));
+                }
+                else if (msg.Contains("TOP_PROJECT"))
+                {
+                    string val = msg.Split(':')[1];
+                    string[] valInfo = val.Split('|');
+                    SocketAction.Top_Project(valInfo[0], bool.Parse(valInfo[1]));
+                }
                 else if (msg.Contains("REPORT"))
                 {
                     int type = msg.Equals(SocketAction.REPORT_STATE) ? 1 : msg.Equals(SocketAction.REPORT_STATE_LESS) ? 2 : 3;

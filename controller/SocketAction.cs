@@ -45,6 +45,10 @@ namespace controller
         public static string AUTO_VOTE_INDEX_SELECT = "AUTO_VOTE_INDEX_SELECT";
         public static string AUTO_VOTE_INDEX_NAME_START = "AUTO_VOTE_INDEX_NAME_START";
 
+        public static string DROP_PROJECT = "DROP_PROJECT";
+        public static string TOP_PROJECT = "TOP_PROJECT";
+
+
         public static string REPORT_STATE = "REPORT_STATE";
         public static string REPORT_STATE_LESS = "REPORT_STATE_LESS";
         public static string REPORT_STATE_DB = "REPORT_STATE_DB";
@@ -109,7 +113,7 @@ namespace controller
                     Form1.InputWorkerId = !Form1.InputWorkerId;
                     break;
                 case 3:
-                    Form1.Tail =  !Form1.Tail;
+                    Form1.Tail = !Form1.Tail;
                     break;
             }
         }
@@ -182,7 +186,13 @@ namespace controller
                     string tail = Form1.Tail ? "1" : "0";
                     string autoVote = Form3.IsAutoVote ? "1" : "0";
                     string overAuto = Form3.IsOverAuto ? "1" : "0";
-                    state.Add("code", $"startNum={Form1.VM1}&endNum={Form1.VM2}&workerId={Form1.WorkerId}&workerInput={workerInput}&tail={tail}&timeout={Form1.Timeout}&autoVote={autoVote}&overAuto={overAuto}");
+                    string voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped",
+                           Form1.GetPathShare() + "/AutoVote.ini");
+                    string voteProjectNameDropedTemp = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDropedTemp",
+                           Form1.GetPathShare() + "/AutoVote.ini");
+                    string voteProjectNameToped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameToped",
+                           Form1.GetPathShare() + "/AutoVote.ini");
+                    state.Add("code", $"startNum={Form1.VM1}&endNum={Form1.VM2}&workerId={Form1.WorkerId}&workerInput={workerInput}&tail={tail}&timeout={Form1.Timeout}&autoVote={autoVote}&overAuto={overAuto}&dropped={voteProjectNameDroped}&droppedTemp={voteProjectNameDropedTemp}&topped={voteProjectNameToped}");
                     prefix = "/api/mq/send/sync";
                     break;
                 case 2:
@@ -216,7 +226,7 @@ namespace controller
 
 
         //通过路径启动进程
-        private static  void StartProcess(string pathName)
+        private static void StartProcess(string pathName)
         {
             ProcessStartInfo info = new ProcessStartInfo();
             info.FileName = pathName;
@@ -328,5 +338,57 @@ namespace controller
                 }
             }
         }
+
+        public static void Drop_Project(string projectName, bool val)
+        {
+            string voteProjectNameDroped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDroped",
+                           Form1.GetPathShare() + "/AutoVote.ini");
+            if (!val)
+            {
+                voteProjectNameDroped +=
+                    StringUtil.isEmpty(voteProjectNameDroped) ? projectName : "|" + projectName;
+            }
+            else
+            {
+                voteProjectNameDroped = voteProjectNameDroped.Replace("|" + projectName, "")
+                    .Replace(projectName, "");
+                string voteProjectNameDropedTemp = IniReadWriter.ReadIniKeys("Command", "voteProjectNameDropedTemp", Form1.GetPathShare() + "/AutoVote.ini");
+                if (voteProjectNameDropedTemp.IndexOf(projectName) != -1)
+                {
+                    voteProjectNameDropedTemp = voteProjectNameDropedTemp.Replace("|" + projectName, "")
+                        .Replace(projectName, "");
+                    IniReadWriter.WriteIniKeys("Command", "voteProjectNameDropedTemp",
+                        voteProjectNameDropedTemp, Form1.GetPathShare() + "/AutoVote.ini");
+                }
+
+            }
+            IniReadWriter.WriteIniKeys("Command", "voteProjectNameDroped", voteProjectNameDroped,
+                Form1.GetPathShare() + "/AutoVote.ini");
+        }
+
+        public static void Top_Project(string projectName, bool val) {
+            string allProjectName = projectName.Split('_')[0];
+            string voteProjectNameToped = IniReadWriter.ReadIniKeys("Command", "voteProjectNameToped",
+                Form1.GetPathShare() + "/AutoVote.ini");
+            if (!val)
+            {
+                if (voteProjectNameToped.IndexOf(allProjectName) == -1)
+                {
+                    voteProjectNameToped += StringUtil.isEmpty(voteProjectNameToped)
+                        ? allProjectName
+                        : "|" + allProjectName;
+                }
+
+            }
+            else
+            {
+                voteProjectNameToped = voteProjectNameToped.Replace("|" + allProjectName, "")
+                    .Replace(allProjectName, "");
+            }
+
+            IniReadWriter.WriteIniKeys("Command", "voteProjectNameToped", voteProjectNameToped,
+                Form1.GetPathShare() + "/AutoVote.ini");
+        }
     }
+    
 }
