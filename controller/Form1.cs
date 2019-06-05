@@ -139,6 +139,11 @@ namespace controller
         {
             return _Form1.PathShare;
         }
+
+        public static string GetPathShareVm()
+        {
+            return _Form1.pathShareVm;
+        }
         public static string Timeout
         {
             get
@@ -171,6 +176,22 @@ namespace controller
             {
                 SetTail(value);
             }
+        }
+        public static bool OverSwitch
+        {
+            get
+            {
+                return _Form1.checkBox3.Checked;
+            }
+            set
+            {
+                SetOverSwitch(value);
+            }
+        }
+
+        public static void SetOverSwitchText(bool value,string text)
+        {
+            SetOverSwitch(value, text);
         }
         public static string WorkerId
         {
@@ -243,6 +264,24 @@ namespace controller
             else
             {
                 _Form1.checkBox2.Checked = value;
+            }
+        }
+        //委托 解决线程间操作checkBox3问题
+        delegate void SetOverSwitchDelegate(bool value,string text = "");
+        public static void SetOverSwitch(bool value, string text = "")
+        {
+            if (_Form1.checkBox3.InvokeRequired)
+            {
+                SetOverSwitchDelegate d = new SetOverSwitchDelegate(SetOverSwitch);
+                _Form1.Invoke(d, new object[] { value });
+            }
+            else
+            {
+                _Form1.checkBox3.Checked = value;
+                if (text != "")
+                {
+                    _Form1.checkBox3.Text = text;
+                }
             }
         }
         //委托 解决线程间操作textBox2问题

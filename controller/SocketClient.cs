@@ -169,8 +169,11 @@ namespace controller
                 }
                 else if (msg.Contains("REPORT"))
                 {
-                    int type = msg.Equals(SocketAction.REPORT_STATE) ? 1 : msg.Equals(SocketAction.REPORT_STATE_LESS) ? 2 : 3;
+                    int type = msg.Equals(SocketAction.REPORT_STATE) ? 1 : msg.Equals(SocketAction.REPORT_STATE_LESS) ? 2 : msg.Equals(SocketAction.REPORT_STATE_VOTE) ? 3 : 4;
                     SocketAction.REPORT(type);
+                }else if (msg.Contains("TASK_VOTE_PROJECT"))
+                {
+                    SocketAction.Vote(msg.Split(':')[1]);
                 }
             }
         }

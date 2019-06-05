@@ -23,7 +23,6 @@ namespace controller
         public static string TASK_PC_EPT = "TASK_PC_EPT";
         public static string TASK_PC_UPGRADE = "TASK_PC_UPGRADE";
 
-
         public static string TASK_VOTE_PROJECT = "投票项目";
 
         public static string FORM1_VM1 = "FORM1_VM1";
@@ -51,6 +50,7 @@ namespace controller
 
         public static string REPORT_STATE = "REPORT_STATE";
         public static string REPORT_STATE_LESS = "REPORT_STATE_LESS";
+        public static string REPORT_STATE_VOTE = "REPORT_STATE_VOTE";
         public static string REPORT_STATE_DB = "REPORT_STATE_DB";
 
 
@@ -201,6 +201,11 @@ namespace controller
                     prefix = "/api/mq/send/sync";
                     break;
                 case 3:
+                    string votes = getVotes();
+                    state.Add("code", $"votes={votes}");
+                    prefix = "/api/mq/send/sync";
+                    break;
+                case 4:
                     state.Add("startNum", Form1.VM1);
                     state.Add("endNum", Form1.VM2);
                     state.Add("workerId", Form1.WorkerId);
@@ -388,6 +393,75 @@ namespace controller
 
             IniReadWriter.WriteIniKeys("Command", "voteProjectNameToped", voteProjectNameToped,
                 Form1.GetPathShare() + "/AutoVote.ini");
+        }
+
+        public static string getVotes()
+        {
+
+            DirectoryInfo theFolder = new DirectoryInfo(PathShare + "/投票项目");
+            DirectoryInfo[] allDir = theFolder.GetDirectories();
+            string votes = "";
+            for (int i = 0; i < allDir.Length; i++)
+            {
+                if (i == 0)
+                {
+                    votes += allDir[i];
+                }
+                else
+                {
+                    votes += $",{allDir[i]}";
+
+                }
+            }
+            return votes;
+        }
+
+        public static void Vote(string projectName)
+        {
+            DirectoryInfo theFolder = new DirectoryInfo(PathShare + "/投票项目/" +projectName);
+            FileInfo[] fileInfo = theFolder.GetFiles();
+            FileInfo executableFile = null;
+            for (int i = 0; i < fileInfo.Length; i++)
+            {
+                if (fileInfo[i].Name.IndexOf(".exe") != -1)
+                {
+                    executableFile = fileInfo[i];
+                    break;
+                }
+            }
+            if (executableFile != null)
+            {
+                if (executableFile.FullName.IndexOf("vote.exe") != -1)
+                {
+                    if (!File.Exists(executableFile.FullName.Substring(0, executableFile.FullName.Length - 9) + "/启动九天.bat"))
+                    {
+                        try
+                        {
+                            String[] Lines = { @"start vote.exe" };
+                            File.WriteAllLines(executableFile.FullName.Substring(0, executableFile.FullName.Length - 9) + "/启动九天.bat", Lines, Encoding.GetEncoding("GBK"));
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.ToString());
+                        }
+                    }
+                }
+                string pathName = executableFile.FullName.Replace(Form1.GetPathShare(), Form1.GetPathShareVm());
+                if (Form1.OverSwitch)
+                {
+                    Form1._Form1.OverSwitchPath = pathName;
+                    Form1.SetOverSwitchText(true, $"到票切换{projectName}");
+                }
+                else
+                {
+                    SwitchUtil.clearAutoVote(Form1.GetPathShare());
+                    SwitchUtil.swichVm(pathName, "投票项目", Form1.GetPathShare());
+                }
+            }
+            else
+            {
+                MessageBox.Show("所选项目中无可执行文件，请检查！");
+            }
         }
     }
     

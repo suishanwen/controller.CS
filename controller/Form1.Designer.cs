@@ -243,7 +243,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(398, 113);
+            this.label3.Location = new System.Drawing.Point(405, 90);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(29, 12);
             this.label3.TabIndex = 22;
@@ -251,7 +251,7 @@
             // 
             // textBox6
             // 
-            this.textBox6.Location = new System.Drawing.Point(433, 110);
+            this.textBox6.Location = new System.Drawing.Point(440, 87);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(47, 21);
             this.textBox6.TabIndex = 23;
@@ -267,7 +267,7 @@
             // 
             // button11
             // 
-            this.button11.Location = new System.Drawing.Point(488, 118);
+            this.button11.Location = new System.Drawing.Point(497, 101);
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(40, 25);
             this.button11.TabIndex = 25;
@@ -278,7 +278,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(494, 142);
+            this.label4.Location = new System.Drawing.Point(450, 134);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(0, 12);
             this.label4.TabIndex = 26;
@@ -286,7 +286,7 @@
             // checkBox3
             // 
             this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(404, 90);
+            this.checkBox3.Location = new System.Drawing.Point(408, 129);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(72, 16);
             this.checkBox3.TabIndex = 27;
@@ -296,7 +296,7 @@
             // 
             // button12
             // 
-            this.button12.Location = new System.Drawing.Point(488, 87);
+            this.button12.Location = new System.Drawing.Point(497, 70);
             this.button12.Name = "button12";
             this.button12.Size = new System.Drawing.Size(40, 25);
             this.button12.TabIndex = 28;
@@ -370,7 +370,7 @@
             this.Name = "Form1";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "控制与监控端";
+            this.Text = "s";
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.groupBox1.ResumeLayout(false);
