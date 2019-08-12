@@ -692,42 +692,34 @@ namespace controller
             }
         }
 
-        private void setWorkerId()
+        private void setWorkerId(string idType)
         {
-            string[] user1 = { "AQ-239356", "Q7-21173" };
-            string[] user2 = { "AQ-14", "Q7-43" };
-            string id = IniReadWriter.ReadIniKeys("Command", "worker", _mainForm.PathShare + "/CF.ini");
-            bool r14 = id.ToUpper().IndexOf(user2[0]) != -1 || id.ToUpper().IndexOf(user2[1]) != -1;
-            string fix = "";
+            string[] user1 = { "TX-111", "Q7-129", "AQ-239356" };
+            string[] user2 = { "TX-18", "Q7-43", "AQ-14" };
+            string[][] users = { user1, user2 };
             string worker = "";
-            if (r14)
+            try
             {
-                fix = id.ToUpper().Replace(user2[0], "").Replace(user2[1], "");
-                if (activeVoteProject.IdType.Equals("Q7"))
-                {
-                    worker = user2[1];
-                }
-                else
-                {
-                    worker = user2[0];
-                }
+                worker = IniReadWriter.ReadIniKeys("Command", "worker", Form1.GetPathShare() + "/CF.ini").ToUpper();
             }
-            else
+            catch (Exception e)
             {
-                fix = id.ToUpper().Replace(user1[0], "").Replace(user1[1], "");
-                if (activeVoteProject.IdType.Equals("Q7"))
-                {
-                    worker = user1[1];
-                }
-                else
-                {
-                    worker = user1[0];
-                }
             }
-            Form1.WorkerId = worker + fix;
-            Form1.InputWorkerId = true;
-            IniReadWriter.WriteIniKeys("Command", "worker", worker + fix, _mainForm.PathShare + "/CF.ini");
-            IniReadWriter.WriteIniKeys("Command", "printgonghao", "1", _mainForm.PathShare + "/CF.ini");
+            int userIndex = worker.IndexOf(user2[0]) != -1 || worker.IndexOf(user2[1]) != -1 || worker.IndexOf(user2[2]) != -1 ? 1 : 0;
+            int idIndex = 0;
+            if ("Q7".Equals(idType))
+            {
+                idIndex = 1;
+            }
+            else if ("AQ".Equals(idType))
+            {
+                idIndex = 2;
+            }
+            string adaptedWorker = users[userIndex][idIndex];
+            //自定义工号结尾
+            string fix = worker.Replace(users[userIndex][0], "").Replace(users[userIndex][1], "").Replace(users[userIndex][2], "");
+            IniReadWriter.WriteIniKeys("Command", "worker", adaptedWorker + fix, Form1.GetPathShare() + "/CF.ini");
+            IniReadWriter.WriteIniKeys("Command", "printgonghao", "1", Form1.GetPathShare() + "/CF.ini");
         }
 
         private void addVoteProjectDroped(string projectName)
@@ -841,7 +833,7 @@ namespace controller
             }
 
             activeVoteProject = voteProject;
-            setWorkerId();
+            setWorkerId(voteProject.IdType);
             if (isAutoVote)
             {
                 //                if (!onlyWaitOrder)

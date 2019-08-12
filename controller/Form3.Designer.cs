@@ -1,4 +1,6 @@
-﻿namespace controller
+﻿using controller.util;
+
+namespace controller
 {
     partial class Form3
     {
