@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using robot.core;
 
 namespace controller
 {
@@ -559,6 +560,34 @@ namespace controller
             return voteProjectList;
         }
 
+        public List<VoteProject> GetVoteProjectsServer()
+        {
+            List<VoteProject> voteProjects = new List<VoteProject>();
+            try
+            {
+                var prefix = "https://bitcoinrobot.cn/api";
+                var path = "/voteProject/query";
+                string json = HttpManager.getInstance().requestHttpPost(prefix, path, "");
+                List<VoteProject> votes = JsonUtil.DeserializeJsonToList<VoteProject>(json);
+                votes.ForEach(voteProject =>
+                {
+                    if (voteProject.Price >= filter && voteProject.IpDial)
+                    {
+                        voteProjects.Add(voteProject);
+                    }
+                });
+                return voteProjects;
+            }
+            catch (ThreadInterruptedException e)
+            {
+                throw e;
+            }
+            catch (Exception)
+            {
+                Thread.Sleep(2000);
+                return GetVoteProjectsServer();
+            }
+        }
 
         //委托 解决线程间操作dataGrid问题
         delegate void SetSelectedDataGridView(int index);
@@ -1034,10 +1063,20 @@ namespace controller
             }
         }
 
+        private void ResolveDependency()
+        {
+            string dllPath = $"{PathCore.WorkingPath}\\Newtonsoft.Json.dll";
+            if (!File.Exists(dllPath))
+            {
+                HttpDownLoad.Download("https://bitcoinrobot.cn/file/Newtonsoft.Json.dll", dllPath);
+            }
+        }
+
         private void autoVoteSystem()
         {
             Log.writeLogs("./log.txt", "");
             Log.writeLogs("./log.txt", "AutoVoteSystem Thread Running");
+            ResolveDependency();
             TaskInfos.Init(_mainForm.PathShare + "/AutoVote.ini");
             if (isAutoVote)
             {
@@ -1075,7 +1114,7 @@ namespace controller
                     }
                     else
                     {
-                        voteProjects = getVoteProjectsBT();
+                        voteProjects = GetVoteProjectsServer();
                     }
 
                     voteProjectsAnalysis(voteProjects);

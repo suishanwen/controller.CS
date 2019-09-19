@@ -254,7 +254,7 @@ namespace controller
             {
                 try
                 {
-                    httpManager.HttpDownloadFile(url, pathName);
+                    httpManager.SimpleDownload(url, pathName);
                     isDownloading = false;
                 }
                 catch (Exception)

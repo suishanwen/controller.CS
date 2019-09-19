@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Net;
 using System.IO;
+using System.Threading;
+using robot.core;
+
 namespace controller.util
 {
     /// <summary>
@@ -24,7 +27,7 @@ namespace controller.util
         /// <param name="url">请求路径url</param>
         /// <param name="param">请求参数键值对</param>
         /// <returns>响应字符串</returns>
-        public String requestHttpGet(String url_prex, String url, String param,String charset)
+        public string requestHttpGet(String url_prex, String url, String param,String charset="UTF-8")
         {
             String responseContent = "";
             HttpWebResponse httpWebResponse = null;
@@ -37,6 +40,7 @@ namespace controller.util
                     url = url + "?" + param;
                 }
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+                httpWebRequest.Proxy = null;
                 httpWebRequest.Method = "GET";
                 httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
                 streamReader = httpWebResponse.GetResponseStream();
@@ -60,9 +64,12 @@ namespace controller.util
                     return "";
                 }
             }
-            catch (Exception e)
+            catch (ThreadInterruptedException e)
             {
                 throw e;
+            }
+            catch (Exception e)
+            {
             }
             finally
             {
@@ -85,7 +92,7 @@ namespace controller.util
         /// <param name="url">请求路径url</param>
         /// <param name="paras">请求数据键值对</param>
         /// <returns>响应字符串</returns>
-        public String requestHttpPost(String url_prex, String url, Dictionary<String, String> paras)
+        public string requestHttpPost(String url_prex, String url, object paras)
         {
             String responseContent = "";
             HttpWebResponse httpWebResponse = null;
@@ -95,17 +102,22 @@ namespace controller.util
                 url = url_prex + url;
                 //根据url创建HttpWebRequest对象
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+                httpWebRequest.Proxy = null;
                 //设置请求方式和头信息
                 httpWebRequest.Method = "POST";
                 httpWebRequest.ContentType = "application/json";
+                byte[] btBodys ;
                 //遍历参数集合
-                if (!(paras == null || paras.Count == 0))
+                if (paras is Dictionary<string,string>)
                 {
-                    byte[] btBodys = Encoding.UTF8.GetBytes(JsonUtil.Dict2Json(paras));
-                    httpWebRequest.ContentLength = btBodys.Length;
-                    //将请求内容封装在请求体中
-                    httpWebRequest.GetRequestStream().Write(btBodys, 0, btBodys.Length);
+                    btBodys = Encoding.UTF8.GetBytes(JsonUtil.Dict2Json(paras as Dictionary<string, string>));
+                }else
+                {
+                    btBodys = Encoding.UTF8.GetBytes(paras as string);
                 }
+                httpWebRequest.ContentLength = btBodys.Length;
+                //将请求内容封装在请求体中
+                httpWebRequest.GetRequestStream().Write(btBodys, 0, btBodys.Length);
                 //获取响应
                 httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
                 //得到响应流
@@ -121,9 +133,12 @@ namespace controller.util
                     return "";
                 }
             }
-            catch (Exception e)
+            catch (ThreadInterruptedException e)
             {
                 throw e;
+            }
+            catch (Exception e)
+            {
             }
             finally
             {
@@ -143,10 +158,11 @@ namespace controller.util
         /// <summary>
         /// Http下载文件
         /// </summary>
-        public  string HttpDownloadFile(string url, string path)
+        public string SimpleDownload(string url, string path)
         {
             // 设置参数
             HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+            request.Proxy = null;
             //发送请求并获取相应回应数据
             HttpWebResponse response = request.GetResponse() as HttpWebResponse;
             //直到request.GetResponse()程序才开始向目标网页发送Post请求
@@ -164,6 +180,7 @@ namespace controller.util
             responseStream.Close();
             return path;
         }
-
     }
+
+
 }

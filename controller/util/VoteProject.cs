@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Windows.Forms;
 
 namespace controller.util
@@ -23,6 +24,8 @@ namespace controller.util
         private bool drop;//是否拉黑
         private bool relDrop;//关联拉黑
         private bool top;//是否置顶
+        private bool ipDial;//是否换ip
+
 
 
         public VoteProject() { }
@@ -51,13 +54,17 @@ namespace controller.util
             {
                 this.Type = "MM";
             }
-            else if (this.BackgroundAddress.IndexOf("jzlsoft.com") != -1)
+            else if (this.BackgroundAddress.IndexOf("fastvote.cn") != -1)
             {
-                this.Type = "JZ";
+                this.Type = "JT";
             }
             else if (this.BackgroundAddress.IndexOf("hinyun.com") != -1)
             {
                 this.Type = "HY";
+            }
+            else if (this.BackgroundAddress.IndexOf("jzlsoft.com") != -1)
+            {
+                this.Type = "JZ";
             }
             else
             {
@@ -70,7 +77,7 @@ namespace controller.util
         {
             get
             {
-                return remains * price > 100;
+                return remains * price > 50 || totalRequire == 0;
             }
         }
 
@@ -100,6 +107,7 @@ namespace controller.util
         public string Type { get => type; set => type = value; }
         public bool Auto { get => auto; set => auto = value; }
         public bool RelDrop { get => relDrop; set => relDrop = value;}
+        public bool IpDial { get => ipDial; set => ipDial = value; }
 
         public static implicit operator VoteProject(DataGridViewCell v)
         {
