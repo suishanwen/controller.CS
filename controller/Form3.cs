@@ -721,7 +721,7 @@ namespace controller
             }
         }
 
-        private void setWorkerId(string idType,string prjectType)
+        private void setWorkerId(string idType)
         {
             string[] user1 = { "TX-111", "Q7-129", "AQ-239356" };
             string[] user2 = { "TX-18", "Q7-43", "AQ-14" };
@@ -749,10 +749,6 @@ namespace controller
             string fix = worker.Replace(users[userIndex][0], "").Replace(users[userIndex][1], "").Replace(users[userIndex][2], "");
             IniReadWriter.WriteIniKeys("Command", "worker", adaptedWorker + fix, Form1.GetPathShare() + "/CF.ini");
             IniReadWriter.WriteIniKeys("Command", "printgonghao", "1", Form1.GetPathShare() + "/CF.ini");
-            if ("圆球".Equals(prjectType))
-            {
-                IniReadWriter.WriteIniKeys("setsoft", "ghid", adaptedWorker + fix, "c:\\gonghao.ini");
-            }
         }
 
         private void addVoteProjectDroped(string projectName)
@@ -866,7 +862,7 @@ namespace controller
             }
 
             activeVoteProject = voteProject;
-            setWorkerId(voteProject.IdType, voteProject.Type);
+            setWorkerId(voteProject.IdType);
             if (isAutoVote)
             {
                 //                if (!onlyWaitOrder)
